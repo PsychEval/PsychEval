@@ -69,7 +69,7 @@ Temporary Items
 .idea/libraries
 .idea/mongoSettings.xml
 .idea/
-*.iml
+## *.iml
 *.iws
 /out/
 .idea_modules/
