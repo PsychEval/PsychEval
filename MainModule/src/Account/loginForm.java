@@ -110,20 +110,7 @@ public class loginForm extends Application {
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-//                if(nameField.getText().isEmpty()) {
-//                    showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!", "Please enter your name");
-//                    return;
-//                }
-//                if(emailField.getText().isEmpty()) {
-//                    showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!", "Please enter your email id");
-//                    return;
-//                }
-//                if(passwordField.getText().isEmpty()) {
-//                    showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!", "Please enter a password");
-//                    return;
-//                }
-//
-//                showAlert(Alert.AlertType.CONFIRMATION, gridPane.getScene().getWindow(), "Registration Successful!", "Welcome " + "World");
+
                 //code for handling button clicks go here
                 //TODO
             }
@@ -138,8 +125,8 @@ public class loginForm extends Application {
         alert.initOwner(owner);
         alert.show();
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+//
+//    public static void main(String[] args) {
+//        launch(args);
+//    }
 }
