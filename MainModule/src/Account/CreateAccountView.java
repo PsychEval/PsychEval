@@ -88,9 +88,20 @@ public class CreateAccountView extends Application{
         gridPane.add(submitButton, 0, 5, 2, 1);
         GridPane.setHalignment(submitButton, HPos.CENTER);
 
+        //Add Login Button
+        Button logInButton = new Button("Login");
+        logInButton.setPrefHeight(40);
+        logInButton.setDefaultButton(true);
+        logInButton.setPrefWidth(100);
+        gridPane.add(logInButton, 0,6,2,1);
+
+        //TODO: For bryan to add
+        logInButton.setOnAction(event -> {
+
+        });
 
         submitButton.setOnAction(event -> {
-            //code for handling button clicks go here
+            //TODO: code for handling button clicks go here
         });
     }
 
