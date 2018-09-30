@@ -22,6 +22,11 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.Objects;
 
+
+// IMPORTANT READ: The UI layout of this main menu is a border layout which consists of
+//                 top, center, bottom, left, and right. In those sections I have a HBox
+//                 layout in the top and a Gridlayout in the center
+
 public class MainView extends Application {
     public static Account currentUser;
 
