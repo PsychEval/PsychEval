@@ -6,7 +6,8 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
-import com.google.firebase.database.*;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -102,7 +103,7 @@ public class Firebase {
         FirebaseApp.initializeApp(options);
 
         // As an admin, the app has access to read and write all data, regardless of Security Rules
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        /*final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -114,7 +115,7 @@ public class Firebase {
             @Override
             public void onCancelled(DatabaseError error) {
             }
-        });
+        });*/
     }
 
     public static void createAccount(String email, String password, String dispName, String type) throws FirebaseAuthException {
