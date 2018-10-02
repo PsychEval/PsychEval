@@ -144,6 +144,7 @@ public class Firebase {
         }
     }
 
+    // This main method should not stay in the code. We need to call init everytime the app gets runs.
     public static void main(String[] args) throws IOException {
         init();
     }
