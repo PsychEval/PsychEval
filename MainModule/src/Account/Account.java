@@ -1,23 +1,29 @@
 package Account;
 
-enum AccountType {
-    ADMIN, COUNSELOR, PARENT;
-}
+
 
 public class Account {
+    public enum AccountType {
+        ADMIN, COUNSELOR, PARENT;
+    }
 
     private String email;
     private String password;
     private String name;
     private AccountType accountType;
+    private String userID;
 
-    public Account(String email, String password, String name, AccountType a) {
+    public Account(String email, String password, String name, AccountType a, String uid) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.accountType = a;
+        this.userID = uid;
     }
 
+    public AccountType getAccountType() {
+        return this.accountType;
+    }
     //general Account functions
     private void editPassword() { }
 
@@ -32,8 +38,7 @@ public class Account {
     //parent functions
     private void addStudentProfile() { }
     private void submitStudentProfile() { }
-    private void receive() { } 
-
+    private void receive() { }
 
 
 }

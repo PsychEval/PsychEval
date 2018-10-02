@@ -1,3 +1,5 @@
+package Account;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,23 +14,26 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-public class loginForm extends Application {
+public class loginForm{
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Login Form JavaFX Application");
+    private Stage mainStage;
+    private Scene mainViewScene;
 
-        // Create the registration form grid pane
-        GridPane gridPane = createRegistrationFormPane();
-        // Add UI controls to the registration form grid pane
-        addUIControls(gridPane);
-        // Create a scene with registration form grid pane as the root node
-        Scene scene = new Scene(gridPane, 800, 500);
-        // Set the scene in primary stage
-        primaryStage.setScene(scene);
-
-        primaryStage.show();
-    }
+//    @Override
+//    public void start(Stage primaryStage) throws Exception {
+//        primaryStage.setTitle("Login Form JavaFX Application");
+//
+//        // Create the registration form grid pane
+//        GridPane gridPane = createRegistrationFormPane();
+//        // Add UI controls to the registration form grid pane
+//        addUIControls(gridPane);
+//        // Create a scene with registration form grid pane as the root node
+//        Scene scene = new Scene(gridPane, 800, 500);
+//        // Set the scene in primary stage
+//        primaryStage.setScene(scene);
+//
+//        primaryStage.show();
+//    }
 
 
     private GridPane createRegistrationFormPane() {
@@ -110,7 +115,7 @@ public class loginForm extends Application {
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
+                mainStage.setScene(mainViewScene);
                 //code for handling button clicks go here
                 //TODO
             }
@@ -124,6 +129,18 @@ public class loginForm extends Application {
         alert.setContentText(message);
         alert.initOwner(owner);
         alert.show();
+    }
+
+    public Scene getScene() {
+        GridPane gp = createRegistrationFormPane();
+        addUIControls(gp);
+        Scene scene = new Scene(gp, 800,500);
+        return scene;
+    }
+
+    public loginForm(Stage primaryStage, Scene mainViewScene) {
+        mainStage = primaryStage;
+        this.mainViewScene = mainViewScene;
     }
 //
 //    public static void main(String[] args) {

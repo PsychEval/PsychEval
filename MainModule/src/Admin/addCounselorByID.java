@@ -15,9 +15,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class addCounselorByID extends Application {
+public class addCounselorByID{
 
     private String counselorID;
+    private Stage mainStage;
+    private Scene mainViewScene;
 
     private GridPane createFormPane(){
         //n rows 2 colums
@@ -66,16 +68,28 @@ public class addCounselorByID extends Application {
             idField.setText("");
             //verifyInput();
             //add to database();
+            mainStage.setScene(mainViewScene);
         });
     }
-
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Create Account");
+    public Scene getScene() {
         GridPane gp = createFormPane();
         AddUI(gp);
         Scene scene = new Scene(gp, 800,500);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        return scene;
     }
+
+    public addCounselorByID(Stage primaryStage, Scene mainViewScene) {
+        mainStage = primaryStage;
+        this.mainViewScene = mainViewScene;
+    }
+
+//    public void start(Stage primaryStage) {
+//        primaryStage.setTitle("Create Account");
+//        GridPane gp = createFormPane();
+//        AddUI(gp);
+//        Scene scene = new Scene(gp, 800,500);
+//        primaryStage.setScene(scene);
+//        primaryStage.show();
+//    }
 
 }
