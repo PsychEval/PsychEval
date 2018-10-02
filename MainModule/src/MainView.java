@@ -29,6 +29,9 @@ import java.util.Objects;
 // test
 public class MainView extends Application {
     public static Account currentUser;
+    private Stage window;
+    private Scene editPass;
+    private Scene mainScene;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -85,7 +88,7 @@ public class MainView extends Application {
                 if (logoutButton == null) {
                     System.out.println("could not set logout button correctly");
                 } else {
-                    logoutButton.setOnAction(event -> {
+                    logoutButton.setOnAction(event -> /*window.setScene()*/{
                         System.out.println("logout button");
                     });
                 }
@@ -93,9 +96,7 @@ public class MainView extends Application {
                 if (editPasswordButton == null) {
                     System.out.println("could not set editpassword button correctly");
                 } else {
-                    editPasswordButton.setOnAction(event -> {
-                        System.out.println("password button");
-                    });
+                    editPasswordButton.setOnAction(event -> window.setScene(editPass));
                 }
 
             }
@@ -200,21 +201,27 @@ public class MainView extends Application {
         }
     }
 
+    public void grabScenes() {
+        EditPassword ep = new EditPassword(window, mainScene);
+        editPass = ep.getScene();
+    }
+
     public void start(Stage primaryStage) {
-        currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.PARENT, "aJ23MX");
+        currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.ADMIN, "aJ23MX");
         primaryStage.setTitle("Main Menu");
+        grabScenes();
         //GridPane gp = createFormPane();
         BorderPane bp = createFormPane();
         AddUI(bp);
-        Scene scene = new Scene(bp, 800,500);
-        primaryStage.setScene(scene);
+        mainScene = new Scene(bp, 800,500);
+        window = primaryStage;
+        grabScenes();
+        primaryStage.setScene(mainScene);
         primaryStage.show();
     }
-//    public static void main(String[]args) {
-//        //TODO get account info from login
-//        // set account info
-//        //hard coding account for testing purposes
-//        currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.ADMIN, "aJ23MX");
-//
-//    }
+    public static void main(String[]args) {
+        //TODO get account info from login
+        launch(args);
+
+    }
 }

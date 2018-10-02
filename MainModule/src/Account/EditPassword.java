@@ -17,7 +17,10 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
-public class EditPassword extends Application{
+public class EditPassword {
+
+    private Stage mainStage;
+    private Scene mainViewScene;
 
     private GridPane createFormPane(){
         //n rows 2 colums
@@ -91,7 +94,12 @@ public class EditPassword extends Application{
                 errorMessage.setFill(Color.RED);
                 errorMessage.setText("Please Provide Valid Input!");
             }
-            //changeInDatabase();
+            else {
+                // change in db()
+                mainStage.setScene(mainViewScene);
+                // return to main
+
+            }
         });
     }
 
@@ -108,12 +116,27 @@ public class EditPassword extends Application{
         }
         return true;
     }
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Create Account");
+
+    public Scene getScene() {
         GridPane gp = createFormPane();
         AddUI(gp);
         Scene scene = new Scene(gp, 800,500);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        return scene;
     }
+
+    public EditPassword(Stage primaryStage, Scene mainViewScene) {
+        mainStage = primaryStage;
+        this.mainViewScene = mainViewScene;
+    }
+//    public void start(Stage primaryStage) {
+//        primaryStage.setTitle("Create Account");
+//        GridPane gp = createFormPane();
+//        AddUI(gp);
+//        Scene scene = new Scene(gp, 800,500);
+//        primaryStage.setScene(scene);
+//        primaryStage.show();
+//    }
+//    public static void main(String [] args) {
+//        launch(args[0]);
+//    }
 }
