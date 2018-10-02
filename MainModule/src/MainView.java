@@ -34,7 +34,7 @@ IMPORTANT READ: The UI layout of this main menu is a border layout which consist
                 back to mainView afterwards. There were a lot of examples with FXML which I
                 don't think we use. I think another way to switch scenes is to have some
                 sort of parent and child implementation if anyone wants to try to code it that way.
-                I don't see any problems with my implementation so far... 
+                I don't see any problems with my implementation so far...
 */
 public class MainView extends Application {
     public static Account currentUser;
@@ -100,8 +100,9 @@ public class MainView extends Application {
                 if (logoutButton == null) {
                     System.out.println("could not set logout button correctly");
                 } else {
-                    logoutButton.setOnAction(event -> /*window.setScene()*/{
+                    logoutButton.setOnAction(event -> {
                         System.out.println("logout button");
+                        window.setScene(createAccount);
                     });
                 }
                 Button editPasswordButton = (Button) getByUserData(pane, "password");
@@ -218,6 +219,7 @@ public class MainView extends Application {
         loginForm lf = new loginForm(window, mainScene);
         login = lf.getScene();
         CreateAccountView cav = new CreateAccountView(window, mainScene, login);
+        // will crash if login is null / if there was a problem creating login scene
         createAccount = cav.getScene();
         EditPassword ep = new EditPassword(window, mainScene);
         editPass = ep.getScene();
@@ -248,6 +250,5 @@ public class MainView extends Application {
           Helpful link: https://stackoverflow.com/questions/42027990/javafx-how-to-run-a-function-after-stage-show
         */
         launch(args);
-
     }
 }
