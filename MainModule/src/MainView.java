@@ -22,16 +22,28 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.Objects;
 
-
-// IMPORTANT READ: The UI layout of this main menu is a border layout which consists of
-//                 top, center, bottom, left, and right. In those sections I have a HBox
-//                 layout in the top and a Gridlayout in the center
-// test
+/*
+IMPORTANT READ: The UI layout of this main menu is a border layout which consists of
+                top, center, bottom, left, and right. In those sections I have a HBox
+                layout in the top and a Gridlayout in the center
+                ---------------------------------------------------------------------
+                The way MainView switches to other scenes is by using setScene() function.
+                This requires me to create a scene of each view and save it in a variable
+                to be used in setScene. This way seems a little "hacky" to me but looking
+                online, I wasn't able to find a solution to switching scenes and switching
+                back to mainView afterwards. There were a lot of examples with FXML which I
+                don't think we use. I think another way to switch scenes is to have some
+                sort of parent and child implementation if anyone wants to try to code it that way.
+                I don't see any problems with my implementation so far... 
+*/
 public class MainView extends Application {
     public static Account currentUser;
     private Stage window;
     private Scene editPass;
     private Scene mainScene;
+    private Scene adminAddsCounselor;
+    private Scene createAccount;
+    private Scene login;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -107,6 +119,7 @@ public class MainView extends Application {
                 } else {
                     addCounselorButton.setOnAction(event -> {
                         System.out.println("addCounselor button");
+                        window.setScene(adminAddsCounselor);
                     });
                 }
                 Button viewScoreButton = (Button) getByUserData(pane, "viewScore");
@@ -202,8 +215,14 @@ public class MainView extends Application {
     }
 
     public void grabScenes() {
+        loginForm lf = new loginForm(window, mainScene);
+        login = lf.getScene();
+        CreateAccountView cav = new CreateAccountView(window, mainScene, login);
+        createAccount = cav.getScene();
         EditPassword ep = new EditPassword(window, mainScene);
         editPass = ep.getScene();
+        addCounselorByID acbID = new addCounselorByID(window, mainScene);
+        adminAddsCounselor = acbID.getScene();
     }
 
     public void start(Stage primaryStage) {
@@ -216,11 +235,18 @@ public class MainView extends Application {
         mainScene = new Scene(bp, 800,500);
         window = primaryStage;
         grabScenes();
-        primaryStage.setScene(mainScene);
+        primaryStage.setScene(createAccount);
         primaryStage.show();
     }
     public static void main(String[]args) {
-        //TODO get account info from login
+        /*TODO get account info from login
+          https://stackoverflow.com/questions/14187963/passing-parameters-javafx-fxml
+          Based on the link above: In order to get user's credentials, since this is a small application, we should just
+          pass by parameters. Create a getCredentials() { usertype = login.getUserType(); name = login.getUserName(); }
+
+          Set these parameters on first showing of main view screen.
+          Helpful link: https://stackoverflow.com/questions/42027990/javafx-how-to-run-a-function-after-stage-show
+        */
         launch(args);
 
     }

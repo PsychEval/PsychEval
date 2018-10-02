@@ -15,7 +15,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class CreateAccountView extends Application{
+public class CreateAccountView{
+
+    private Stage mainStage;
+    private Scene mainViewScene;
+    private Scene loginScene;
 
     private GridPane createFormPane(){
         //n rows 2 colums
@@ -97,7 +101,7 @@ public class CreateAccountView extends Application{
 
         //TODO: For bryan to add
         logInButton.setOnAction(event -> {
-
+            mainStage.setScene(loginScene);
         });
 
         submitButton.setOnAction(event -> {
@@ -105,12 +109,25 @@ public class CreateAccountView extends Application{
         });
     }
 
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Create Account");
+    public Scene getScene() {
         GridPane gp = createFormPane();
         AddUI(gp);
         Scene scene = new Scene(gp, 800,500);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        return scene;
     }
+
+    public CreateAccountView(Stage primaryStage, Scene mainViewScene, Scene loginScene) {
+        mainStage = primaryStage;
+        this.mainViewScene = mainViewScene;
+        this.loginScene = loginScene;
+    }
+
+//    public void start(Stage primaryStage) {
+//        primaryStage.setTitle("Create Account");
+//        GridPane gp = createFormPane();
+//        AddUI(gp);
+//        Scene scene = new Scene(gp, 800,500);
+//        primaryStage.setScene(scene);
+//        primaryStage.show();
+//    }
 }
