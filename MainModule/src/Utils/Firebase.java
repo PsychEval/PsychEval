@@ -90,6 +90,9 @@ class Counselor {
 
 public class Firebase {
 
+    public Firebase() {
+    }
+
     public static void init() throws IOException {
         // Fetch the service account key JSON file contents
         FileInputStream serviceAccount = new FileInputStream("/Users/akhilagrawal/IdeaProjects/PsychEval/MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
