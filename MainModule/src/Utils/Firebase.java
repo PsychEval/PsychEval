@@ -95,7 +95,8 @@ public class Firebase {
 
     public static void init() throws IOException {
         // Fetch the service account key JSON file contents
-        FileInputStream serviceAccount = new FileInputStream("/Users/akhilagrawal/IdeaProjects/PsychEval/MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
+     //   System.out.println(System.getProperty("user.dir"));
+        FileInputStream serviceAccount = new FileInputStream("MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
 
         // Initialize the app with a service account, granting admin privileges
         FirebaseOptions options = new FirebaseOptions.Builder()
@@ -119,6 +120,7 @@ public class Firebase {
             public void onCancelled(DatabaseError error) {
             }
         });*/
+        System.out.println("Firebase successfully initialized");
     }
 
     public static void createAccount(String email, String password, String dispName, String type) throws FirebaseAuthException {
@@ -127,7 +129,7 @@ public class Firebase {
                 .setEmailVerified(false)
                 .setPassword(password)
                 .setDisplayName(dispName)
-                .setPhotoUrl(type)  // We are using this to identify client type, i.e., Admin, Counselor, or Parent
+                .setPhoneNumber(type)  // We are using this to identify client type, i.e., Admin ends with 1, Counselor ends with 2, or Parent ends with 3
                 .setDisabled(false);
 
         UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
@@ -147,10 +149,6 @@ public class Firebase {
         }
     }
 
-    // This main method should not stay in the code. We need to call init everytime the app gets runs.
-    public static void main(String[] args) throws IOException {
-        init();
-    }
 
     // getters for user type & display name & email & UID
     private String getUID(String email) {
@@ -172,7 +170,15 @@ public class Firebase {
             e.printStackTrace();
         }
         assert userRecord != null;
-        return userRecord.getPhotoUrl();
+        String number = userRecord.getPhoneNumber();
+        String lastIndex = number.substring(number.length()-1);
+        if(lastIndex.equals("1")){
+            return "Admin";
+        }else if(lastIndex.equals("2")){
+            return "Counselor";
+        }else{
+            return "Parent";
+        }
     }
 
     private String getDisplayName(String uid) {

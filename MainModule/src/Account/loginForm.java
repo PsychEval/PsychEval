@@ -112,13 +112,11 @@ public class loginForm{
         GridPane.setHalignment(submitButton, HPos.CENTER);
         GridPane.setMargin(submitButton, new Insets(20, 0,20,0));
 
-        submitButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                mainStage.setScene(mainViewScene);
-                //code for handling button clicks go here
-                //TODO
-            }
+        submitButton.setOnAction(event -> {
+            mainStage.setScene(mainViewScene);
+            //code for handling button clicks go here
+            //TODO add login functionality
+
         });
     }
 
