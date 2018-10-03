@@ -1,5 +1,7 @@
 package Account;
 
+import Utils.Firebase;
+import com.google.firebase.auth.FirebaseAuthException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -99,13 +101,27 @@ public class CreateAccountView{
         logInButton.setPrefWidth(100);
         gridPane.add(logInButton, 0,6,2,1);
 
-        //TODO: For bryan to add
         logInButton.setOnAction(event -> {
             mainStage.setScene(loginScene);
         });
 
         submitButton.setOnAction(event -> {
-            //TODO: code for handling button clicks go here
+            //TODO: error checking for password and email
+            String selection = comboBox.getValue();
+            String type;
+            if(selection.equals("Admin")){
+                type = "+10000000001";
+            }else if(selection.equals("Counselor")){
+                type = "+10000000002";
+            }else{
+                type = "+10000000003";
+            }
+            try {
+                Firebase.createAccount(emailField.getText(), passwordField.getText(), nameField.getText(), type);
+            } catch (FirebaseAuthException e) {
+                e.printStackTrace();
+            }
+
         });
     }
 

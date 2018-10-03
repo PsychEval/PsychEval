@@ -19,6 +19,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -249,6 +250,11 @@ public class MainView extends Application {
           Set these parameters on first showing of main view screen.
           Helpful link: https://stackoverflow.com/questions/42027990/javafx-how-to-run-a-function-after-stage-show
         */
+        try {
+            Firebase.init(); //intializes the static firebase class
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         launch(args);
     }
 }
