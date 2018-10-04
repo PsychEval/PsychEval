@@ -124,6 +124,11 @@ public class CreateAccountView extends Application{
                 Account currentUser = new Account(emailField.getText(), passwordField.getText(), nameField.getText(), temp);
                 MainView mainView = new MainView(mainStage, createAccountScene, currentUser);
                 Scene mainViewScene = mainView.getScene();
+
+                emailField.setText("");
+                passwordField.setText("");
+                nameField.setText("");
+
                 mainStage.setScene(mainViewScene);
             } catch (Exception e) {
                 e.printStackTrace();
