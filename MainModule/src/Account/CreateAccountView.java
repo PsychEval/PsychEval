@@ -1,7 +1,7 @@
 package Account;
 
-//import Utils.Firebase;
-//import com.google.firebase.auth.FirebaseAuthException;
+import Utils.Firebase;
+import com.google.firebase.auth.FirebaseAuthException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,12 +16,16 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import sun.applet.Main;
+
+import java.io.IOException;
 
 public class CreateAccountView extends Application{
 
     private Stage mainStage;
     private Scene loginScene;
     private Scene createAccountScene;
+    private Scene mainSceneView;
 
     private GridPane createFormPane(){
         //n rows 2 colums
@@ -105,24 +109,30 @@ public class CreateAccountView extends Application{
             mainStage.setScene(loginScene);
         });
 
-//        submitButton.setOnAction(event -> {
-//            //TODO: error checking for password and email
-//            String selection = comboBox.getValue();
-//            String type;
-//            if(selection.equals("Admin")){
-//                type = "+10000000001";
-//            }else if(selection.equals("Counselor")){
-//                type = "+10000000002";
-//            }else{
-//                type = "+10000000003";
-//            }
-//            try {
-//                Firebase.createAccount(emailField.getText(), passwordField.getText(), nameField.getText(), type);
-//            } catch (FirebaseAuthException e) {
-//                e.printStackTrace();
-//            }
-//
-//        });
+        submitButton.setOnAction(event -> {
+            //TODO: error checking for password and email
+            String selection = comboBox.getValue();
+            String type;
+            Account.AccountType temp;
+            if(selection.equals("Admin")){
+                temp = Account.AccountType.ADMIN;
+            }else if(selection.equals("Counselor")){
+                temp = Account.AccountType.COUNSELOR;
+            }else{
+                temp = Account.AccountType.PARENT;
+            }
+            try {
+                Firebase.createAccount(selection, emailField.getText(), nameField.getText(), passwordField.getText());
+                Account currentUser = new Account(emailField.getText(), passwordField.getText(), nameField.getText(), temp);
+                MainView mainView = new MainView(mainStage, mainSceneView, currentUser);
+                mainSceneView = mainView.getScene();
+                mainStage.setScene(mainSceneView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        });
     }
 
     public Scene getScene() {
@@ -154,15 +164,13 @@ public class CreateAccountView extends Application{
         primaryStage.show();
     }
     public static void main(String [] args) {
+        try {
+            Firebase.init(); //intializes the static firebase class
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         launch(args);
     }
 
-//    public static void main(String[]args) {
-//        try {
-//            Firebase.init(); //intializes the static firebase class
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        launch(args);
-//    }
+
 }
