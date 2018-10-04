@@ -209,12 +209,12 @@ public class Firebase {
 //        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Authentication");
 //    }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 //        Firebase firebase = new Firebase();
         init();
 //        createAccount("akhil", "akhil", "akhil", "akhil");
         setPassword("akhil", "rish");
-    }
+    }*/
 
     public static void init() {
         // Fetch the service account key JSON file contents
