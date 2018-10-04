@@ -14,11 +14,13 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+
 public class loginForm{
 
     private Stage mainStage;
     private Scene mainViewScene;
-
+    private Account currentUser;
+    private Scene createAccountScene;
 //    @Override
 //    public void start(Stage primaryStage) throws Exception {
 //        primaryStage.setTitle("Login Form JavaFX Application");
@@ -75,16 +77,6 @@ public class loginForm{
         GridPane.setHalignment(headerLabel, HPos.CENTER);
         GridPane.setMargin(headerLabel, new Insets(20, 0,20,0));
 
-//        // Add Name Label
-//        Label nameLabel = new Label("Full Name : ");
-//        gridPane.add(nameLabel, 0,1);
-//
-//        // Add Name Text Field
-//        TextField nameField = new TextField();
-//        nameField.setPrefHeight(40);
-//        gridPane.add(nameField, 1,1);
-
-
         // Add Email Label
         Label emailLabel = new Label("Email ID : ");
         gridPane.add(emailLabel, 0, 2);
@@ -113,9 +105,12 @@ public class loginForm{
         GridPane.setMargin(submitButton, new Insets(20, 0,20,0));
 
         submitButton.setOnAction(event -> {
+            //TODO get login info through firebase
+            currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.ADMIN, "aJ23MX");
+            MainView mv = new MainView(mainStage, createAccountScene, currentUser);
+            mainViewScene = mv.getScene();
             mainStage.setScene(mainViewScene);
             //code for handling button clicks go here
-            //TODO add login functionality
 
         });
     }
@@ -136,12 +131,9 @@ public class loginForm{
         return scene;
     }
 
-    public loginForm(Stage primaryStage, Scene mainViewScene) {
+    public loginForm(Stage primaryStage, Scene createAccountScene) {
         mainStage = primaryStage;
-        this.mainViewScene = mainViewScene;
+        this.createAccountScene = createAccountScene;
     }
-//
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
+
 }

@@ -96,6 +96,7 @@ public class EditPassword {
             }
             else {
                 // change in db()
+                System.out.println("here it works");
                 mainStage.setScene(mainViewScene);
                 // return to main
 
@@ -128,15 +129,4 @@ public class EditPassword {
         mainStage = primaryStage;
         this.mainViewScene = mainViewScene;
     }
-//    public void start(Stage primaryStage) {
-//        primaryStage.setTitle("Create Account");
-//        GridPane gp = createFormPane();
-//        AddUI(gp);
-//        Scene scene = new Scene(gp, 800,500);
-//        primaryStage.setScene(scene);
-//        primaryStage.show();
-//    }
-//    public static void main(String [] args) {
-//        launch(args[0]);
-//    }
 }

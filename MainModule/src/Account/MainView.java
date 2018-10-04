@@ -1,8 +1,9 @@
-import Account.*;
+package Account;
+
 import Admin.*;
 import Counselor.*;
 import Parent.*;
-import Utils.*;
+//import Utils.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,7 +29,7 @@ IMPORTANT READ: The UI layout of this main menu is a border layout which consist
                 top, center, bottom, left, and right. In those sections I have a HBox
                 layout in the top and a Gridlayout in the center
                 ---------------------------------------------------------------------
-                The way MainView switches to other scenes is by using setScene() function.
+                The way Account.MainView switches to other scenes is by using setScene() function.
                 This requires me to create a scene of each view and save it in a variable
                 to be used in setScene. This way seems a little "hacky" to me but looking
                 online, I wasn't able to find a solution to switching scenes and switching
@@ -37,7 +38,7 @@ IMPORTANT READ: The UI layout of this main menu is a border layout which consist
                 sort of parent and child implementation if anyone wants to try to code it that way.
                 I don't see any problems with my implementation so far...
 */
-public class MainView extends Application {
+public class MainView{
     public static Account currentUser;
     private Stage window;
     private Scene editPass;
@@ -77,11 +78,6 @@ public class MainView extends Application {
         gp.setHgap(9);
         gp.setVgap(9);
         gp.setPrefSize(400, 200);
-//        ColumnConstraints columnOneConstraints = new ColumnConstraints(200, 200, Double.MAX_VALUE);
-//        columnOneConstraints.setHalignment(HPos.RIGHT);
-//        ColumnConstraints columnTwoConstrains = new ColumnConstraints(200,200, Double.MAX_VALUE);
-//        //columnTwoConstrains.setHgrow(Priority.ALWAYS);
-//        gp.getColumnConstraints().addAll(columnOneConstraints, columnTwoConstrains);
         return gp;
     }
 
@@ -216,45 +212,29 @@ public class MainView extends Application {
         }
     }
 
+    public Scene getScene() {
+        return this.mainScene;
+    }
+
     public void grabScenes() {
-        loginForm lf = new loginForm(window, mainScene);
-        login = lf.getScene();
-        CreateAccountView cav = new CreateAccountView(window, mainScene, login);
+        //CreateAccountView cav = new CreateAccountView(window, mainScene, login);
         // will crash if login is null / if there was a problem creating login scene
-        createAccount = cav.getScene();
+        //createAccount = cav.getScene();
         EditPassword ep = new EditPassword(window, mainScene);
         editPass = ep.getScene();
         addCounselorByID acbID = new addCounselorByID(window, mainScene);
         adminAddsCounselor = acbID.getScene();
     }
 
-    public void start(Stage primaryStage) {
-        currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.ADMIN, "aJ23MX");
-        primaryStage.setTitle("Main Menu");
-        grabScenes();
-        //GridPane gp = createFormPane();
+    public MainView(Stage primaryStage, Scene createAccount, Account currUser) {
+        this.window = primaryStage;
+        this.currentUser = currUser;
+        this.createAccount = createAccount;
         BorderPane bp = createFormPane();
         AddUI(bp);
-        mainScene = new Scene(bp, 800,500);
-        window = primaryStage;
+        this.mainScene = new Scene(bp, 800,500);
         grabScenes();
-        primaryStage.setScene(createAccount);
-        primaryStage.show();
     }
-    public static void main(String[]args) {
-        /*TODO get account info from login
-          https://stackoverflow.com/questions/14187963/passing-parameters-javafx-fxml
-          Based on the link above: In order to get user's credentials, since this is a small application, we should just
-          pass by parameters. Create a getCredentials() { usertype = login.getUserType(); name = login.getUserName(); }
 
-          Set these parameters on first showing of main view screen.
-          Helpful link: https://stackoverflow.com/questions/42027990/javafx-how-to-run-a-function-after-stage-show
-        */
-        try {
-            Firebase.init(); //intializes the static firebase class
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        launch(args);
-    }
+
 }
