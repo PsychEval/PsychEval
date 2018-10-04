@@ -120,7 +120,7 @@ public class Firebase {
         System.out.println("Created new user with ID: " + email);
     }
 
-    private static boolean login(String email, String password) throws ExecutionException, InterruptedException {
+    public static boolean login(String email, String password) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();

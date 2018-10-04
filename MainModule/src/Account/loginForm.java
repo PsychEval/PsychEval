@@ -1,5 +1,6 @@
 package Account;
 
+import Utils.Firebase;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,6 +14,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
+import java.util.concurrent.ExecutionException;
 
 
 public class loginForm{
@@ -106,14 +109,21 @@ public class loginForm{
 
         submitButton.setOnAction(event -> {
             //TODO get login info through firebase
-
-
-
+            System.out.println(emailField.getText() + " " + passwordField.getText());
+            try {
+                if(Firebase.login(emailField.getText(), passwordField.getText())){
+                    //TODO: grab details here
+                }else{
+                    showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Incorrect Username or Password");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.ADMIN);
             MainView mv = new MainView(mainStage, createAccountScene, currentUser);
             mainViewScene = mv.getScene();
-            mainStage.setScene(mainViewScene);
+            //mainStage.setScene(mainViewScene);
             //code for handling button clicks go here
 
         });
