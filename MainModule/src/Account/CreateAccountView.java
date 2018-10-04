@@ -1,7 +1,6 @@
 package Account;
 
 import Utils.Firebase;
-import com.google.firebase.auth.FirebaseAuthException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
