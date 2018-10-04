@@ -16,7 +16,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import sun.applet.Main;
+//import sun.applet.Main;
 
 import java.io.IOException;
 
@@ -25,7 +25,6 @@ public class CreateAccountView extends Application{
     private Stage mainStage;
     private Scene loginScene;
     private Scene createAccountScene;
-    private Scene mainSceneView;
 
     private GridPane createFormPane(){
         //n rows 2 colums
@@ -124,9 +123,9 @@ public class CreateAccountView extends Application{
             try {
                 Firebase.createAccount(selection, emailField.getText(), nameField.getText(), passwordField.getText());
                 Account currentUser = new Account(emailField.getText(), passwordField.getText(), nameField.getText(), temp);
-                MainView mainView = new MainView(mainStage, mainSceneView, currentUser);
-                mainSceneView = mainView.getScene();
-                mainStage.setScene(mainSceneView);
+                MainView mainView = new MainView(mainStage, createAccountScene, currentUser);
+                Scene mainViewScene = mainView.getScene();
+                mainStage.setScene(mainViewScene);
             } catch (Exception e) {
                 e.printStackTrace();
             }
