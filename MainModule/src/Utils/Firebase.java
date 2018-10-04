@@ -9,8 +9,6 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,82 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-class Profile {
-    private int riskFactor;
-    private String name, link, oauthKey;
-
-    public Profile() {
-    }
-
-    public Profile(int riskFactor, String name, String link, String oauthKey) {
-        this.riskFactor = riskFactor;
-        this.name = name;
-        this.link = link;
-        this.oauthKey = oauthKey;
-    }
-
-    public int getRiskFactor() {
-        return riskFactor;
-    }
-
-    public void setRiskFactor(int riskFactor) {
-        this.riskFactor = riskFactor;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getOauthKey() {
-        return oauthKey;
-    }
-
-    public void setOauthKey(String oauthKey) {
-        this.oauthKey = oauthKey;
-    }
-}
-
-class Counselor {
-    // counselor db - name, email, parent list (parent name, student name, flag)
-    private String name, email;
-
-    public Counselor() {
-    }
-
-    public Counselor(String name, String email) {
-        this.name = name;
-        this.email = email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-}
 
 public class Firebase {
 
@@ -116,7 +38,9 @@ public class Firebase {
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
-            if (document.getString("Email").equalsIgnoreCase(email))
+            if (document.getString("email") == null)
+                continue;
+            if (document.getString("email").equalsIgnoreCase(email))
                 return document.getString("Type");
         }
         return null;
@@ -127,7 +51,9 @@ public class Firebase {
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
-            if (document.getString("Email").equalsIgnoreCase(email))
+            if (document.getString("email") == null)
+                continue;
+            if (document.getString("email").equalsIgnoreCase(email))
                 return document.getString("Name");
         }
         return null;
@@ -138,7 +64,9 @@ public class Firebase {
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
-            if (document.getString("Email").equalsIgnoreCase(email))
+            if (document.getString("email") == null)
+                continue;
+            if (document.getString("email").equalsIgnoreCase(email))
                 return document.getString("Password");
         }
         return null;
@@ -157,8 +85,12 @@ public class Firebase {
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
 
+            ApiFuture<WriteResult> future = null;
             // Update an existing document
-            ApiFuture<WriteResult> future = document.getReference().update("password", password);
+            if (document.getString("email") == null)
+                continue;
+            if (document.getString("email").equalsIgnoreCase(email))
+                future = document.getReference().update("password", password);
             WriteResult result = null;
             try {
                 result = future.get();
@@ -347,15 +279,174 @@ public class Firebase {
     }*/
 
     // counselor db - name, email, parent list (parent name, student name, flag)
+
+    private void setStudents(String email, String [] studentNames) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+
+            ApiFuture<WriteResult> future = null;
+            // Update an existing document
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email))
+                future = document.getReference().update("Student Names", studentNames);
+            WriteResult result = null;
+            try {
+                result = future.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Write result: " + result);
+        }
+    }
+
+    private void setParents(String email, String [] parentNames) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+
+            ApiFuture<WriteResult> future = null;
+            // Update an existing document
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email)) {
+                future = document.getReference().update("Parents.Name", parentNames);
+                future = document.getReference().update("Parents.Approved", false);
+            }
+            WriteResult result = null;
+            try {
+                result = future.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Write result: " + result);
+        }
+    }
+
+    private void setParentsApproved(String email, String parentName) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+
+            ApiFuture<WriteResult> future = null;
+            // Update an existing document
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email)) {
+                if (document.getString("Parent.Name") == null)
+                    continue;
+                if (document.getString("Parent.Name").equalsIgnoreCase(parentName))
+                    future = document.getReference().update("Parents.Approved", true);
+            }
+            WriteResult result = null;
+            try {
+                result = future.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Write result: " + result);
+        }
+    }
+
+    public String getCounselorName(String email) throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = query.get();
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email))
+                return document.getString("Name");
+        }
+        return null;
+    }
+
+    public String [] getStudentNames(String email) throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = query.get();
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email))
+                return (String[]) document.get("Student Names");
+        }
+        return null;
+    }
+
     private void setCounselorDB(String name, String email) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Counselor");
-        ref.setValueAsync(new Counselor(name, email));
+        DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor").document();
+        Map<String, Object> data = new HashMap<>();
+        data.put("Email", email);
+        data.put("Name", name);
+        data.put("Approved", false);
+
+        ApiFuture<WriteResult> result = docRef.set(data);
+        try {
+            result.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     // social media db - student name, twitter oauth key, twitter link, score, getters & setters
     private void setSocialMediaDB(int riskFactor, String name, String link, String oauthKey) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("SocialMedia");
-        ref.setValueAsync(new Profile(riskFactor, name, link, oauthKey));
+        DocumentReference docRef = FirestoreClient.getFirestore().collection("SocialMedia").document();
+        Map<String, Object> data = new HashMap<>();
+        data.put("Risk Factor", riskFactor);
+        data.put("Student Name", name);
+        data.put("Twitter Link", link);
+
+        ApiFuture<WriteResult> result = docRef.set(data);
+        try {
+            result.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getRiskFactor(String name) throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = query.get();
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Student Name") == null)
+                continue;
+            if (document.getString("Student Name").equalsIgnoreCase(name))
+                return document.getString("Risk Factor");
+        }
+        return null;
     }
 }
 
