@@ -12,6 +12,7 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class Firebase {
         this.password = password;
     }
 
-    public String getType(String email) throws ExecutionException, InterruptedException {
+    public static String getType(String email) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
@@ -41,12 +42,12 @@ public class Firebase {
             if (document.getString("email") == null)
                 continue;
             if (document.getString("email").equalsIgnoreCase(email))
-                return document.getString("Type");
+                return document.getString("type");
         }
         return null;
     }
 
-    public String getName(String email) throws ExecutionException, InterruptedException {
+    public static String getName(String email) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
@@ -54,12 +55,12 @@ public class Firebase {
             if (document.getString("email") == null)
                 continue;
             if (document.getString("email").equalsIgnoreCase(email))
-                return document.getString("Name");
+                return document.getString("name");
         }
         return null;
     }
 
-    public String getPassword(String email) throws ExecutionException, InterruptedException {
+    public static String getPassword(String email) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
@@ -67,7 +68,7 @@ public class Firebase {
             if (document.getString("email") == null)
                 continue;
             if (document.getString("email").equalsIgnoreCase(email))
-                return document.getString("Password");
+                return document.getString("password");
         }
         return null;
     }
@@ -392,7 +393,7 @@ public class Firebase {
         return null;
     }
 
-    public String [] getStudentNames(String email) throws ExecutionException, InterruptedException {
+    public static ArrayList<String> getStudentNames(String email) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
@@ -400,7 +401,7 @@ public class Firebase {
             if (document.getString("Email") == null)
                 continue;
             if (document.getString("Email").equalsIgnoreCase(email))
-                return (String[]) document.get("Student Names");
+                return  (ArrayList<String>) document.get("Student Names");
         }
         return null;
     }
@@ -436,8 +437,8 @@ public class Firebase {
         }
     }
 
-    public String getRiskFactor(String name) throws ExecutionException, InterruptedException {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+    public static String getRiskFactor(String name) throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {

@@ -107,12 +107,40 @@ public class loginForm{
         GridPane.setHalignment(submitButton, HPos.CENTER);
         GridPane.setMargin(submitButton, new Insets(20, 0,20,0));
 
+        Button editPassButton = new Button("Change Password");
+        editPassButton.setPrefHeight(40);
+        editPassButton.setPrefWidth(100);
+        gridPane.add(editPassButton,0,5,2,1);
+        GridPane.setHalignment(editPassButton, HPos.CENTER);
+        GridPane.setMargin(editPassButton, new Insets(20, 0,20,0));
+
+
+        editPassButton.setOnAction(event -> {
+            EditPassword ep = new EditPassword(mainStage, mainViewScene);
+            Scene eps = ep.getScene();
+            mainStage.setScene(eps);
+        });
+
         submitButton.setOnAction(event -> {
             //TODO get login info through firebase
-            System.out.println(emailField.getText() + " " + passwordField.getText());
-            try {
+                try {
                 if(Firebase.login(emailField.getText(), passwordField.getText())){
-                    //TODO: grab details here
+                    Account.AccountType tempA;
+                    String type = Firebase.getType(emailField.getText());
+                    if(type.equals("Admin")){
+                        tempA = Account.AccountType.ADMIN;
+                    }else if(type.equals("Counselor")){
+                        tempA = Account.AccountType.COUNSELOR;
+                    }else{
+                        tempA  = Account.AccountType.PARENT;
+                    }
+                    String name = Firebase.getName(emailField.getText());
+                    String pass = passwordField.getText();
+                    System.out.println(type + " "  + name);
+                    currentUser = new Account(emailField.getText(), pass, name, tempA);
+                    MainView mv = new MainView(mainStage, createAccountScene, currentUser);
+                    mainViewScene = mv.getScene();
+                    mainStage.setScene(mainViewScene);
                 }else{
                     showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Incorrect Username or Password");
                 }
@@ -120,10 +148,7 @@ public class loginForm{
                 e.printStackTrace();
             }
 
-            currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.ADMIN);
-            MainView mv = new MainView(mainStage, createAccountScene, currentUser);
-            mainViewScene = mv.getScene();
-            //mainStage.setScene(mainViewScene);
+
             //code for handling button clicks go here
 
         });

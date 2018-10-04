@@ -24,6 +24,9 @@ public class Account {
     public AccountType getAccountType() {
         return this.accountType;
     }
+    public String getEmail(){
+        return this.email;
+    }
     //general Account functions
     private void editPassword() { }
 
