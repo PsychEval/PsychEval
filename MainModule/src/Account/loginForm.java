@@ -140,6 +140,10 @@ public class loginForm{
                     currentUser = new Account(emailField.getText(), pass, name, tempA);
                     MainView mv = new MainView(mainStage, createAccountScene, currentUser);
                     mainViewScene = mv.getScene();
+
+                    emailField.setText("");
+                    passwordField.setText("");
+
                     mainStage.setScene(mainViewScene);
                 }else{
                     showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Incorrect Username or Password");

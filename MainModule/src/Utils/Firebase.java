@@ -406,7 +406,7 @@ public class Firebase {
         return null;
     }
 
-    private void setCounselorDB(String name, String email) {
+    public static void setCounselorDB(String name, String email) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor").document();
         Map<String, Object> data = new HashMap<>();
         data.put("Email", email);

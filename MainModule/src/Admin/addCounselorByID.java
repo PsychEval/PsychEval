@@ -1,5 +1,6 @@
 package Admin;
 
+import Utils.Firebase;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -53,6 +54,16 @@ public class addCounselorByID{
         idField.setPrefHeight(40);
         gridPane.add(idField, 1,1);
 
+
+        // Add Name Label
+        Label nameLabel2 = new Label("Counselor Name ");
+        gridPane.add(nameLabel2, 0,2);
+
+        // Add Name Text Field
+        TextField nameField = new TextField();
+        idField.setPrefHeight(40);
+        gridPane.add(nameField, 1,2);
+
         // Add Submit Button
         Button submitButton = new Button("Add Counselor");
         submitButton.setPrefHeight(40);
@@ -66,8 +77,11 @@ public class addCounselorByID{
             //code for handling button clicks go here
             counselorID = idField.getText();
             idField.setText("");
+            String name = nameField.getText();
             //verifyInput();
             //add to database();
+            Firebase.setCounselorDB(name, counselorID);
+            nameField.setText("");
             mainStage.setScene(mainViewScene);
         });
     }

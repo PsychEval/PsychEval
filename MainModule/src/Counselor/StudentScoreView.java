@@ -17,6 +17,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -58,13 +59,17 @@ public class StudentScoreView{
         return gridPane;
     }
 
-    private void addFields(GridPane gp){
+    private int addFields(GridPane gp){
         int i = 0;
         try {
             ArrayList<String> sNames = Firebase.getStudentNames(MainView.currentUser.getEmail());
             if(sNames == null){
                 System.out.println("GOT NULL");
-                return;
+                showAlert(Alert.AlertType.ERROR, mainStage, "Error", "No students found for this counselor");
+
+
+                return -1;
+
             }
             for (String name : sNames) {
                 Label nameLabel = new Label(name);
@@ -88,12 +93,28 @@ public class StudentScoreView{
             Scene mvs = mv.getScene();
             mainStage.setScene(mvs);
         });
+        return 0;
 
+    }
+
+    private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initOwner(owner);
+        alert.show();
     }
 
     public Scene getScene(){
         GridPane gp = createGP();
-        addFields(gp);
+        int test = addFields(gp);
+        if(test == -1){
+
+            MainView mv = new MainView(mainStage, mainViewScene, MainView.currentUser);
+            return mv.getScene();
+
+        }
         Scene scene = new Scene(gp, 800, 500);
         return scene;
     }
@@ -101,6 +122,7 @@ public class StudentScoreView{
     public StudentScoreView(Stage primaryStage, Scene createAccountScene) {
         mainStage = primaryStage;
         this.createAccountScene = createAccountScene;
+
     }
 
 }
