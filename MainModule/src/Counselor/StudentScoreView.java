@@ -84,7 +84,9 @@ public class StudentScoreView{
         GridPane.setMargin(back, new Insets(20, 0,20,0));
 
         back.setOnAction(event -> {
-            mainStage.setScene(mainViewScene);
+            MainView mv = new MainView(mainStage, mainViewScene, MainView.currentUser);
+            Scene mvs = mv.getScene();
+            mainStage.setScene(mvs);
         });
 
     }

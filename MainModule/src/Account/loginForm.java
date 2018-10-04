@@ -136,7 +136,8 @@ public class loginForm{
                     }
                     String name = Firebase.getName(emailField.getText());
                     String pass = passwordField.getText();
-                    MainView.currentUser = new Account(emailField.getText(), pass, name, tempA);
+                    System.out.println(type + " "  + name);
+                    currentUser = new Account(emailField.getText(), pass, name, tempA);
                     MainView mv = new MainView(mainStage, createAccountScene, currentUser);
                     mainViewScene = mv.getScene();
                     mainStage.setScene(mainViewScene);
