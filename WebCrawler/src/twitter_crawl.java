@@ -17,8 +17,8 @@ public class twitter_crawl {
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey("rv6od3nKApSUaEVeIehlu5Hkn")
                 .setOAuthConsumerSecret("afkABogRCD1Ag7fo7paI0BWLIEXW37sZW552evyesxFjtGwoTT")
-                .setOAuthAccessToken("936667168149819393-QVX20pdniONfV1MTHuGTYJpPp0lhxWh")
-                .setOAuthAccessTokenSecret("VpNrfYQM1CBUMeWXeaqnlLshVjRRbZVetk6d5oToKXabZ");
+                .setOAuthAccessToken("936667168149819393-L7yfh1uuqlptSpdCJ2mT3ghavXegfee")
+                .setOAuthAccessTokenSecret("r3ntUQdhib621FhIEggmf4j1HhMb8wM5LG3MsRDCdbTDR");
         TwitterFactory tf = new TwitterFactory(cb.build());
         Twitter twitter = tf.getInstance();
 
@@ -52,7 +52,7 @@ public class twitter_crawl {
         ArrayList<Status> tweets = new ArrayList<Status>();
         while (tweets.size () < numberOfTweets) {
             try {
-                tweets.addAll(twitter.getUserTimeline("realDonaldTrump",pg));
+                tweets.addAll(twitter.getUserTimeline(pg));
 //                System.out.println("Gathered " + tweets.size() + " tweets");
                 for (Status t: tweets)
                     if(t.getId() < lastID) lastID = t.getId();
