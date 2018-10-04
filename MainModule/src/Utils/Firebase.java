@@ -33,7 +33,7 @@ public class Firebase {
         this.password = password;
     }
 
-    public String getType(String email) throws ExecutionException, InterruptedException {
+    public static String getType(String email) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
@@ -46,7 +46,7 @@ public class Firebase {
         return null;
     }
 
-    public String getName(String email) throws ExecutionException, InterruptedException {
+    public static String getName(String email) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
@@ -59,7 +59,7 @@ public class Firebase {
         return null;
     }
 
-    public String getPassword(String email) throws ExecutionException, InterruptedException {
+    public static String getPassword(String email) throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();

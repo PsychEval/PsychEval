@@ -109,10 +109,23 @@ public class loginForm{
 
         submitButton.setOnAction(event -> {
             //TODO get login info through firebase
-            System.out.println(emailField.getText() + " " + passwordField.getText());
-            try {
+                try {
                 if(Firebase.login(emailField.getText(), passwordField.getText())){
-                    //TODO: grab details here
+                    Account.AccountType tempA;
+                    String type = Firebase.getType(emailField.getText());
+                    if(type.equals("Admin")){
+                        tempA = Account.AccountType.ADMIN;
+                    }else if(type.equals("Counselor")){
+                        tempA = Account.AccountType.COUNSELOR;
+                    }else{
+                        tempA  = Account.AccountType.PARENT;
+                    }
+                    String name = Firebase.getName(emailField.getText());
+                    String pass = passwordField.getText();
+                    MainView.currentUser = new Account(emailField.getText(), pass, name, tempA);
+                    MainView mv = new MainView(mainStage, createAccountScene, currentUser);
+                    mainViewScene = mv.getScene();
+                    mainStage.setScene(mainViewScene);
                 }else{
                     showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Incorrect Username or Password");
                 }
@@ -120,10 +133,7 @@ public class loginForm{
                 e.printStackTrace();
             }
 
-            currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.ADMIN);
-            MainView mv = new MainView(mainStage, createAccountScene, currentUser);
-            mainViewScene = mv.getScene();
-            //mainStage.setScene(mainViewScene);
+
             //code for handling button clicks go here
 
         });
