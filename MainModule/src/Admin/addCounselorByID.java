@@ -16,6 +16,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 public class addCounselorByID{
 
     private String counselorID;
@@ -74,15 +77,39 @@ public class addCounselorByID{
 
 
         submitButton.setOnAction(event -> {
+            //TODO: ARE YOU SURE?!?!? success/fail
             //code for handling button clicks go here
             counselorID = idField.getText();
-            idField.setText("");
             String name = nameField.getText();
             //verifyInput();
             //add to database();
-            Firebase.setCounselorDB(name, counselorID);
-            nameField.setText("");
-            mainStage.setScene(mainViewScene);
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Are You Sure?");
+            Optional<ButtonType> result = alert.showAndWait();
+            ButtonType button = result.orElse(ButtonType.CANCEL);
+
+            if (button == ButtonType.OK) {
+                System.out.println("Ok pressed");
+                Firebase.setCounselorDB(name, counselorID);
+                nameField.setText("");
+                idField.setText("");
+                Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
+                alert1.setTitle("Success");
+                Optional<ButtonType> newResult =  alert1.showAndWait();
+                ButtonType button1 = result.orElse((ButtonType.OK));
+                if(button1 == ButtonType.OK){
+                    mainStage.setScene(mainViewScene);
+                }
+
+
+
+            } else {
+                System.out.println("canceled");
+            }
+
+
+
         });
     }
     public Scene getScene() {
