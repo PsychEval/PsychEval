@@ -126,7 +126,7 @@ public class MainView{
                     System.out.println("view score button was not found");
                 } else {
                     viewScoreButton.setOnAction(event -> {
-                        window.setScene(scoreView);
+                        ChangeSceneToScoreView();
                     });
                 }
                 Button viewProfileRequests = (Button) getByUserData(pane, "viewProfileRequests");
@@ -225,8 +225,14 @@ public class MainView{
         editPass = ep.getScene();
         addCounselorByID acbID = new addCounselorByID(window, mainScene);
         adminAddsCounselor = acbID.getScene();
+        //StudentScoreView ssv = new StudentScoreView(window, mainScene);
+        //scoreView = ssv.getScene();
+    }
+
+    public void ChangeSceneToScoreView(){
         StudentScoreView ssv = new StudentScoreView(window, mainScene);
         scoreView = ssv.getScene();
+        window.setScene(scoreView);
     }
 
     public MainView(Stage primaryStage, Scene createAccount, Account currUser) {
