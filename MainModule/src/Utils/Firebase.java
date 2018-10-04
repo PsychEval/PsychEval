@@ -1,16 +1,23 @@
 package Utils;
 
+import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.UserRecord;
+import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 class Profile {
     private int riskFactor;
@@ -90,19 +97,145 @@ class Counselor {
 
 public class Firebase {
 
-    public Firebase() {
+    String type;
+    String email;
+    String name;
+    String password;
+
+    public Firebase() {}
+
+    public Firebase(String type, String email, String name, String password) {
+        this.type = type;
+        this.email = email;
+        this.name = name;
+        this.password = password;
     }
 
-    public static void init() throws IOException {
-        // Fetch the service account key JSON file contents
-     //   System.out.println(System.getProperty("user.dir"));
-        FileInputStream serviceAccount = new FileInputStream("MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
+    public String getType(String email) throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        QuerySnapshot querySnapshot = query.get();
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email").equalsIgnoreCase(email))
+                return document.getString("Type");
+        }
+        return null;
+    }
 
-        // Initialize the app with a service account, granting admin privileges
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .setDatabaseUrl("https://psycheval-ff91b.firebaseio.com")
-                .build();
+    public String getName(String email) throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        QuerySnapshot querySnapshot = query.get();
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email").equalsIgnoreCase(email))
+                return document.getString("Name");
+        }
+        return null;
+    }
+
+    public String getPassword(String email) throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        QuerySnapshot querySnapshot = query.get();
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email").equalsIgnoreCase(email))
+                return document.getString("Password");
+        }
+        return null;
+    }
+
+    public static void setPassword(String email, String password) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+
+            // Update an existing document
+            ApiFuture<WriteResult> future = document.getReference().update("password", password);
+            WriteResult result = null;
+            try {
+                result = future.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Write result: " + result);
+        }
+    }
+
+    public static void createAccount(String type, String email, String name, String password) {
+        DocumentReference docRef = FirestoreClient.getFirestore().collection("Authentication").document();
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", type);
+        data.put("email", email);
+        data.put("name", name);
+        data.put("password", password);
+
+        ApiFuture<WriteResult> result = docRef.set(data);
+        try {
+            result.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Created new user with ID: " + email);
+    }
+
+    private static boolean login(String email, String password) throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        QuerySnapshot querySnapshot = query.get();
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("email") == null)
+                return false;
+            if ((document.getString("email")).equalsIgnoreCase(email)) {
+                if (document.getString("password") == null)
+                    return false;
+                if ((document.getString("password")).equalsIgnoreCase(password))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+//    private DatabaseReference login(String email, String password) {
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Authentication");
+//    }
+
+    /*public static void main(String[] args) {
+//        Firebase firebase = new Firebase();
+        init();
+//        createAccount("akhil", "akhil", "akhil", "akhil");
+        setPassword("akhil", "rish");
+    }*/
+
+    public static void init() {
+        // Fetch the service account key JSON file contents
+        //   System.out.println(System.getProperty("user.dir"));
+        FileInputStream serviceAccount = null;
+        FirebaseOptions options = null;
+        try {
+            serviceAccount = new FileInputStream("MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
+
+            // Initialize the app with a service account, granting admin privileges
+            options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setDatabaseUrl("https://psycheval-ff91b.firebaseio.com")
+                    .build();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        FirestoreOptions options1 =
+//                FirestoreOptions.newBuilder().setTimestampsInSnapshotsEnabled(true).build();
+//        Firestore firestore = options1.getService();
 
         FirebaseApp.initializeApp(options);
 
@@ -123,7 +256,7 @@ public class Firebase {
         System.out.println("Firebase successfully initialized");
     }
 
-    public static void createAccount(String email, String password, String dispName, String type) throws FirebaseAuthException {
+    /*public static void createAccount(String email, String password, String dispName, String type) throws FirebaseAuthException {
         UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                 .setEmail(email)
                 .setEmailVerified(false)
@@ -134,6 +267,16 @@ public class Firebase {
 
         UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
         System.out.println("Successfully created new user: " + userRecord.getUid());
+    }
+
+    private void login(String email, String password) {
+        try {
+            String token = FirebaseAuth.getInstance().createCustomToken(getUID(email));
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void updatePassword(String uid, String password) {
@@ -201,7 +344,7 @@ public class Firebase {
         }
         assert userRecord != null;
         return userRecord.getEmail();
-    }
+    }*/
 
     // counselor db - name, email, parent list (parent name, student name, flag)
     private void setCounselorDB(String name, String email) {
@@ -215,3 +358,4 @@ public class Firebase {
         ref.setValueAsync(new Profile(riskFactor, name, link, oauthKey));
     }
 }
+
