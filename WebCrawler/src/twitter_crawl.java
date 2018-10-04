@@ -1,9 +1,10 @@
 
 import twitter4j.*;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,17 +14,27 @@ public class twitter_crawl {
         // gets Twitter instance with default credentials
 //        Twitter twitter = new TwitterFactory().getInstance();
 
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("rv6od3nKApSUaEVeIehlu5Hkn")
-                .setOAuthConsumerSecret("afkABogRCD1Ag7fo7paI0BWLIEXW37sZW552evyesxFjtGwoTT")
-                .setOAuthAccessToken("936667168149819393-L7yfh1uuqlptSpdCJ2mT3ghavXegfee")
-                .setOAuthAccessTokenSecret("r3ntUQdhib621FhIEggmf4j1HhMb8wM5LG3MsRDCdbTDR");
-        TwitterFactory tf = new TwitterFactory(cb.build());
-        Twitter twitter = tf.getInstance();
+//        ConfigurationBuilder cb = new ConfigurationBuilder();
+//        cb.setDebugEnabled(true)
+//                .setOAuthConsumerKey("rv6od3nKApSUaEVeIehlu5Hkn")
+//                .setOAuthConsumerSecret("afkABogRCD1Ag7fo7paI0BWLIEXW37sZW552evyesxFjtGwoTT");
+////                .setOAuthAccessToken("936667168149819393-L7yfh1uuqlptSpdCJ2mT3ghavXegfee")
+////                .setOAuthAccessTokenSecret("r3ntUQdhib621FhIEggmf4j1HhMb8wM5LG3MsRDCdbTDR");
+//        TwitterFactory tf = new TwitterFactory(cb.build());
+//        Twitter twitter = tf.getInstance();
 
         Paging pg = new Paging();
-
+        Twitter twitter = TwitterFactory.getSingleton();
+        twitter.setOAuthConsumer("rv6od3nKApSUaEVeIehlu5Hkn", "afkABogRCD1Ag7fo7paI0BWLIEXW37sZW552evyesxFjtGwoTT");
+        String name = "";
+        try {
+            name = getName(twitter);
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(name);
 //        try {
 //            List<Status> statuses;
 //            String user;
@@ -52,14 +63,15 @@ public class twitter_crawl {
         ArrayList<Status> tweets = new ArrayList<Status>();
         while (tweets.size () < numberOfTweets) {
             try {
-                tweets.addAll(twitter.getUserTimeline(pg));
+                tweets.addAll(twitter.getUserTimeline(name,pg));
 //                System.out.println("Gathered " + tweets.size() + " tweets");
                 for (Status t: tweets)
                     if(t.getId() < lastID) lastID = t.getId();
             }
             catch (TwitterException te) {
                 System.out.println("Couldn't connect: " + te);
-            };
+            }
+            ;
             pg.setMaxId(lastID-1);
         }
 
@@ -75,6 +87,7 @@ public class twitter_crawl {
 //        }
         for (int i = 0; i < tweets.size(); i++) {
             String tw = tweets.get(i).getText();
+            System.out.println(name);
             if (filterRetweet(tw)) {
                 System.out.println(tw);
             }
@@ -87,6 +100,44 @@ public class twitter_crawl {
             return true;
         }
         return false;
+    }
+
+    public static String getName(Twitter twitter) throws TwitterException, IOException {
+        RequestToken requestToken = twitter.getOAuthRequestToken();
+        AccessToken accessToken = null;
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        while (null == accessToken) {
+            System.out.println("Open the following URL and grant access to your account:");
+            System.out.println(requestToken.getAuthorizationURL());
+            System.out.print("Enter the PIN(if aviailable) or just hit enter.[PIN]:");
+            String pin = br.readLine();
+            try{
+                if(pin.length() > 0){
+                    accessToken = twitter.getOAuthAccessToken(requestToken, pin);
+                }else{
+                    accessToken = twitter.getOAuthAccessToken();
+                }
+            } catch (TwitterException te) {
+                if(401 == te.getStatusCode()){
+                    System.out.println("Unable to get the access token.");
+                }else{
+                    te.printStackTrace();
+                }
+            }
+        }
+        //persist to the accessToken for future reference.
+        storeAccessToken(twitter.verifyCredentials().getId() , accessToken);
+//        Status status = twitter.updateStatus("Hi test");
+//        System.out.println("Successfully updated the status to [" + status.getText() + "].");
+
+        String uName = twitter.getScreenName();
+
+        return uName;
+    }
+
+    private static void storeAccessToken(long useId, AccessToken accessToken){
+        //store accessToken.getToken()
+        //store accessToken.getTokenSecret()
     }
 
 }
