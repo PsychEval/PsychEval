@@ -3,7 +3,7 @@ package Account;
 import Admin.*;
 import Counselor.*;
 import Parent.*;
-//import Utils.*;
+import Utils.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import twitter4j.TwitterException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -151,6 +152,15 @@ public class MainView{
                 } else {
                     oauth.setOnAction(event -> {
                         System.out.println("oauth button");
+                        Oauth oauth1 = new Oauth();
+                        try {
+                            oauth1.launchOauth();
+                        } catch (TwitterException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     });
                 }
             }
