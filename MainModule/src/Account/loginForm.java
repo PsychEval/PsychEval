@@ -106,7 +106,11 @@ public class loginForm{
 
         submitButton.setOnAction(event -> {
             //TODO get login info through firebase
-            currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.ADMIN, "aJ23MX");
+
+
+
+
+            currentUser = new Account("bryan@purdue.edu", "aaaaaa", "Bryan Chiou", Account.AccountType.ADMIN);
             MainView mv = new MainView(mainStage, createAccountScene, currentUser);
             mainViewScene = mv.getScene();
             mainStage.setScene(mainViewScene);

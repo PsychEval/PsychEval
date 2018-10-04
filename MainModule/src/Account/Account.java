@@ -13,12 +13,12 @@ public class Account {
     private AccountType accountType;
     private String userID;
 
-    public Account(String email, String password, String name, AccountType a, String uid) {
+    public Account(String email, String password, String name, AccountType a) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.accountType = a;
-        this.userID = uid;
+
     }
 
     public AccountType getAccountType() {
