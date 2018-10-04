@@ -63,8 +63,9 @@ public class twitter_crawl {
         ArrayList<Status> tweets = new ArrayList<Status>();
         while (tweets.size () < numberOfTweets) {
             try {
-                tweets.addAll(twitter.getUserTimeline(name,pg));
-//                System.out.println("Gathered " + tweets.size() + " tweets");
+                System.out.println("Getting Tweets");
+                tweets.addAll(twitter.getUserTimeline("realDonaldTrump",pg));
+                System.out.println("Gathered " + tweets.size() + " tweets");
                 for (Status t: tweets)
                     if(t.getId() < lastID) lastID = t.getId();
             }
@@ -87,7 +88,7 @@ public class twitter_crawl {
 //        }
         for (int i = 0; i < tweets.size(); i++) {
             String tw = tweets.get(i).getText();
-            System.out.println(name);
+//            System.out.println(name);
             if (filterRetweet(tw)) {
                 System.out.println(tw);
             }
