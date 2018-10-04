@@ -4,7 +4,9 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.awt.*;
 import java.io.*;
+import java.net.URI;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,16 +78,6 @@ public class twitter_crawl {
             pg.setMaxId(lastID-1);
         }
 
-//        PrintWriter pw = null;
-//        try {
-//            pw = new PrintWriter("finderTwitter.txt");
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        {
-//            pw.println(arrayList.get(index));
-//        }
         for (int i = 0; i < tweets.size(); i++) {
             String tw = tweets.get(i).getText();
 //            System.out.println(name);
@@ -110,6 +102,13 @@ public class twitter_crawl {
         while (null == accessToken) {
             System.out.println("Open the following URL and grant access to your account:");
             System.out.println(requestToken.getAuthorizationURL());
+            try {
+                Desktop desktop = java.awt.Desktop.getDesktop();
+                URI oURL = new URI(requestToken.getAuthorizationURL());
+                desktop.browse(oURL);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             System.out.print("Enter the PIN(if aviailable) or just hit enter.[PIN]:");
             String pin = br.readLine();
             try{
