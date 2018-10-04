@@ -62,6 +62,10 @@ public class StudentScoreView{
         int i = 0;
         try {
             ArrayList<String> sNames = Firebase.getStudentNames(MainView.currentUser.getEmail());
+            if(sNames == null){
+                System.out.println("GOT NULL");
+                return;
+            }
             for (String name : sNames) {
                 Label nameLabel = new Label(name);
                 gp.add(nameLabel, 0, i);
@@ -72,8 +76,13 @@ public class StudentScoreView{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Button back = new Button();
+        Button back = new Button("Go Back");
+        back.setPrefHeight(40);
+        back.setPrefWidth(100);
         gp.add(back, 0, i, 2, 1);
+        GridPane.setHalignment(back, HPos.CENTER);
+        GridPane.setMargin(back, new Insets(20, 0,20,0));
+
         back.setOnAction(event -> {
             mainStage.setScene(mainViewScene);
         });

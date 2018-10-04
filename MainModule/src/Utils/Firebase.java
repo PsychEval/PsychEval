@@ -42,7 +42,7 @@ public class Firebase {
             if (document.getString("email") == null)
                 continue;
             if (document.getString("email").equalsIgnoreCase(email))
-                return document.getString("Type");
+                return document.getString("type");
         }
         return null;
     }
@@ -55,7 +55,7 @@ public class Firebase {
             if (document.getString("email") == null)
                 continue;
             if (document.getString("email").equalsIgnoreCase(email))
-                return document.getString("Name");
+                return document.getString("name");
         }
         return null;
     }
@@ -68,7 +68,7 @@ public class Firebase {
             if (document.getString("email") == null)
                 continue;
             if (document.getString("email").equalsIgnoreCase(email))
-                return document.getString("Password");
+                return document.getString("password");
         }
         return null;
     }
@@ -438,7 +438,7 @@ public class Firebase {
     }
 
     public static String getRiskFactor(String name) throws ExecutionException, InterruptedException {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
