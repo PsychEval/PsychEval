@@ -3,10 +3,12 @@ package Counselor;
 public class ParentStudentPair {
     private String parentName;
     private String studentName;
+    private Boolean approved;
 
-    ParentStudentPair(String parent, String student) {
+    ParentStudentPair(String parent, Boolean approved, String student) {
         this.parentName = parent;
         this.studentName = student;
+        this.approved = approved;
     }
 
     public String getParentName() {
@@ -15,4 +17,5 @@ public class ParentStudentPair {
     public String getStudentName() {
         return this.studentName;
     }
+    public Boolean getApproved() { return this.approved; }
 }

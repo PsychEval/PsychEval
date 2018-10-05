@@ -88,10 +88,10 @@ public class ApproveParent{
     private ObservableList<ParentStudentPair> getParentStudentPairs() {
         ObservableList<ParentStudentPair> pairs = FXCollections.observableArrayList();
         // TODO get parents list from db
-        pairs.add(new ParentStudentPair("parent0", "student0"));
-        pairs.add(new ParentStudentPair("parent1", "student1"));
-        pairs.add(new ParentStudentPair("parent2", "student2"));
-        pairs.add(new ParentStudentPair("parent3", "student3"));
+        pairs.add(new ParentStudentPair("parent0", false, "student0"));
+        pairs.add(new ParentStudentPair("parent1", false,"student1"));
+        pairs.add(new ParentStudentPair("parent2", false,"student2"));
+        pairs.add(new ParentStudentPair("parent3", false, "student3"));
         return pairs;
     }
     public Scene getScene() {
