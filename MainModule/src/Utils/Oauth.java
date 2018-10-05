@@ -15,7 +15,7 @@ import java.util.List;
 public class Oauth {
     public static void launchOauth() throws TwitterException, IOException {
         Twitter twitter = TwitterFactory.getSingleton();
-        twitter.setOAuthConsumer("rv6od3nKApSUaEVeIehlu5Hkn", "afkABogRCD1Ag7fo7paI0BWLIEXW37sZW552evyesxFjtGwoTT");
+        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
         RequestToken requestToken = twitter.getOAuthRequestToken();
         AccessToken accessToken = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -30,20 +30,20 @@ public class Oauth {
         }
             System.out.print("Enter the PIN(if aviailable) or just hit enter.[PIN]:");
             //String pin = br.readLine();
-            String pin = "1234";
-            try{
-                if(pin.length() > 0){
-                    accessToken = twitter.getOAuthAccessToken(requestToken, pin);
-                }else{
-                    accessToken = twitter.getOAuthAccessToken();
-                }
-            } catch (TwitterException te) {
-                if(401 == te.getStatusCode()){
-                    System.out.println("Unable to get the access token.");
-                }else{
-                    te.printStackTrace();
-                }
-            }
+//            String pin = "1234";
+//            try{
+//                if(pin.length() > 0){
+//                    accessToken = twitter.getOAuthAccessToken(requestToken, pin);
+//                }else{
+//                    accessToken = twitter.getOAuthAccessToken();
+//                }
+//            } catch (TwitterException te) {
+//                if(401 == te.getStatusCode()){
+//                    System.out.println("Unable to get the access token.");
+//                }else{
+//                    te.printStackTrace();
+//                }
+//            }
 
         //persist to the accessToken for future reference.
         storeAccessToken(twitter.verifyCredentials().getId() , accessToken);

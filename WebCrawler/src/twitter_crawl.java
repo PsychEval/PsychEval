@@ -27,7 +27,7 @@ public class twitter_crawl {
 
         Paging pg = new Paging();
         Twitter twitter = TwitterFactory.getSingleton();
-        twitter.setOAuthConsumer("rv6od3nKApSUaEVeIehlu5Hkn", "afkABogRCD1Ag7fo7paI0BWLIEXW37sZW552evyesxFjtGwoTT");
+        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
         String name = "";
         try {
             name = getName(twitter);
