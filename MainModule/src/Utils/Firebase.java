@@ -93,6 +93,8 @@ public class Firebase {
                 continue;
             if (document.getString("email").equalsIgnoreCase(email))
                 future = document.getReference().update("password", password);
+            else
+                continue;
             WriteResult result = null;
             try {
                 result = future.get();
@@ -196,16 +198,23 @@ public class Firebase {
                         .document(document.getId());
                 Map<String, Object> map;
                 map = (Map<String, Object>) document.get("Parents");
-                int size = ((Map<String, Object>) document.get("Parents")).size();
+                List<Object> l = new ArrayList<>();
+                l.add("");
+                l.add(false);
+                l.add("");
+                if (map.containsValue(l))
+                    map.remove("EMPTY");
+                int size = map.size();
+                l.clear();
                 for (int i = 0; i < m.size(); ++i) {
-                    List<Object> l = (List<Object>) m.get(i);
-                    map.put(String.valueOf(size++), l);
-                    ApiFuture<WriteResult> arrayUnion = docRef.update("Parents", map);
-                    try {
-                        arrayUnion.get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                    l.add(m.get(i));
+                }
+                map.put(String.valueOf(size++), l);
+                ApiFuture<WriteResult> arrayUnion = docRef.update("Parents", map);
+                try {
+                    arrayUnion.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -307,7 +316,10 @@ public class Firebase {
         Map<String, Object> m = new HashMap<>();
         List<Object> l = new ArrayList<>();
         Collections.addAll(l, pName, false, sName);
-        m.put(String.valueOf((count++)), l);
+        if (pName.isEmpty() && sName.isEmpty())
+            m.put("EMPTY", l);
+        else
+            m.put(String.valueOf((count++)), l);
         data.put("Parents", m);
 
         ApiFuture<WriteResult> result = docRef.set(data);
