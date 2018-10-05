@@ -19,7 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
-import sun.applet.Main;
+//import sun.applet.Main;
 import twitter4j.TwitterException;
 
 import java.io.IOException;
@@ -49,6 +49,7 @@ public class MainView{
     private Scene createAccount;
     private Scene scoreView;
     private Scene login;
+    private Scene approveParent;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -140,6 +141,15 @@ public class MainView{
                         System.out.println("view profile reqeusts button");
                     });
                 }
+                Button approveParentButton = (Button)getByUserData(pane, "approveParent");
+                if (approveParentButton == null) {
+                    System.out.println("Approve parent button was not found");
+                } else {
+                    approveParentButton.setOnAction(event -> {
+                        System.out.println("approve parent button");
+                        window.setScene(approveParent);
+                    });
+                }
                 Button addStudent = (Button)getByUserData(pane, "addStudent");
                 if (addStudent == null) {
                     System.out.println("add student button was not found");
@@ -171,7 +181,7 @@ public class MainView{
     private void AddUI(BorderPane borderPane){ //positioning is important when adding, treat like an array
 
         if (borderPane != null) {
-            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth;
+            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent;
 
             HBox usables = createTopBar();
             usables.setUserData("Top");
@@ -204,6 +214,13 @@ public class MainView{
                 viewProfileRequests.setPrefWidth(200);
                 viewProfileRequests.setUserData("viewProfileRequests");
                 gridPane.add(viewProfileRequests, 2, 0, 2, 1);
+
+                approveParent = new Button("Approve Parent");
+                approveParent.setPrefHeight(40);
+                approveParent.setPrefWidth(200);
+                approveParent.setUserData("approveParent");
+                gridPane.add(approveParent, 4, 0, 2, 1);
+
 
             } else {
                 //account type is parent
@@ -239,6 +256,8 @@ public class MainView{
         adminAddsCounselor = acbID.getScene();
         //StudentScoreView ssv = new StudentScoreView(window, mainScene);
         //scoreView = ssv.getScene();
+        ApproveParent ap = new ApproveParent(window, mainScene, currentUser);
+        approveParent = ap.getScene();
     }
 
     public void ChangeSceneToScoreView(){
