@@ -143,7 +143,7 @@ public class Firebase {
 
     public static void init() {
         // Fetch the service account key JSON file contents
-        FileInputStream serviceAccount = null;
+        FileInputStream serviceAccount;
         FirebaseOptions options = null;
         try {
             serviceAccount = new FileInputStream("MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
@@ -281,9 +281,14 @@ public class Firebase {
         return null;
     }
 
-    public static ArrayList<String> getStudentNames(String email) throws ExecutionException, InterruptedException {
+    public static ArrayList<String> getStudentNames(String email) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
-        QuerySnapshot querySnapshot = query.get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         List<String> sNames = new ArrayList<>();
         for (QueryDocumentSnapshot document : documents) {
@@ -308,7 +313,6 @@ public class Firebase {
 
     public static void setCounselorDB(String name, String email, String pName, String sName) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor").document();
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
         Map<String, Object> data = new HashMap<>();
         data.put("Email", email);
         data.put("Name", name);
@@ -362,7 +366,6 @@ public class Firebase {
     // PostData db - Name, Posts[]
     public static void setPostDB(String name, String[] posts) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("PostData").document();
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("PostData").get();
         Map<String, Object> data = new HashMap<>();
         List<HashMap<String, Object>> l = new ArrayList<>();
         data.put("Name", name);
@@ -434,5 +437,31 @@ public class Firebase {
                     return (ArrayList<String>) document.get("Posts");
         }
         return null;
+    }
+
+    public static boolean isApproved(String counselorEmail, String parentName) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(counselorEmail)) {
+                Map<String, Object> map;
+                if (document.get("Parents") != null)
+                    map = (Map<String, Object>) document.get("Parents");
+                else
+                    continue;
+                if (map.get(String.valueOf(1)).equals(true))
+                    return true;
+                }
+            }
+        return false;
     }
 }
