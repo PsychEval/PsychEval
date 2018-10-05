@@ -90,6 +90,7 @@ public class EditPassword {
         submitButton.setOnAction(event -> {
             //code for handling button clicks go here
             //checkInput()
+            String passToChange = newPass2Field.getText();
             boolean validInput = checkInput(oldPassField, newPassField, newPass2Field);
             if (!validInput) {
                 errorMessage.setFill(Color.RED);
@@ -97,7 +98,7 @@ public class EditPassword {
             }
             else {
                 // change in db()
-                Firebase.setPassword(MainView.currentUser.getEmail(), newPassField.getText());
+                Firebase.setPassword(MainView.currentUser.getEmail(), passToChange);
                 System.out.println("here it works");
                 mainStage.setScene(mainViewScene);
                 // return to main
