@@ -50,6 +50,7 @@ public class MainView{
     private Scene scoreView;
     private Scene login;
     private Scene approveParent;
+    private Scene linkStudent;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -156,6 +157,7 @@ public class MainView{
                 } else {
                     addStudent.setOnAction(event -> {
                         System.out.println("add student button");
+                        window.setScene(linkStudent);
                     });
                 }
                 Button oauth = (Button)getByUserData(pane, "oauth");
@@ -224,7 +226,7 @@ public class MainView{
 
             } else {
                 //account type is parent
-                addStudent = new Button("Add Student");
+                addStudent = new Button("Link With Child");
                 addStudent.setPrefHeight(40);
                 addStudent.setPrefWidth(200);
                 addStudent.setUserData("addStudent");
@@ -258,6 +260,8 @@ public class MainView{
         //scoreView = ssv.getScene();
         ApproveParent ap = new ApproveParent(window, mainScene, currentUser);
         approveParent = ap.getScene();
+        LinkWithAStudent lwas = new LinkWithAStudent(window, mainScene, currentUser);
+        linkStudent = lwas.getScene();
     }
 
     public void ChangeSceneToScoreView(){
