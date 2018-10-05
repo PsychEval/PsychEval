@@ -122,7 +122,6 @@ public class loginForm{
         });
 
         submitButton.setOnAction(event -> {
-            //TODO get login info through firebase
                 try {
                 if(Firebase.login(emailField.getText(), passwordField.getText())){
                     Account.AccountType tempA;
