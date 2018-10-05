@@ -26,6 +26,7 @@ import twitter4j.TwitterException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 
 /*
 IMPORTANT READ: The UI layout of this main menu is a border layout which consists of
@@ -149,7 +150,7 @@ public class MainView{
                 } else {
                     approveParentButton.setOnAction(event -> {
                         System.out.println("approve parent button");
-                        window.setScene(approveParent);
+                        ChangeSceneToApproveView();
                     });
                 }
                 Button addStudent = (Button)getByUserData(pane, "addStudent");
@@ -179,13 +180,29 @@ public class MainView{
                     });
                 }
                 Button approvedYetButton = (Button)getByUserData(pane, "approvedYet");
-                if (oauth == null) {
+                if (approvedYetButton == null) {
                     System.out.println("approved yet button was not found");
                 } else {
                     approvedYetButton.setOnAction(event -> {
                         System.out.println("approved yet button");
                         // TODO get form db
-                        showAlert(Alert.AlertType.INFORMATION, window, "Pending", "Counselor is still reviewing your request.");
+                        TextInputDialog dialog = new TextInputDialog();
+                        dialog.setTitle("Counselor Email");
+                        dialog.setHeaderText("Enter email");
+                        dialog.setContentText("Email:");
+                        Optional<String> result = dialog.showAndWait();
+                        if (result.isPresent()){
+                            //System.out.println("AHHHHHHH   " + result.get() + " " + currentUser.getName());
+                            boolean temp = Firebase.isApproved(result.get(), currentUser.getName());
+                            if(temp){
+                                showAlert(Alert.AlertType.INFORMATION, window, "Approved", "You are approved");
+                            }else{
+                                showAlert(Alert.AlertType.INFORMATION, window, "Not Approved", "You are not approved");
+                            }
+                        }
+
+
+                        //showAlert(Alert.AlertType.INFORMATION, window, "Pending", "Counselor is still reviewing your request.");
                     });
                 }
             }
@@ -275,8 +292,7 @@ public class MainView{
         adminAddsCounselor = acbID.getScene();
         //StudentScoreView ssv = new StudentScoreView(window, mainScene);
         //scoreView = ssv.getScene();
-        ApproveParent ap = new ApproveParent(window, mainScene, currentUser);
-        approveParent = ap.getScene();
+
         LinkWithAStudent lwas = new LinkWithAStudent(window, mainScene, currentUser);
         linkStudent = lwas.getScene();
     }
@@ -285,6 +301,12 @@ public class MainView{
         StudentScoreView ssv = new StudentScoreView(window, mainScene);
         scoreView = ssv.getScene();
         window.setScene(scoreView);
+    }
+
+    public void ChangeSceneToApproveView(){
+        ApproveParent ap = new ApproveParent(window, mainScene, currentUser);
+        approveParent = ap.getScene();
+        window.setScene(approveParent);
     }
 
     public MainView(Stage primaryStage, Scene createAccount, Account currUser) {

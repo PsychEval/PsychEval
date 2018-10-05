@@ -2,6 +2,7 @@ package Counselor;
 
 import Account.Account;
 import Utils.Firebase;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +18,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static javafx.application.Application.launch;
 
@@ -88,11 +93,21 @@ public class ApproveParent{
     private ObservableList<ParentStudentPair> getParentStudentPairs() {
         ObservableList<ParentStudentPair> pairs = FXCollections.observableArrayList();
         // TODO get parents list from db
+        Map<String, Object> map = new HashMap<>();
+        map = Firebase.getParents(user.getEmail());
 
-        pairs.add(new ParentStudentPair("parent0", false, "student0"));
-        pairs.add(new ParentStudentPair("parent1", false,"student1"));
-        pairs.add(new ParentStudentPair("parent2", false,"student2"));
-        pairs.add(new ParentStudentPair("parent3", false, "student3"));
+        for (int i = 0; i < map.size(); i++) {
+           // map.get(String.valueOf(i));
+            ArrayList<Object> temp = (ArrayList<Object>) map.get(String.valueOf(i));
+            if(temp.get(1).equals(false)){
+                pairs.add(new ParentStudentPair((String)temp.get(0), false, (String)temp.get(2)));
+            }
+
+        }
+        //pairs.add(new ParentStudentPair("parent0", false, "student0"));
+        //pairs.add(new ParentStudentPair("parent1", false,"student1"));
+        //pairs.add(new ParentStudentPair("parent2", false,"student2"));
+        //pairs.add(new ParentStudentPair("parent3", false, "student3"));
         return pairs;
     }
     public Scene getScene() {
