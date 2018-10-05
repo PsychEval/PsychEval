@@ -91,7 +91,8 @@ public class addCounselorByID{
 
             if (button == ButtonType.OK) {
                 System.out.println("Ok pressed");
-                Firebase.setCounselorDB(name, counselorID);
+                Firebase.setCounselorDB(name, counselorID, "","");
+
                 nameField.setText("");
                 idField.setText("");
                 Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
