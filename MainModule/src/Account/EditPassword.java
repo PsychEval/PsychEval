@@ -1,5 +1,6 @@
 package Account;
 
+import Utils.Firebase;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -96,6 +97,7 @@ public class EditPassword {
             }
             else {
                 // change in db()
+                Firebase.setPassword(MainView.currentUser.getEmail(), newPassField.getText());
                 System.out.println("here it works");
                 mainStage.setScene(mainViewScene);
                 // return to main
@@ -112,6 +114,7 @@ public class EditPassword {
         String newPass2 = newPass2Field.getText();
         newPass2Field.setText("");
         // check if old pass the same as account's old pass
+        if(!oldPass.equals(MainView.currentUser.getPassword()))
         if (!newPass.equals(newPass2)) {
             return false;
         }

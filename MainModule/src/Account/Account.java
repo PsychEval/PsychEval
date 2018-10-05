@@ -27,6 +27,7 @@ public class Account {
     public String getEmail(){
         return this.email;
     }
+    public String getPassword(){return  this.password;}
     //general Account functions
     private void editPassword() { }
 
