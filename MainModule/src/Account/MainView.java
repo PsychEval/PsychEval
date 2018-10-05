@@ -20,6 +20,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 //import sun.applet.Main;
+import javafx.stage.Window;
 import twitter4j.TwitterException;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ IMPORTANT READ: The UI layout of this main menu is a border layout which consist
                 back to mainView afterwards. There were a lot of examples with FXML which I
                 don't think we use. I think another way to switch scenes is to have some
                 sort of parent and child implementation if anyone wants to try to code it that way.
-                I don't see any problems with my implementation so far...
+                I don't see any problems with my implementation so far..
 */
 public class MainView{
     public static Account currentUser;
@@ -50,6 +51,7 @@ public class MainView{
     private Scene scoreView;
     private Scene login;
     private Scene approveParent;
+    private Scene linkStudent;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -156,6 +158,7 @@ public class MainView{
                 } else {
                     addStudent.setOnAction(event -> {
                         System.out.println("add student button");
+                        window.setScene(linkStudent);
                     });
                 }
                 Button oauth = (Button)getByUserData(pane, "oauth");
@@ -175,13 +178,23 @@ public class MainView{
 
                     });
                 }
+                Button approvedYetButton = (Button)getByUserData(pane, "approvedYet");
+                if (oauth == null) {
+                    System.out.println("approved yet button was not found");
+                } else {
+                    approvedYetButton.setOnAction(event -> {
+                        System.out.println("approved yet button");
+                        // TODO get form db
+                        showAlert(Alert.AlertType.INFORMATION, window, "Pending", "Counselor is still reviewing your request.");
+                    });
+                }
             }
         }
     }
     private void AddUI(BorderPane borderPane){ //positioning is important when adding, treat like an array
 
         if (borderPane != null) {
-            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent;
+            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent, approvedYet;
 
             HBox usables = createTopBar();
             usables.setUserData("Top");
@@ -224,7 +237,7 @@ public class MainView{
 
             } else {
                 //account type is parent
-                addStudent = new Button("Add Student");
+                addStudent = new Button("Link With Child");
                 addStudent.setPrefHeight(40);
                 addStudent.setPrefWidth(200);
                 addStudent.setUserData("addStudent");
@@ -235,6 +248,12 @@ public class MainView{
                 oauth.setPrefWidth(200);
                 oauth.setUserData("oauth");
                 gridPane.add(oauth, 2, 0, 2, 1);
+
+                approvedYet = new Button("Am I Approved?");
+                approvedYet.setPrefHeight(40);
+                approvedYet.setPrefWidth(200);
+                approvedYet.setUserData("approvedYet");
+                gridPane.add(approvedYet, 4, 0, 2, 1);
             }
 
             borderPane.setCenter(gridPane);
@@ -258,6 +277,8 @@ public class MainView{
         //scoreView = ssv.getScene();
         ApproveParent ap = new ApproveParent(window, mainScene, currentUser);
         approveParent = ap.getScene();
+        LinkWithAStudent lwas = new LinkWithAStudent(window, mainScene, currentUser);
+        linkStudent = lwas.getScene();
     }
 
     public void ChangeSceneToScoreView(){
@@ -276,5 +297,13 @@ public class MainView{
         grabScenes();
     }
 
+    private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initOwner(owner);
+        alert.show();
+    }
 
 }
