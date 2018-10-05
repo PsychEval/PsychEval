@@ -1,6 +1,7 @@
 package Counselor;
 
 import Account.Account;
+import Utils.Firebase;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -71,10 +72,12 @@ public class ApproveParent{
 
         selectedPair = table.getSelectionModel().getSelectedItems();
         if (status == 0) {
-            // TODO approve parents in db
+            for (ParentStudentPair p : selectedPair) {
+                Firebase.setParentsApproved(user.getEmail(), p.getParentName());
+            }
         }
         else {
-            // TODO deny parents in db
+            // The database doesn't update the parent's approval. It's simply removed from list
         }
         selectedPair.forEach(allPairs::remove);
     }
