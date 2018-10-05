@@ -458,10 +458,18 @@ public class Firebase {
                     map = (Map<String, Object>) document.get("Parents");
                 else
                     continue;
-                if (map.get(String.valueOf(1)).equals(true))
-                    return true;
+                List<Object> l;
+                for (int i = 0; i < map.size(); i++) {
+                    l = (List<Object>) map.get(String.valueOf(i));
+                    if (l != null) {
+                        for (int j = 0; j < l.size(); j++) {
+                            if (l.get(0).equals(parentName))
+                                return (boolean) l.get(1);
+                        }
+                    }
                 }
             }
+        }
         return false;
     }
 
