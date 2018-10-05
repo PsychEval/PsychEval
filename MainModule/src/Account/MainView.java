@@ -39,7 +39,7 @@ IMPORTANT READ: The UI layout of this main menu is a border layout which consist
                 back to mainView afterwards. There were a lot of examples with FXML which I
                 don't think we use. I think another way to switch scenes is to have some
                 sort of parent and child implementation if anyone wants to try to code it that way.
-                I don't see any problems with my implementation so far...
+                I don't see any problems with my implementation so far..
 */
 public class MainView{
     public static Account currentUser;
