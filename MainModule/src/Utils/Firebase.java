@@ -464,4 +464,30 @@ public class Firebase {
             }
         return false;
     }
+
+    public static Map<String, Object> getParents(String email) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email)) {
+                Map<String, Object> map;
+                if (document.get("Parents") != null)
+                    map = (Map<String, Object>) document.get("Parents");
+                else
+                    continue;
+                System.out.println(map);
+                return map;
+            }
+        }
+        return null;
+    }
 }
