@@ -20,6 +20,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 //import sun.applet.Main;
+import javafx.stage.Window;
 import twitter4j.TwitterException;
 
 import java.io.IOException;
@@ -177,13 +178,23 @@ public class MainView{
 
                     });
                 }
+                Button approvedYetButton = (Button)getByUserData(pane, "approvedYet");
+                if (oauth == null) {
+                    System.out.println("approved yet button was not found");
+                } else {
+                    approvedYetButton.setOnAction(event -> {
+                        System.out.println("approved yet button");
+                        // TODO get form db
+                        showAlert(Alert.AlertType.INFORMATION, window, "Pending", "Counselor is still reviewing your request.");
+                    });
+                }
             }
         }
     }
     private void AddUI(BorderPane borderPane){ //positioning is important when adding, treat like an array
 
         if (borderPane != null) {
-            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent;
+            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent, approvedYet;
 
             HBox usables = createTopBar();
             usables.setUserData("Top");
@@ -237,6 +248,12 @@ public class MainView{
                 oauth.setPrefWidth(200);
                 oauth.setUserData("oauth");
                 gridPane.add(oauth, 2, 0, 2, 1);
+
+                approvedYet = new Button("Am I Approved?");
+                approvedYet.setPrefHeight(40);
+                approvedYet.setPrefWidth(200);
+                approvedYet.setUserData("approvedYet");
+                gridPane.add(approvedYet, 4, 0, 2, 1);
             }
 
             borderPane.setCenter(gridPane);
@@ -280,5 +297,13 @@ public class MainView{
         grabScenes();
     }
 
+    private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initOwner(owner);
+        alert.show();
+    }
 
 }
