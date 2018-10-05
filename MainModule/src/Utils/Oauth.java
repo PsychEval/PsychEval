@@ -29,7 +29,8 @@ public class Oauth {
             e.printStackTrace();
         }
             System.out.print("Enter the PIN(if aviailable) or just hit enter.[PIN]:");
-            String pin = br.readLine();
+            //String pin = br.readLine();
+            String pin = "1234";
             try{
                 if(pin.length() > 0){
                     accessToken = twitter.getOAuthAccessToken(requestToken, pin);

@@ -19,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import sun.applet.Main;
 import twitter4j.TwitterException;
 
 import java.io.IOException;
@@ -101,6 +102,7 @@ public class MainView{
                 } else {
                     logoutButton.setOnAction(event -> {
                         System.out.println("logout button");
+                        MainView.currentUser = null;
                         window.setScene(createAccount);
                     });
                 }
