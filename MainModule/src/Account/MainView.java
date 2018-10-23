@@ -33,14 +33,6 @@ IMPORTANT READ: The UI layout of this main menu is a border layout which consist
                 top, center, bottom, left, and right. In those sections I have a HBox
                 layout in the top and a Gridlayout in the center
                 ---------------------------------------------------------------------
-                The way Account.MainView switches to other scenes is by using setScene() function.
-                This requires me to create a scene of each view and save it in a variable
-                to be used in setScene. This way seems a little "hacky" to me but looking
-                online, I wasn't able to find a solution to switching scenes and switching
-                back to mainView afterwards. There were a lot of examples with FXML which I
-                don't think we use. I think another way to switch scenes is to have some
-                sort of parent and child implementation if anyone wants to try to code it that way.
-                I don't see any problems with my implementation so far..
 */
 public class MainView{
     public static Account currentUser;
@@ -53,6 +45,8 @@ public class MainView{
     private Scene login;
     private Scene approveParent;
     private Scene linkStudent;
+    private Notifications notif;
+    private Thread t1;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -106,8 +100,12 @@ public class MainView{
                 } else {
                     logoutButton.setOnAction(event -> {
                         System.out.println("logout button");
+                        if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
+                            notif.terminate();
+                        }
                         MainView.currentUser = null;
                         window.setScene(createAccount);
+
                     });
                 }
                 Button editPasswordButton = (Button) getByUserData(pane, "password");
@@ -317,6 +315,7 @@ public class MainView{
         AddUI(bp);
         this.mainScene = new Scene(bp, 800,500);
         grabScenes();
+        startNotificationThreads();
     }
 
     private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
@@ -328,4 +327,12 @@ public class MainView{
         alert.show();
     }
 
+    public void startNotificationThreads() {
+        if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
+            // notify if there is a new parent approval request
+            notif = new Notifications(window);
+            t1 = new Thread(notif);
+            t1.start();
+        }
+    }
 }
