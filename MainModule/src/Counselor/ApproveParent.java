@@ -2,7 +2,7 @@ package Counselor;
 
 import Account.Account;
 import Utils.Firebase;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+//import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
