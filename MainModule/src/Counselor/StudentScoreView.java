@@ -63,7 +63,13 @@ public class StudentScoreView{
     private int addFields(GridPane gp){
         int i = 0;
         try {
-            ArrayList<String> sNames = Firebase.getStudentNames(MainView.currentUser.getEmail());
+            ArrayList<String> sNames;
+            if (currentUser.getAccountType() == Account.AccountType.COUNSELOR)
+                sNames = Firebase.getStudentNames(MainView.currentUser.getEmail());
+            else { //current user is parent
+                //TODO implement view student score firebase method for parent, get(name, score)
+                sNames = null;
+            }
             if(sNames == null){
                 System.out.println("GOT NULL");
                 showAlert(Alert.AlertType.ERROR, mainStage, "Error", "No students found for this counselor");
