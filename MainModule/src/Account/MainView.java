@@ -296,7 +296,7 @@ public class MainView{
     }
 
     public void ChangeSceneToScoreView(){
-        StudentScoreView ssv = new StudentScoreView(window, mainScene);
+        StudentScoreView ssv = new StudentScoreView(window, mainScene, currentUser);
         scoreView = ssv.getScene();
         window.setScene(scoreView);
     }

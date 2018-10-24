@@ -27,6 +27,7 @@ public class StudentScoreView{
     private Stage mainStage;
     private Scene mainViewScene;
     private Scene createAccountScene;
+    private Account currentUser;
 
     private GridPane createGP() {
         // Instantiate a new Grid Pane
@@ -68,7 +69,7 @@ public class StudentScoreView{
                 showAlert(Alert.AlertType.ERROR, mainStage, "Error", "No students found for this counselor");
 
 
-                return -1;
+                //return -1;
 
             }
             for (String name : sNames) {
@@ -89,9 +90,7 @@ public class StudentScoreView{
         GridPane.setMargin(back, new Insets(20, 0,20,0));
 
         back.setOnAction(event -> {
-            MainView mv = new MainView(mainStage, mainViewScene, MainView.currentUser);
-            Scene mvs = mv.getScene();
-            mainStage.setScene(mvs);
+            mainStage.setScene(mainViewScene);
         });
         return 0;
 
@@ -110,19 +109,19 @@ public class StudentScoreView{
         GridPane gp = createGP();
         int test = addFields(gp);
         if(test == -1){
-
-            MainView mv = new MainView(mainStage, mainViewScene, MainView.currentUser);
-            return mv.getScene();
+//              WRONG
+//            MainView mv = new MainView(mainStage, mainViewScene, MainView.currentUser);
+//            return mv.getScene();
 
         }
         Scene scene = new Scene(gp, 800, 500);
         return scene;
     }
 
-    public StudentScoreView(Stage primaryStage, Scene createAccountScene) {
+    public StudentScoreView(Stage primaryStage, Scene mainViewScene, Account currentUser) {
         mainStage = primaryStage;
-        this.createAccountScene = createAccountScene;
-
+        this.mainViewScene = mainViewScene;
+        this.currentUser = currentUser;
     }
 
 }
