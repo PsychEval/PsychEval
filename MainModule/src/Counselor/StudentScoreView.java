@@ -11,15 +11,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class StudentScoreView{
@@ -28,77 +29,42 @@ public class StudentScoreView{
     private Scene mainViewScene;
     private Scene createAccountScene;
     private Account currentUser;
+    private TableView<StudentScore> table;
 
-    private GridPane createGP() {
-        // Instantiate a new Grid Pane
-        GridPane gridPane = new GridPane();
+    private VBox createFormPane() {
+        TableColumn<StudentScore, String> parentNames = new TableColumn<>("Parent Name");
+        parentNames.setMinWidth(200);
+        parentNames.setCellValueFactory(new PropertyValueFactory<>("parentName"));
 
-        // Position the pane at the center of the screen, both vertically and horizontally
-        gridPane.setAlignment(Pos.CENTER);
+        TableColumn<StudentScore, String> studentNames = new TableColumn<>("Student Name");
+        studentNames.setMinWidth(200);
+        studentNames.setCellValueFactory(new PropertyValueFactory<>("studentName"));
 
-        // Set a padding of 20px on each side
-        gridPane.setPadding(new Insets(40, 40, 40, 40));
+        TableColumn<StudentScore, Double> studentScore = new TableColumn<>("Student Score");
+        studentScore.setMinWidth(200);
+        studentScore.setCellValueFactory(new PropertyValueFactory<>("studentScore"));
 
-        // Set the horizontal gap between columns
-        gridPane.setHgap(10);
-
-        // Set the vertical gap between rows
-        gridPane.setVgap(10);
-
-        // Add Column Constraints
-
-        // columnOneConstraints will be applied to all the nodes placed in column one.
-        ColumnConstraints columnOneConstraints = new ColumnConstraints(100, 100, Double.MAX_VALUE);
-        columnOneConstraints.setHalignment(HPos.RIGHT);
-
-        // columnTwoConstraints will be applied to all the nodes placed in column two.
-        ColumnConstraints columnTwoConstrains = new ColumnConstraints(200,200, Double.MAX_VALUE);
-        columnTwoConstrains.setHgrow(Priority.ALWAYS);
-
-        gridPane.getColumnConstraints().addAll(columnOneConstraints, columnTwoConstrains);
-
-        return gridPane;
+        table = new TableView<>();
+        table.setItems(getStudentScore());
+        table.getColumns().addAll(parentNames, studentNames, studentScore);
+        VBox vBox = new VBox();
+        vBox.getChildren().addAll(table);
+        vBox.setPadding(new Insets(40,40,40,40));
+        return vBox;
     }
 
-    private int addFields(GridPane gp){
-        int i = 0;
-        try {
-            ArrayList<String> sNames;
-            if (currentUser.getAccountType() == Account.AccountType.COUNSELOR)
-                sNames = Firebase.getStudentNames(MainView.currentUser.getEmail());
-            else { //current user is parent
-                //TODO implement view student score firebase method for parent, get(name, score)
-                sNames = null;
-            }
-            if(sNames == null){
-                System.out.println("GOT NULL");
-                showAlert(Alert.AlertType.ERROR, mainStage, "Error", "No students found for this counselor");
+    private void addUI(VBox tableView){
+        Button goBack = new Button("Back");
+        goBack.setOnAction(e -> returnToMainView());
+        Region region1 = new Region();
+        HBox.setHgrow(region1, Priority.ALWAYS);
 
+        HBox hBox = new HBox();
+        hBox.setPadding(new Insets(10,10,10,10));
+        hBox.setSpacing(30);
+        hBox.getChildren().addAll(region1, goBack);
 
-                //return -1;
-
-            }
-            for (String name : sNames) {
-                Label nameLabel = new Label(name);
-                gp.add(nameLabel, 0, i);
-                Label rf = new Label(Firebase.getRiskFactor(name));
-                gp.add(rf, 1, i);
-                i++;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Button back = new Button("Go Back");
-        back.setPrefHeight(40);
-        back.setPrefWidth(100);
-        gp.add(back, 0, i, 2, 1);
-        GridPane.setHalignment(back, HPos.CENTER);
-        GridPane.setMargin(back, new Insets(20, 0,20,0));
-
-        back.setOnAction(event -> {
-            mainStage.setScene(mainViewScene);
-        });
-        return 0;
+        tableView.getChildren().addAll(hBox);
 
     }
 
@@ -112,15 +78,14 @@ public class StudentScoreView{
     }
 
     public Scene getScene(){
-        GridPane gp = createGP();
-        int test = addFields(gp);
-        if(test == -1){
+        VBox cfp = createFormPane();
+        addUI(cfp);
+
 //              WRONG
 //            MainView mv = new MainView(mainStage, mainViewScene, MainView.currentUser);
 //            return mv.getScene();
 
-        }
-        Scene scene = new Scene(gp, 800, 500);
+        Scene scene = new Scene(cfp, 800, 500);
         return scene;
     }
 
@@ -128,6 +93,37 @@ public class StudentScoreView{
         mainStage = primaryStage;
         this.mainViewScene = mainViewScene;
         this.currentUser = currentUser;
+    }
+
+    public void returnToMainView() {
+        mainStage.setScene(mainViewScene);
+    }
+
+    private ObservableList<StudentScore> getStudentScore() {
+        ObservableList<StudentScore> pairs = FXCollections.observableArrayList();
+        Map<String, Object> map = new HashMap<>();
+        // TODO get parent name, student name, student score
+//        map = Firebase.getParents(currentUser.getEmail());
+//
+//        for (int i = 0; i < map.size(); i++) {
+//            // map.get(String.valueOf(i));
+//            ArrayList<Object> temp = (ArrayList<Object>) map.get(String.valueOf(i));
+//            if(temp.get(1).equals(false)){
+//                pairs.add(new ParentStudentPair((String)temp.get(0), false, (String)temp.get(2)));
+//            }
+//
+//        }
+
+        if(pairs.isEmpty() && currentUser.getAccountType() == Account.AccountType.PARENT) {
+            System.out.println("GOT NULL");
+            showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Please submit evaluation for your student");
+        }
+
+        pairs.add(new StudentScore("parent0", "student0", 2.0));
+        pairs.add(new StudentScore("parent1", "student1", 1.0));
+        pairs.add(new StudentScore("parent2", "student2", 3.0));
+        pairs.add(new StudentScore("parent3", "student3", 4.0));
+        return pairs;
     }
 
 }
