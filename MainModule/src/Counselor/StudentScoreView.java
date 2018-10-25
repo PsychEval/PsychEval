@@ -110,6 +110,7 @@ public class StudentScoreView{
 //            ArrayList<Object> temp = (ArrayList<Object>) map.get(String.valueOf(i));
 //            if(temp.get(1).equals(false)){
 //                pairs.add(new ParentStudentPair((String)temp.get(0), false, (String)temp.get(2)));
+                    //while adding, if (temp.get(2) > 8) alert the user
 //            }
 //
 //        }
