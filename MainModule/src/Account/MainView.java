@@ -24,8 +24,6 @@ import javafx.stage.Window;
 import twitter4j.TwitterException;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 //import sun.applet.Main;
@@ -338,15 +336,12 @@ public class MainView{
     public void startNotificationThreads() {
         if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
             // notify if there is a new parent approval request
-//            notif = new Notifications(window);
-//            t1 = new Thread(notif);
-//            t1.start();
             Firebase.checkForNewParents("aaa", window);
-            Map<Integer, Object> m = new HashMap<>();
+/*            Map<Integer, Object> m = new HashMap<>();
             m.put(0, "QWERTYUYTREWQ");
             m.put(1, false);
             m.put(2, "1234567890");
-            Firebase.setParents("aaa", m);
+            Firebase.setParents("aaa", m);*/
         }
     }
 }

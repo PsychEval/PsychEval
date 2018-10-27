@@ -9,6 +9,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.database.annotations.Nullable;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
@@ -516,7 +517,10 @@ public class Firebase {
 
                         if (snapshot != null && snapshot.exists()) {
                             Notifications n = new Notifications(primaryStage);
-                            n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request", "You have a new parent request!");
+                            Platform.runLater(() -> {
+                                n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
+                                        "You have a new parent request!");
+                            });
                         }
                     }
                 });
