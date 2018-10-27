@@ -1,32 +1,34 @@
 package Account;
 
-import Admin.*;
-import Counselor.*;
-import Parent.*;
-import Utils.*;
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import Admin.addCounselorByID;
+import Counselor.ApproveParent;
+import Counselor.Notifications;
+import Counselor.StudentScoreView;
+import Parent.LinkWithAStudent;
+import Utils.Firebase;
+import Utils.Oauth;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.scene.text.Text;
-//import sun.applet.Main;
 import javafx.stage.Window;
 import twitter4j.TwitterException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+//import sun.applet.Main;
 
 /*
 IMPORTANT READ: The UI layout of this main menu is a border layout which consists of
@@ -101,7 +103,7 @@ public class MainView{
                     logoutButton.setOnAction(event -> {
                         System.out.println("logout button");
                         if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
-                            notif.terminate();
+//                            notif.terminate();
                         }
                         MainView.currentUser = null;
                         window.setScene(createAccount);
@@ -336,9 +338,15 @@ public class MainView{
     public void startNotificationThreads() {
         if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
             // notify if there is a new parent approval request
-            notif = new Notifications(window);
-            t1 = new Thread(notif);
-            t1.start();
+//            notif = new Notifications(window);
+//            t1 = new Thread(notif);
+//            t1.start();
+            Firebase.checkForNewParents("aaa", window);
+            Map<Integer, Object> m = new HashMap<>();
+            m.put(0, "QWERTYUYTREWQ");
+            m.put(1, false);
+            m.put(2, "1234567890");
+            Firebase.setParents("aaa", m);
         }
     }
 }

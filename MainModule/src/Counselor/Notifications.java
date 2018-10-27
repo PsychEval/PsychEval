@@ -1,11 +1,10 @@
 package Counselor;
 
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-public class Notifications implements Runnable{
+public class Notifications implements Runnable {
     private volatile boolean running;
     private Stage window;
     private boolean newRequest;
@@ -22,7 +21,7 @@ public class Notifications implements Runnable{
     }
 
     @Override
-    public void run() {
+    public void run() {/*
         while(running) {
             try {
                 Thread.sleep(1* 30* 1000); //change first number to change num of mins
@@ -35,10 +34,10 @@ public class Notifications implements Runnable{
                 if (newRequest)
                     showAlert(Alert.AlertType.INFORMATION, window, "New Request", "You have a new parent request!");
             });
-        }
+        }*/
     }
 
-    private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+    public void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);
