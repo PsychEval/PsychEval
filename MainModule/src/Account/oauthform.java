@@ -105,6 +105,15 @@ public class oauthform {
             //TODO: add success message
         });
 
+        //Add back button
+        Button goBack = new Button("Back");
+        goBack.setPrefHeight(40);
+        goBack.setPrefWidth(100);
+        gp.add(goBack, 0, 3);
+        goBack.setOnAction(e -> mainstage.setScene(mainviewscene));
+        GridPane.setHalignment(goBack, HPos.CENTER);
+
+
     }
     private static void launchOauth() throws TwitterException{
 //        Twitter twitter = TwitterFactory.getSingleton();

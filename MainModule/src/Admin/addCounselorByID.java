@@ -112,6 +112,14 @@ public class addCounselorByID{
 
 
         });
+
+        //Add back button
+        Button goBack = new Button("Back");
+        goBack.setPrefHeight(40);
+        goBack.setPrefWidth(100);
+        gridPane.add(goBack, 0, 6, 2, 1);
+        goBack.setOnAction(e -> mainStage.setScene(mainViewScene));
+        GridPane.setHalignment(goBack, HPos.CENTER);
     }
     public Scene getScene() {
         GridPane gp = createFormPane();
