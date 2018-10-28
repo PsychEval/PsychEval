@@ -169,8 +169,8 @@ public class oauthform {
 
     private void updateTokens(String token, String secret, String twitterId, long userID){
         //TODO: make sure they have linked with counselor
-        //TODO: pull student name from databse
-//        Firebase firebase = new Firebase();
-//        firebase.setSocialMediaDB(-1, );
+        //TODO: pull student name from database
+        Firebase firebase = new Firebase();
+        firebase.setSocialMediaDB(currentuser.getEmail(), -1, firebase.getStudentName(currentuser.getEmail()), token, secret, twitterId, userID);
     }
 }
