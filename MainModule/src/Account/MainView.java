@@ -54,6 +54,7 @@ public class MainView{
     private Scene approveParent;
     private Scene linkStudent;
     private Scene oauthform;
+    private Scene messageParent;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -181,6 +182,15 @@ public class MainView{
 
                     });
                 }
+                Button sendMessageToParent = (Button)getByUserData(pane, "sendMessage");
+                if (sendMessageToParent == null) {
+                    System.out.println("sendMessage button was not found");
+                } else {
+                    sendMessageToParent.setOnAction(event -> {
+                        System.out.println("sendmessage button");
+                        ChangeSceneToSendMessageView();
+                    });
+                }
                 Button approvedYetButton = (Button)getByUserData(pane, "approvedYet");
                 if (approvedYetButton == null) {
                     System.out.println("approved yet button was not found");
@@ -213,7 +223,7 @@ public class MainView{
     private void AddUI(BorderPane borderPane){ //positioning is important when adding, treat like an array
 
         if (borderPane != null) {
-            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent, approvedYet;
+            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent, approvedYet, sendMessageToParent;
 
             HBox usables = createTopBar();
             usables.setUserData("Top");
@@ -252,6 +262,12 @@ public class MainView{
                 approveParent.setPrefWidth(200);
                 approveParent.setUserData("approveParent");
                 gridPane.add(approveParent, 4, 0, 2, 1);
+
+                sendMessageToParent = new Button("Send Message");
+                sendMessageToParent.setPrefHeight(40);
+                sendMessageToParent.setPrefWidth(200);
+                sendMessageToParent.setUserData("sendMessage");
+                gridPane.add(sendMessageToParent, 2, 3, 2, 1);
 
 
             } else {
@@ -315,7 +331,12 @@ public class MainView{
         oauthform oa = new oauthform(window, mainScene, currentUser);
         this.oauthform = oa.getScene();
         window.setScene(this.oauthform);
+    }
 
+    public void ChangeSceneToSendMessageView() {
+        MessageParent mp = new MessageParent(window, mainScene, currentUser);
+        messageParent = mp.getScene();
+        window.setScene(messageParent);
     }
 
     public MainView(Stage primaryStage, Scene createAccount, Account currUser) {
