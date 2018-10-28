@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class oauthform {
 
@@ -107,14 +109,28 @@ public class oauthform {
 //        Twitter twitter = TwitterFactory.getSingleton();
 //        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
 //        RequestToken requestToken = twitter.getOAuthRequestToken();
-        AccessToken accessToken = null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        //AccessToken accessToken = null;
+        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 //        System.out.println("Open the following URL and grant access to your account:");
 //        System.out.println(requestToken.getAuthorizationURL());
         try {
-            Desktop desktop = java.awt.Desktop.getDesktop();
-            URI oURL = new URI(requestToken.getAuthorizationURL());
-            desktop.browse(oURL);
+          //  Desktop desktop = java.awt.Desktop.getDesktop();
+            //URI oURL = new URI(requestToken.getAuthorizationURL());
+            //desktop.browse(oURL);
+            //System.out.println("Test1");
+            //System.out.println(Desktop.isDesktopSupported());
+            //Desktop.getDesktop().browse(new URL(requestToken.getAuthorizationURL()).toURI());
+            //System.out.println("Test 2");
+            if( Desktop.isDesktopSupported() )
+            {
+                new Thread(() -> {
+                    try {
+                        Desktop.getDesktop().browse( new URI( requestToken.getAuthorizationURL() ) );
+                    } catch (IOException | URISyntaxException e1) {
+                        e1.printStackTrace();
+                    }
+                }).start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,7 +159,13 @@ public class oauthform {
 //        System.out.println("SUCCCCCCCCCCCC");
         System.out.println(accessToken.getToken());
         System.out.println(accessToken.getTokenSecret());
+        System.out.println(accessToken.getScreenName());
         //TODO: push tokens to database
+        updateTokens(accessToken.getToken(), accessToken.getTokenSecret(), accessToken.getScreenName());
+
+    }
+
+    private void updateTokens(String token, String secret, String twitterId){
 
     }
 }

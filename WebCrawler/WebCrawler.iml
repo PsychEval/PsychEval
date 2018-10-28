@@ -10,13 +10,13 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="com.google.firebase:firebase-admin:6.5.0" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Desktop/Fall 2018/CS 407/twitter4j-4.0.7/lib/twitter4j-core-4.0.7.jar!/" />
+          <root url="jar://$USER_HOME$/Desktop/twitter4j-core-4.0.7.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
