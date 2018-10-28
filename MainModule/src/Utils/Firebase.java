@@ -311,6 +311,33 @@ public class Firebase {
         return (ArrayList<String>) sNames;
     }
 
+    public static String getStudentName(String parentEmail) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            Map<String, Object> map;
+            if (document.get("Parents") != null)
+                map = (Map<String, Object>) document.get("Parents");
+            else
+                continue;
+            Iterator it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                List<String> l = (List<String>) pair.getValue();
+                if (!l.contains(parentEmail))
+                    continue;
+                return l.get(2);
+            }
+        }
+        return null;
+    }
+
     public static void setCounselorDB(String name, String email, String pName, String sName) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor").document();
         Map<String, Object> data = new HashMap<>();
