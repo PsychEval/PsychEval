@@ -27,15 +27,18 @@ public class oauthForm {
     private Account currentUser;
     static Twitter twitter;
     static RequestToken requestToken;
-
+    static  boolean hasTwitterBeenSetup = false;
 
     public oauthForm(Stage primary, Scene mainViewScene, Account currentUser) throws TwitterException {
         this.mainStage = primary;
         this.mainViewScene = mainViewScene;
         this.currentUser= currentUser;
         twitter = TwitterFactory.getSingleton();
-        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
-        requestToken = twitter.getOAuthRequestToken();
+        if(!hasTwitterBeenSetup){
+            twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
+            requestToken = twitter.getOAuthRequestToken();
+            hasTwitterBeenSetup = true;
+        }
 
     }
 
