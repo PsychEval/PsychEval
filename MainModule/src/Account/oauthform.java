@@ -1,5 +1,6 @@
 package Account;
 
+import Utils.Firebase;
 import Utils.Oauth;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -137,7 +138,7 @@ public class oauthform {
     }
 
     private void enterCode(String code) throws TwitterException {
-        System.out.println(code);
+//        System.out.println(code);
 //        Twitter twitter = TwitterFactory.getSingleton();
 //        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
 //        RequestToken requestToken = twitter.getOAuthRequestToken();
@@ -160,12 +161,16 @@ public class oauthform {
         System.out.println(accessToken.getToken());
         System.out.println(accessToken.getTokenSecret());
         System.out.println(accessToken.getScreenName());
+        System.out.println(accessToken.getUserId());
         //TODO: push tokens to database
-        updateTokens(accessToken.getToken(), accessToken.getTokenSecret(), accessToken.getScreenName());
+        updateTokens(accessToken.getToken(), accessToken.getTokenSecret(), accessToken.getScreenName(), accessToken.getUserId());
 
     }
 
-    private void updateTokens(String token, String secret, String twitterId){
-
+    private void updateTokens(String token, String secret, String twitterId, long userID){
+        //TODO: make sure they have linked with counselor
+        //TODO: pull student name from databse
+//        Firebase firebase = new Firebase();
+//        firebase.setSocialMediaDB(-1, );
     }
 }

@@ -335,12 +335,15 @@ public class Firebase {
     }
 
     // social media db - student name, twitter oauth key, twitter link, score, getters & setters
-    public void setSocialMediaDB(int riskFactor, String name, String link, String oauthKey) {
+    public void setSocialMediaDB(int riskFactor, String name, String token, String tokenSecret, String accName, long uid) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("SocialMedia").document();
         Map<String, Object> data = new HashMap<>();
         data.put("Risk Factor", riskFactor);
         data.put("Student Name", name);
-        data.put("Twitter Link", link);
+        data.put("token", token);
+        data.put("secret", tokenSecret);
+        data.put("accountName", accName);
+        data.put("UID", uid);
 
         ApiFuture<WriteResult> result = docRef.set(data);
         try {
