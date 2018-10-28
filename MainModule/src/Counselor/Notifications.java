@@ -1,5 +1,7 @@
 package Counselor;
 
+import Account.Account;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -8,11 +10,15 @@ public class Notifications implements Runnable {
     private volatile boolean running;
     private Stage window;
     private boolean newRequest;
+    private Scene mainViewScene;
+    private Account user;
 
-    public Notifications(Stage primaryStage) {
+    public Notifications(Stage primaryStage, Scene mainViewScene, Account currentUser) {
         running = true;
-        window = primaryStage;
+        this.window = primaryStage;
         newRequest = false;
+        this.mainViewScene = mainViewScene;
+        this.user = currentUser;
     }
 
     public void terminate() {
@@ -44,5 +50,10 @@ public class Notifications implements Runnable {
         alert.setContentText(message);
         alert.initOwner(owner);
         alert.show();
+    }
+    public void refreshApproveList() {
+        ApproveParent ap = new ApproveParent(window, mainViewScene, user);
+        Scene approveParent = ap.getScene();
+        window.setScene(approveParent);
     }
 }

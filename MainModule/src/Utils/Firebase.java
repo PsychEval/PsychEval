@@ -1,5 +1,6 @@
 package Utils;
 
+import Account.Account;
 import Counselor.Notifications;
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -10,6 +11,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.database.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
@@ -489,7 +491,7 @@ public class Firebase {
         return null;
     }
 
-    public static void checkForNewParents(String email, Stage primaryStage) {
+    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -523,8 +525,9 @@ public class Firebase {
                                 Map.Entry pair = (Map.Entry) it.next();
                                 List<String> l = (List<String>) pair.getValue();
                                 if (l.contains(false)) {
-                                    Notifications n = new Notifications(primaryStage);
+                                    Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
                                     Platform.runLater(() -> {
+                                        n.refreshApproveList();
                                         n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
                                                 "You have a new parent request!");
                                     });
