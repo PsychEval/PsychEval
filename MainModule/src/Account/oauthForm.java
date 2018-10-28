@@ -1,7 +1,6 @@
 package Account;
 
 import Utils.Firebase;
-import Utils.Oauth;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,26 +16,23 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
-public class oauthform {
+public class oauthForm {
 
-    private Stage mainstage;
-    private Scene mainviewscene;
-    private Account currentuser;
+    private Stage mainStage;
+    private Scene mainViewScene;
+    private Account currentUser;
     static Twitter twitter;
     static RequestToken requestToken;
 
 
-    public oauthform(Stage primary, Scene mainviewscene, Account currentuser) throws TwitterException {
-        this.mainstage = primary;
-        this.mainviewscene = mainviewscene;
-        this.currentuser= currentuser;
+    public oauthForm(Stage primary, Scene mainViewScene, Account currentUser) throws TwitterException {
+        this.mainStage = primary;
+        this.mainViewScene = mainViewScene;
+        this.currentUser= currentUser;
         twitter = TwitterFactory.getSingleton();
         twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
         requestToken = twitter.getOAuthRequestToken();
@@ -101,7 +97,7 @@ public class oauthform {
             } catch (TwitterException e) {
                 e.printStackTrace();
             }
-            this.mainstage.setScene(mainviewscene);
+            this.mainStage.setScene(mainViewScene);
             //TODO: add success message
         });
 
@@ -110,7 +106,7 @@ public class oauthform {
         goBack.setPrefHeight(40);
         goBack.setPrefWidth(100);
         gp.add(goBack, 0, 3);
-        goBack.setOnAction(e -> mainstage.setScene(mainviewscene));
+        goBack.setOnAction(e -> mainStage.setScene(mainViewScene));
         GridPane.setHalignment(goBack, HPos.CENTER);
 
 
@@ -166,7 +162,6 @@ public class oauthform {
                     te.printStackTrace();
                 }
             }
-//        System.out.println("SUCCCCCCCCCCCC");
         System.out.println(accessToken.getToken());
         System.out.println(accessToken.getTokenSecret());
         System.out.println(accessToken.getScreenName());
@@ -180,6 +175,6 @@ public class oauthform {
         //TODO: make sure they have linked with counselor
         //TODO: pull student name from database
         Firebase firebase = new Firebase();
-        firebase.setSocialMediaDB(currentuser.getEmail(), -1, firebase.getStudentName(currentuser.getEmail()), token, secret, twitterId, userID);
+        firebase.setSocialMediaDB(currentUser.getEmail(), -1, firebase.getStudentName(currentUser.getEmail()), token, secret, twitterId, userID);
     }
 }
