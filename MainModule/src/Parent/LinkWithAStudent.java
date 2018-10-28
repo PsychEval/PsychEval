@@ -79,6 +79,14 @@ public class LinkWithAStudent{
         GridPane.setHalignment(submitButton, HPos.CENTER);
 
 
+        //Add back button
+        Button goBack = new Button("Back");
+        goBack.setPrefHeight(40);
+        goBack.setPrefWidth(100);
+        gridPane.add(goBack, 0, 6, 2, 1);
+
+        goBack.setOnAction(e -> mainStage.setScene(mainViewScene));
+
         submitButton.setOnAction(event -> {
             counselorEmail = counselorEmailField.getText();
             studentName = childNameField.getText();
@@ -93,6 +101,7 @@ public class LinkWithAStudent{
         });
 
     }
+
     private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
