@@ -6,41 +6,15 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-public class Notifications implements Runnable {
-    private volatile boolean running;
+public class Notifications{
     private Stage window;
-    private boolean newRequest;
     private Scene mainViewScene;
     private Account user;
 
     public Notifications(Stage primaryStage, Scene mainViewScene, Account currentUser) {
-        running = true;
         this.window = primaryStage;
-        newRequest = false;
         this.mainViewScene = mainViewScene;
         this.user = currentUser;
-    }
-
-    public void terminate() {
-        System.out.println("thread stopped");
-        running = false;
-    }
-
-    @Override
-    public void run() {/*
-        while(running) {
-            try {
-                Thread.sleep(1* 30* 1000); //change first number to change num of mins
-                //TODO quering the db every min to see if there's new request
-            } catch (InterruptedException e) {
-                System.out.println("thread stopped");
-                running = false;
-            }
-            Platform.runLater(() -> {
-                if (newRequest)
-                    showAlert(Alert.AlertType.INFORMATION, window, "New Request", "You have a new parent request!");
-            });
-        }*/
     }
 
     public void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {

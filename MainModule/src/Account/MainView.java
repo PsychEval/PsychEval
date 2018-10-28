@@ -45,8 +45,6 @@ public class MainView{
     private Scene login;
     private Scene approveParent;
     private Scene linkStudent;
-    private Notifications notif;
-    private Thread t1;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -100,9 +98,6 @@ public class MainView{
                 } else {
                     logoutButton.setOnAction(event -> {
                         System.out.println("logout button");
-                        if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
-//                            notif.terminate();
-                        }
                         MainView.currentUser = null;
                         window.setScene(createAccount);
 
@@ -337,11 +332,6 @@ public class MainView{
         if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
             // notify if there is a new parent approval request
             Firebase.checkForNewParents("aaa", window, mainScene, currentUser);
-/*            Map<Integer, Object> m = new HashMap<>();
-            m.put(0, "QWERTYUYTREWQ");
-            m.put(1, false);
-            m.put(2, "1234567890");
-            Firebase.setParents("aaa", m);*/
         }
     }
 }
