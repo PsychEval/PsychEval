@@ -46,7 +46,7 @@ public class Oauth {
 //            }
 
         //persist to the accessToken for future reference.
-        storeAccessToken(twitter.verifyCredentials().getId() , accessToken);
+        //storeAccessToken(twitter.verifyCredentials().getId() , accessToken);
 //        Status status = twitter.updateStatus("Hi test");
 //        System.out.println("Successfully updated the status to [" + status.getText() + "].");
 

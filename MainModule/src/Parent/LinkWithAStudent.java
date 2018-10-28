@@ -84,7 +84,7 @@ public class LinkWithAStudent{
             studentName = childNameField.getText();
             Map<Integer, Object> m;
             m = new HashMap<>();
-            m.put(0, user.getName());
+            m.put(0, user.getEmail());
             m.put(1, false);
             m.put(2, studentName);
             Firebase.setParents(counselorEmail, m);

@@ -53,6 +53,7 @@ public class MainView{
     private Scene login;
     private Scene approveParent;
     private Scene linkStudent;
+    private Scene oauthform;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -170,10 +171,11 @@ public class MainView{
                         System.out.println("oauth button");
                         Oauth oauth1 = new Oauth();
                         try {
-                            oauth1.launchOauth();
-                        } catch (TwitterException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
+                            //oauth1.launchOauth();
+                            ChangeSceneToOauthView();
+                            //TODO: open form to input code
+
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -307,6 +309,13 @@ public class MainView{
         ApproveParent ap = new ApproveParent(window, mainScene, currentUser);
         approveParent = ap.getScene();
         window.setScene(approveParent);
+    }
+
+    public void ChangeSceneToOauthView() throws TwitterException {
+        oauthform oa = new oauthform(window, mainScene, currentUser);
+        this.oauthform = oa.getScene();
+        window.setScene(this.oauthform);
+
     }
 
     public MainView(Stage primaryStage, Scene createAccount, Account currUser) {

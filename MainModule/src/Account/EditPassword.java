@@ -51,7 +51,7 @@ public class EditPassword {
         gridPane.add(oldPassLabel, 0,1);
 
         // Add Name Text Field
-        TextField oldPassField = new TextField();
+        PasswordField oldPassField = new PasswordField();
         oldPassField.setPrefHeight(40);
         gridPane.add(oldPassField, 1,1);
 
