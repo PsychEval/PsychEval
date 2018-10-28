@@ -311,7 +311,7 @@ public class MainView{
         window.setScene(approveParent);
     }
 
-    public void ChangeSceneToOauthView(){
+    public void ChangeSceneToOauthView() throws TwitterException {
         oauthform oa = new oauthform(window, mainScene, currentUser);
         this.oauthform = oa.getScene();
         window.setScene(this.oauthform);
