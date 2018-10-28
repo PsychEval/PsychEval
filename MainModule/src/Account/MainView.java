@@ -267,11 +267,11 @@ public class MainView{
                 approvedYet.setUserData("approvedYet");
                 gridPane.add(approvedYet, 4, 0, 2, 1);
 
-                viewScores = new Button("View Scores");
-                viewScores.setPrefHeight(40);
-                viewScores.setPrefWidth(200);
-                viewScores.setUserData("viewScore");
-                gridPane.add(viewScores, 2, 3, 2, 1);
+//                viewScores = new Button("View Scores");
+//                viewScores.setPrefHeight(40);
+//                viewScores.setPrefWidth(200);
+//                viewScores.setUserData("viewScore");
+//                gridPane.add(viewScores, 2, 3, 2, 1);
             }
 
             borderPane.setCenter(gridPane);
