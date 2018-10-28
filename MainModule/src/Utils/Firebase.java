@@ -233,6 +233,7 @@ public class Firebase {
                     map = (Map<String, Object>) document.get("Parents");
                 else
                     continue;
+                System.out.println(map);
                 List<Object> list = new ArrayList<>();
                 for (int i = 0; i < map.size(); ++i) {
                     List<Object> l = (List<Object>) map.get(String.valueOf(i));
@@ -516,11 +517,20 @@ public class Firebase {
                         }
 
                         if (snapshot != null && snapshot.exists()) {
-                            Notifications n = new Notifications(primaryStage);
-                            Platform.runLater(() -> {
-                                n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
-                                        "You have a new parent request!");
-                            });
+                            Map<String, List<String>> hm = (Map<String, List<String>>) snapshot.get("Parents");
+                            Iterator it = hm.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry pair = (Map.Entry) it.next();
+                                List<String> l = (List<String>) pair.getValue();
+                                if (l.contains(false)) {
+                                    Notifications n = new Notifications(primaryStage);
+                                    Platform.runLater(() -> {
+                                        n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
+                                                "You have a new parent request!");
+                                    });
+                                }
+                            }
+
                         }
                     }
                 });
