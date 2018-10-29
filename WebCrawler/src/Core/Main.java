@@ -1,3 +1,5 @@
+package Core;
+
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -26,12 +28,19 @@ public class Main extends Application {
         Button button = new Button("Run Crawler");
         button.setPrefHeight(40);
         button.setPrefWidth(100);
+        button.setDefaultButton(true);
         GridPane.setHalignment(button, HPos.CENTER);
         gp.add(button, 0,0);
+
+        button.setOnAction(event -> {
+            //TODO: CODEEEEEE
+            System.out.println("REEEE");
+        });
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        firebase.init();
         primaryStage.setTitle("Server Test");
         GridPane gp = createGridPane();
         AddUi(gp);
