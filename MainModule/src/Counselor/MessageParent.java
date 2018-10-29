@@ -75,16 +75,7 @@ public class MessageParent {
         ObservableList<ParentInfo> selectedPair;
 
         selectedPair = table.getSelectionModel().getSelectedItems();
-        System.out.println(selectedPair.get(0).getParentEmail());
-//        if (status == 0) {
-//            for (ParentStudentPair p : selectedPair) {
-//                Firebase.setParentsApproved(user.getEmail(), p.getParentName());
-//            }
-//        }
-//        else {
-//            // The database doesn't update the parent's approval. It's simply removed from list
-//            // TODO remove this pair in database
-//        }
+        // TODO send the message to parent based on the parentemail
 
     }
     public void returnToMainView() {
