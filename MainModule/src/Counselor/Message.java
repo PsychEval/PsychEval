@@ -10,6 +10,10 @@ public class Message {
         this.message = message;
         this.timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
     }
+    public Message(String message, String timeStamp) {
+        this.message = message;
+        this.timeStamp = timeStamp;
+    }
     public String getMessage() {
         return message;
     }

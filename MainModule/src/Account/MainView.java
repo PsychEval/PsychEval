@@ -55,6 +55,7 @@ public class MainView{
     private Scene linkStudent;
     private Scene oauthform;
     private Scene messageParent;
+    private Scene checkMessages;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -217,13 +218,22 @@ public class MainView{
                         //showAlert(Alert.AlertType.INFORMATION, window, "Pending", "Counselor is still reviewing your request.");
                     });
                 }
+                Button checkMessagesButton = (Button)getByUserData(pane, "checkMessages");
+                if (checkMessagesButton == null) {
+                    System.out.println("checkMessages button was not found");
+                } else {
+                    checkMessagesButton.setOnAction(event -> {
+                        System.out.println("checkMessage button");
+                        ChangeSceneToCheckMessage();
+                    });
+                }
             }
         }
     }
     private void AddUI(BorderPane borderPane){ //positioning is important when adding, treat like an array
 
         if (borderPane != null) {
-            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent, approvedYet, sendMessageToParent;
+            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent, approvedYet, sendMessageToParent, checkMessages;
 
             HBox usables = createTopBar();
             usables.setUserData("Top");
@@ -289,6 +299,12 @@ public class MainView{
                 approvedYet.setPrefWidth(200);
                 approvedYet.setUserData("approvedYet");
                 gridPane.add(approvedYet, 4, 0, 2, 1);
+
+                checkMessages = new Button("Check Messages");
+                checkMessages.setPrefHeight(40);
+                checkMessages.setPrefWidth(200);
+                checkMessages.setUserData("checkMessages");
+                gridPane.add(checkMessages, 2,3,2,1);
             }
 
             borderPane.setCenter(gridPane);
@@ -337,6 +353,12 @@ public class MainView{
         MessageParent mp = new MessageParent(window, mainScene, currentUser);
         messageParent = mp.getScene();
         window.setScene(messageParent);
+    }
+
+    public void ChangeSceneToCheckMessage() {
+        CheckMessages cm = new CheckMessages(window, mainScene, currentUser);
+        checkMessages = cm.getScene();
+        window.setScene(checkMessages);
     }
 
     public MainView(Stage primaryStage, Scene createAccount, Account currUser) {
