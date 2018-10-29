@@ -79,12 +79,20 @@ public class LinkWithAStudent{
         GridPane.setHalignment(submitButton, HPos.CENTER);
 
 
+        //Add back button
+        Button goBack = new Button("Back");
+        goBack.setPrefHeight(40);
+        goBack.setPrefWidth(100);
+        gridPane.add(goBack, 0, 6, 2, 1);
+
+        goBack.setOnAction(e -> mainStage.setScene(mainViewScene));
+
         submitButton.setOnAction(event -> {
             counselorEmail = counselorEmailField.getText();
             studentName = childNameField.getText();
             Map<Integer, Object> m;
             m = new HashMap<>();
-            m.put(0, user.getName());
+            m.put(0, user.getEmail());
             m.put(1, false);
             m.put(2, studentName);
             Firebase.setParents(counselorEmail, m);
@@ -93,6 +101,7 @@ public class LinkWithAStudent{
         });
 
     }
+
     private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

@@ -4,9 +4,6 @@ import Admin.*;
 import Counselor.*;
 import Parent.*;
 import Utils.*;
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,18 +11,11 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.scene.text.Text;
 //import sun.applet.Main;
 import javafx.stage.Window;
 import twitter4j.TwitterException;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Optional;
 
 /*
@@ -53,6 +43,7 @@ public class MainView{
     private Scene login;
     private Scene approveParent;
     private Scene linkStudent;
+    private Scene oauthform;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -170,10 +161,11 @@ public class MainView{
                         System.out.println("oauth button");
                         Oauth oauth1 = new Oauth();
                         try {
-                            oauth1.launchOauth();
-                        } catch (TwitterException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
+                            //oauth1.launchOauth();
+                            ChangeSceneToOauthView();
+                            //TODO: open form to input code
+
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -307,6 +299,13 @@ public class MainView{
         ApproveParent ap = new ApproveParent(window, mainScene, currentUser);
         approveParent = ap.getScene();
         window.setScene(approveParent);
+    }
+
+    public void ChangeSceneToOauthView() throws TwitterException {
+        oauthForm oa = new oauthForm(window, mainScene, currentUser);
+        this.oauthform = oa.getScene();
+        window.setScene(this.oauthform);
+
     }
 
     public MainView(Stage primaryStage, Scene createAccount, Account currUser) {
