@@ -6,6 +6,7 @@ import Utils.Firebase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,9 +27,6 @@ public class MessageParent {
     private Account user;
 
     private VBox createFormPane() {
-        TableColumn<ParentInfo, String> parentNames = new TableColumn<>("Parent Name");
-        parentNames.setMinWidth(200);
-        parentNames.setCellValueFactory(new PropertyValueFactory<>("parentName"));
 
         TableColumn<ParentInfo, String> parentEmails = new TableColumn<>("Parent Email");
         parentEmails.setMinWidth(200);
@@ -36,7 +34,7 @@ public class MessageParent {
 
         table = new TableView<>();
         table.setItems(getParentInfo());
-        table.getColumns().addAll(parentNames, parentEmails);
+        table.getColumns().addAll(parentEmails);
         VBox vBox = new VBox();
         vBox.getChildren().addAll(table);
         vBox.setPadding(new Insets(40,40,40,40));
@@ -76,6 +74,7 @@ public class MessageParent {
 
         selectedPair = table.getSelectionModel().getSelectedItems();
         // TODO send the message to parent based on the parentemail
+        // Firebase.addMessage(user.getEmail(), selectedPair.get(0).getParentEmail, messageString);
 
     }
     public void returnToMainView() {
@@ -84,23 +83,20 @@ public class MessageParent {
 
     private ObservableList<ParentInfo> getParentInfo() {
         ObservableList<ParentInfo> pairs = FXCollections.observableArrayList();
-        // TODO get all parents associated to a counselor
-//        Map<String, Object> map = new HashMap<>();
-//        map = Firebase.getParents(user.getEmail());
-//
-//        for (int i = 0; i < map.size(); i++) {
-//            // map.get(String.valueOf(i));
-//            ArrayList<Object> temp = (ArrayList<Object>) map.get(String.valueOf(i));
-//            if(temp.get(1).equals(false)){
-//                pairs.add(new ParentStudentPair((String)temp.get(0), false, (String)temp.get(2)));
-//            }
-//
-//        }
-        pairs.add(new ParentInfo("parent0", "parent0@gmail.com"));
-        pairs.add(new ParentInfo("parent1", "parent1@gmail.com"));
-        pairs.add(new ParentInfo("parent2", "parent2@gmail.com"));
-        pairs.add(new ParentInfo("parent3", "parent3@gmail.com"));
+        Map<String, Object> map;
+        map = Firebase.getParents(user.getEmail());
+        if (map == null)
+            return pairs;
+
+        for (String key : map.keySet()) {
+            // map.get(String.valueOf(i));
+            ArrayList<Object> temp = (ArrayList<Object>) map.get(key);
+            if (temp.get(0) != null)
+                pairs.add(new ParentInfo((String)temp.get(0)));
+        }
+
         return pairs;
+
     }
     public Scene getScene() {
         VBox vb = createFormPane();

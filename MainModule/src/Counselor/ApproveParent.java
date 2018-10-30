@@ -77,10 +77,11 @@ public class ApproveParent {
         if (status == 0) {
             for (ParentStudentPair p : selectedPair) {
                 Firebase.setParentsApproved(user.getEmail(), p.getParentName());
+                // TODO add counselor, parent, empty list of messages JSON to new database that holds messages
             }
         } else {
-            // The database doesn't update the parent's approval. It's simply removed from list
-            // TODO remove this pair in database
+            // TODO make sure function below works
+            //Firebase.deleteParent(user.getEmail(), p.getParentName());
         }
         selectedPair.forEach(allPairs::remove);
     }
