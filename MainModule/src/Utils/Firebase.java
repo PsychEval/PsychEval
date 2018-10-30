@@ -113,7 +113,6 @@ public class Firebase {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            System.out.println("Write result: " + result);
         }
     }
 
