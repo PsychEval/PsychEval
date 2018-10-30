@@ -155,6 +155,14 @@ public class loginForm{
             //code for handling button clicks go here
 
         });
+        //Add back button
+
+        Button goBack = new Button("Create Account");
+        goBack.setPrefHeight(40);
+        goBack.setPrefWidth(100);
+        gridPane.add(goBack, 0, 4);
+        goBack.setOnAction(e -> mainStage.setScene(mainViewScene));
+        GridPane.setHalignment(goBack, HPos.CENTER);
     }
 
     private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
