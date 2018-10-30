@@ -530,8 +530,32 @@ public class Firebase {
     }
 
     // social media db - student name, twitter oauth key, twitter link, score, getters & setters
-    public static void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret, String accName, String uid) {
+    public static void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret,
+                                        String accName, String uid) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("SocialMedia").document();
+        // TODO: check if pEmail already in DB. If so, delete that record.
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot dc:documents) {
+            if (dc.getString("Parent Email") == null)
+                continue;
+            if (dc.getString("Parent Email").equalsIgnoreCase(pEmail)) {
+                ApiFuture<WriteResult> writeResult = FirestoreClient.getFirestore().collection("SocialMedia")
+                        .document(dc.getId()).delete();
+                try {
+                    System.out.println("Update time : " + writeResult.get().getUpdateTime());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("Parent Email", pEmail);
         data.put("Risk Factor", riskFactor);
