@@ -53,9 +53,14 @@ public class Firebase {
         return null;
     }
 
-    public static String getName(String email) throws ExecutionException, InterruptedException {
+    public static String getName(String email) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
-        QuerySnapshot querySnapshot = query.get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
             if (document.getString("email") == null)
@@ -373,15 +378,38 @@ public class Firebase {
         }
     }
 
-    public static String getRiskFactor(String name) throws ExecutionException, InterruptedException {
+    public static int getRiskFactor(String parentEmail) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
-        QuerySnapshot querySnapshot = query.get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
-            if (document.getString("Student Name") == null)
+            if (document.getString("Parent Email") == null)
                 continue;
-            if (document.getString("Student Name").equalsIgnoreCase(name))
-                return document.getString("Risk Factor");
+            if (document.getString("Parent Email").equalsIgnoreCase(parentEmail))
+                return Integer.parseInt(document.getString("Risk Factor"));
+        }
+        return -10;
+    }
+
+    public static String getStuNameSM(String parentEmail) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Parent Email") == null)
+                continue;
+            if (document.getString("Parent Email").equalsIgnoreCase(parentEmail))
+                return document.getString("Student Name");
         }
         return null;
     }

@@ -1,27 +1,24 @@
 package Counselor;
 
 import Account.Account;
-import Account.MainView;
 import Utils.Firebase;
-import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.*;
 
 public class StudentScoreView{
     //TODO: make this functional
@@ -99,10 +96,35 @@ public class StudentScoreView{
         mainStage.setScene(mainViewScene);
     }
 
+    public StudentScoreView() {
+    }
+
+    public static void main(String[] args) {
+        Firebase.init();
+        StudentScoreView s = new StudentScoreView();
+        s.getStudentScore();
+    }
     private ObservableList<StudentScore> getStudentScore() {
         ObservableList<StudentScore> pairs = FXCollections.observableArrayList();
-        Map<String, Object> map = new HashMap<>();
+        List<List<String>> finalList = new ArrayList<>();
         // TODO get parent name, student name, student score
+        String cEmail = currentUser.getEmail();
+        Map<String, Object> hm = Firebase.getParents(cEmail);
+        Iterator it = hm.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            List<String> l = (List<String>) pair.getValue();
+            String stuName = Firebase.getStuNameSM(l.get(0));
+            if (stuName == null)
+                continue;
+            int score = Firebase.getRiskFactor(l.get(0));
+            if (score == -10)
+                continue;
+            String pName = Firebase.getName(l.get(0));
+            List<String> list = new ArrayList<>();
+            Collections.addAll(list, pName, stuName, String.valueOf(score));
+            finalList.add(list);
+        }
 //        map = Firebase.getParents(currentUser.getEmail());
 //
 //        for (int i = 0; i < map.size(); i++) {
