@@ -162,11 +162,11 @@ public class oauthForm {
         System.out.println(accessToken.getScreenName());
         System.out.println(accessToken.getUserId());
         //TODO: push tokens to database
-        updateTokens(accessToken.getToken(), accessToken.getTokenSecret(), accessToken.getScreenName(), accessToken.getUserId());
+        updateTokens(accessToken.getToken(), accessToken.getTokenSecret(), accessToken.getScreenName(), Long.toString(accessToken.getUserId()));
 
     }
 
-    private void updateTokens(String token, String secret, String twitterId, long userID){
+    private void updateTokens(String token, String secret, String twitterId, String userID){
         //TODO: make sure they have linked with counselor
         //TODO: pull student name from database
         Firebase firebase = new Firebase();
