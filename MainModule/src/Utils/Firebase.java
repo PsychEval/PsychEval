@@ -113,7 +113,6 @@ public class Firebase {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            System.out.println("Write result: " + result);
         }
     }
 
@@ -359,7 +358,7 @@ public class Firebase {
     }
 
     // social media db - student name, twitter oauth key, twitter link, score, getters & setters
-    public void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret, String accName, long uid) {
+    public void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret, String accName, String uid) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("SocialMedia").document();
         Map<String, Object> data = new HashMap<>();
         data.put("Parent Email", pEmail);
