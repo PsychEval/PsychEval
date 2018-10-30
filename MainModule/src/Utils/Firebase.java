@@ -533,7 +533,6 @@ public class Firebase {
     public static void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret,
                                         String accName, String uid) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("SocialMedia").document();
-        // TODO: check if pEmail already in DB. If so, delete that record.
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
         QuerySnapshot querySnapshot = null;
         try {
