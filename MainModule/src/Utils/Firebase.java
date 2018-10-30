@@ -228,16 +228,15 @@ public class Firebase {
         }
     }
 
-    public static void setParentsApproved(String email, String parentName) {
+    public static void setParentsApproved(String email, String parentEmail) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        assert querySnapshot != null;
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
 
@@ -247,7 +246,7 @@ public class Firebase {
             if (document.getString("Email").equalsIgnoreCase(email)) {
                 DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
                         .document(document.getId());
-                Map<String, Object> map = null;
+                Map<String, Object> map;
                 if (document.get("Parents") != null)
                     map = (Map<String, Object>) document.get("Parents");
                 else
@@ -256,7 +255,7 @@ public class Firebase {
                 List<Object> list = new ArrayList<>();
                 for (int i = 0; i < map.size(); ++i) {
                     List<Object> l = (List<Object>) map.get(String.valueOf(i));
-                    if (l.contains(parentName)) {
+                    if (l.contains(parentEmail)) {
                         for (int j = 0; j < l.size(); j++) {
                             if (j == 1)
                                 list.add(true);
@@ -354,7 +353,7 @@ public class Firebase {
         return null;
     }
 
-    public static void setCounselorDB(String name, String email, String pName, String sName) {
+    public static void setCounselorDB(String name, String email, String pEmail, String sName) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor").document();
         Map<String, Object> data = new HashMap<>();
         data.put("Email", email);
@@ -362,8 +361,8 @@ public class Firebase {
 
         Map<String, Object> m = new HashMap<>();
         List<Object> l = new ArrayList<>();
-        Collections.addAll(l, pName, false, sName);
-        if (pName.isEmpty() && sName.isEmpty())
+        Collections.addAll(l, pEmail, false, sName);
+        if (pEmail.isEmpty() && sName.isEmpty())
             m.put("EMPTY", l);
         else
             m.put(String.valueOf((count++)), l);
@@ -552,7 +551,7 @@ public class Firebase {
         return null;
     }
 
-    public static boolean isApproved(String counselorEmail, String parentName) {
+    public static boolean isApproved(String counselorEmail, String parentEmail) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -576,7 +575,7 @@ public class Firebase {
                     l = (List<Object>) map.get(String.valueOf(i));
                     if (l != null) {
                         for (int j = 0; j < l.size(); j++) {
-                            if (l.get(0).equals(parentName))
+                            if (l.get(0).equals(parentEmail))
                                 return (boolean) l.get(1);
                         }
                     }
