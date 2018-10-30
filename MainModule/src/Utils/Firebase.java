@@ -150,21 +150,25 @@ public class Firebase {
         }
     }
 
-    public static void createAccount(String type, String email, String name, String password) {
+    public static boolean createAccount(String type, String email, String name, String password) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("Authentication").document();
         Map<String, Object> data = new HashMap<>();
-        data.put("type", type);
-        data.put("email", email);
-        data.put("name", name);
-        data.put("password", password);
+        if (getName(email) == null) {
+            data.put("type", type);
+            data.put("email", email);
+            data.put("name", name);
+            data.put("password", password);
 
-        ApiFuture<WriteResult> result = docRef.set(data);
-        try {
-            result.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            ApiFuture<WriteResult> result = docRef.set(data);
+            try {
+                result.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Created new user with ID: " + email);
+            return true;
         }
-        System.out.println("Created new user with ID: " + email);
+        return false;
     }
 
     public static boolean login(String email, String password) throws ExecutionException, InterruptedException {
