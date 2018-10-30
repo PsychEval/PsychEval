@@ -40,9 +40,37 @@ public class Firebase {
         this.count = 0;
     }
 
-    public static String getType(String email) throws ExecutionException, InterruptedException {
+    public static void init() {
+        // Fetch the service account key JSON file contents
+        FileInputStream serviceAccount;
+        FirebaseOptions options = null;
+        try {
+            serviceAccount = new FileInputStream("MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
+
+            // Initialize the app with a service account, granting admin privileges
+            options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setDatabaseUrl("https://psycheval-ff91b.firebaseio.com")
+                    .build();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        FirebaseApp.initializeApp(options);
+
+        System.out.println("Firebase successfully initialized");
+    }
+
+    // Authentication DB
+    public static String getType(String email) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
-        QuerySnapshot querySnapshot = query.get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
             if (document.getString("email") == null)
@@ -71,9 +99,15 @@ public class Firebase {
         return null;
     }
 
-    public static String getPassword(String email) throws ExecutionException, InterruptedException {
+    public static String getPassword(String email) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
-        QuerySnapshot querySnapshot = query.get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
             if (document.getString("email") == null)
@@ -148,27 +182,6 @@ public class Firebase {
             }
         }
         return false;
-    }
-
-    public static void init() {
-        // Fetch the service account key JSON file contents
-        FileInputStream serviceAccount;
-        FirebaseOptions options = null;
-        try {
-            serviceAccount = new FileInputStream("MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
-
-            // Initialize the app with a service account, granting admin privileges
-            options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .setDatabaseUrl("https://psycheval-ff91b.firebaseio.com")
-                    .build();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        FirebaseApp.initializeApp(options);
-
-        System.out.println("Firebase successfully initialized");
     }
 
     // counselor db - name, email, parent list (parent name, student name, flag)
@@ -264,9 +277,15 @@ public class Firebase {
         }
     }
 
-    public String getCounselorName(String email) throws ExecutionException, InterruptedException {
+    public String getCounselorName(String email) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
-        QuerySnapshot querySnapshot = query.get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
             if (document.getString("Email") == null)
@@ -315,6 +334,7 @@ public class Firebase {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        assert querySnapshot != null;
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
             Map<String, Object> map;
@@ -357,8 +377,51 @@ public class Firebase {
         }
     }
 
+    public static void deleteParent(String cEmail, String pEmail) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(cEmail)) {
+                Map<String, Object> map;
+                if (document.get("Parents") != null)
+                    map = (Map<String, Object>) document.get("Parents");
+                else
+                    continue;
+                int i = 0;
+                Iterator it = map.entrySet().iterator();
+                while (it.hasNext()) {
+                    DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
+                            .document(document.getId());
+                    Map.Entry pair = (Map.Entry) it.next();
+                    List<String> l = (List<String>) pair.getValue();
+                    if (l.contains(pEmail)) {
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("Parents." + String.valueOf(i), FieldValue.delete());
+                        // Update and delete the "capital" field in the document
+                        ApiFuture<WriteResult> writeResult = docRef.update(updates);
+                        try {
+                            System.out.println("Update time : " + writeResult.get());
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    i++;
+                }
+            }
+        }
+    }
+
     // social media db - student name, twitter oauth key, twitter link, score, getters & setters
-    public void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret, String accName, String uid) {
+    public static void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret, String accName, String uid) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("SocialMedia").document();
         Map<String, Object> data = new HashMap<>();
         data.put("Parent Email", pEmail);
