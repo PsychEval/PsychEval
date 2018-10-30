@@ -150,21 +150,25 @@ public class Firebase {
         }
     }
 
-    public static void createAccount(String type, String email, String name, String password) {
+    public static boolean createAccount(String type, String email, String name, String password) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("Authentication").document();
         Map<String, Object> data = new HashMap<>();
-        data.put("type", type);
-        data.put("email", email);
-        data.put("name", name);
-        data.put("password", password);
+        if (getName(email) == null) {
+            data.put("type", type);
+            data.put("email", email);
+            data.put("name", name);
+            data.put("password", password);
 
-        ApiFuture<WriteResult> result = docRef.set(data);
-        try {
-            result.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            ApiFuture<WriteResult> result = docRef.set(data);
+            try {
+                result.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Created new user with ID: " + email);
+            return true;
         }
-        System.out.println("Created new user with ID: " + email);
+        return false;
     }
 
     public static boolean login(String email, String password) throws ExecutionException, InterruptedException {
@@ -228,16 +232,15 @@ public class Firebase {
         }
     }
 
-    public static void setParentsApproved(String email, String parentName) {
+    public static void setParentsApproved(String email, String parentEmail) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        assert querySnapshot != null;
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
 
@@ -247,7 +250,7 @@ public class Firebase {
             if (document.getString("Email").equalsIgnoreCase(email)) {
                 DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
                         .document(document.getId());
-                Map<String, Object> map = null;
+                Map<String, Object> map;
                 if (document.get("Parents") != null)
                     map = (Map<String, Object>) document.get("Parents");
                 else
@@ -256,7 +259,7 @@ public class Firebase {
                 List<Object> list = new ArrayList<>();
                 for (int i = 0; i < map.size(); ++i) {
                     List<Object> l = (List<Object>) map.get(String.valueOf(i));
-                    if (l.contains(parentName)) {
+                    if (l.contains(parentEmail)) {
                         for (int j = 0; j < l.size(); j++) {
                             if (j == 1)
                                 list.add(true);
@@ -354,7 +357,7 @@ public class Firebase {
         return null;
     }
 
-    public static void setCounselorDB(String name, String email, String pName, String sName) {
+    public static void setCounselorDB(String name, String email, String pEmail, String sName) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor").document();
         Map<String, Object> data = new HashMap<>();
         data.put("Email", email);
@@ -362,8 +365,8 @@ public class Firebase {
 
         Map<String, Object> m = new HashMap<>();
         List<Object> l = new ArrayList<>();
-        Collections.addAll(l, pName, false, sName);
-        if (pName.isEmpty() && sName.isEmpty())
+        Collections.addAll(l, pEmail, false, sName);
+        if (pEmail.isEmpty() && sName.isEmpty())
             m.put("EMPTY", l);
         else
             m.put(String.valueOf((count++)), l);
@@ -420,9 +423,142 @@ public class Firebase {
         }
     }
 
+    public static boolean isApproved(String counselorEmail, String parentEmail) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(counselorEmail)) {
+                Map<String, Object> map;
+                if (document.get("Parents") != null)
+                    map = (Map<String, Object>) document.get("Parents");
+                else
+                    continue;
+                List<Object> l;
+                Iterator it = map.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    l = (List<Object>) pair.getValue();
+                    if (l != null) {
+                        if (l.get(0).equals(parentEmail))
+                            return (boolean) l.get(1);
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static Map<String, Object> getParents(String email) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email)) {
+                Map<String, Object> map;
+                if (document.get("Parents") != null)
+                    map = (Map<String, Object>) document.get("Parents");
+                else
+                    continue;
+                System.out.println(map);
+                return map;
+            }
+        }
+        return null;
+    }
+
+    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            // Update an existing document
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email)) {
+                DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
+                        .document(document.getId());
+                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                        @Nullable FirestoreException e) {
+                        if (e != null) {
+                            System.err.println("Listen failed: " + e);
+                            return;
+                        }
+
+                        if (snapshot != null && snapshot.exists()) {
+                            Map<String, List<String>> hm = (Map<String, List<String>>) snapshot.get("Parents");
+                            Iterator it = hm.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry pair = (Map.Entry) it.next();
+                                List<String> l = (List<String>) pair.getValue();
+                                if (l.contains(false)) {
+                                    Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
+                                    Platform.runLater(() -> {
+                                        n.refreshApproveList();
+                                        n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
+                                                "You have a new parent request!");
+                                    });
+                                }
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+    }
+
     // social media db - student name, twitter oauth key, twitter link, score, getters & setters
-    public static void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret, String accName, String uid) {
+    public static void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret,
+                                        String accName, String uid) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("SocialMedia").document();
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot dc:documents) {
+            if (dc.getString("Parent Email") == null)
+                continue;
+            if (dc.getString("Parent Email").equalsIgnoreCase(pEmail)) {
+                ApiFuture<WriteResult> writeResult = FirestoreClient.getFirestore().collection("SocialMedia")
+                        .document(dc.getId()).delete();
+                try {
+                    System.out.println("Update time : " + writeResult.get().getUpdateTime());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("Parent Email", pEmail);
         data.put("Risk Factor", riskFactor);
@@ -550,115 +686,5 @@ public class Firebase {
                     return (ArrayList<String>) document.get("Posts");
         }
         return null;
-    }
-
-    public static boolean isApproved(String counselorEmail, String parentName) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
-        QuerySnapshot querySnapshot = null;
-        try {
-            querySnapshot = query.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        assert querySnapshot != null;
-        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-        for (QueryDocumentSnapshot document : documents) {
-            if (document.getString("Email") == null)
-                continue;
-            if (document.getString("Email").equalsIgnoreCase(counselorEmail)) {
-                Map<String, Object> map;
-                if (document.get("Parents") != null)
-                    map = (Map<String, Object>) document.get("Parents");
-                else
-                    continue;
-                List<Object> l;
-                for (int i = 0; i < map.size(); i++) {
-                    l = (List<Object>) map.get(String.valueOf(i));
-                    if (l != null) {
-                        for (int j = 0; j < l.size(); j++) {
-                            if (l.get(0).equals(parentName))
-                                return (boolean) l.get(1);
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    public static Map<String, Object> getParents(String email) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
-        QuerySnapshot querySnapshot = null;
-        try {
-            querySnapshot = query.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        assert querySnapshot != null;
-        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-        for (QueryDocumentSnapshot document : documents) {
-            if (document.getString("Email") == null)
-                continue;
-            if (document.getString("Email").equalsIgnoreCase(email)) {
-                Map<String, Object> map;
-                if (document.get("Parents") != null)
-                    map = (Map<String, Object>) document.get("Parents");
-                else
-                    continue;
-                System.out.println(map);
-                return map;
-            }
-        }
-        return null;
-    }
-
-    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
-        QuerySnapshot querySnapshot = null;
-        try {
-            querySnapshot = query.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-        for (QueryDocumentSnapshot document : documents) {
-            // Update an existing document
-            if (document.getString("Email") == null)
-                continue;
-            if (document.getString("Email").equalsIgnoreCase(email)) {
-                DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
-                        .document(document.getId());
-                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                        @Nullable FirestoreException e) {
-                        if (e != null) {
-                            System.err.println("Listen failed: " + e);
-                            return;
-                        }
-
-                        if (snapshot != null && snapshot.exists()) {
-                            Map<String, List<String>> hm = (Map<String, List<String>>) snapshot.get("Parents");
-                            Iterator it = hm.entrySet().iterator();
-                            while (it.hasNext()) {
-                                Map.Entry pair = (Map.Entry) it.next();
-                                List<String> l = (List<String>) pair.getValue();
-                                if (l.contains(false)) {
-                                    Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
-                                    Platform.runLater(() -> {
-                                        n.refreshApproveList();
-                                        n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
-                                                "You have a new parent request!");
-                                    });
-                                }
-                            }
-
-                        }
-                    }
-                });
-            }
-        }
     }
 }
