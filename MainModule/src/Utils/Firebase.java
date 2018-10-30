@@ -419,6 +419,116 @@ public class Firebase {
         }
     }
 
+    public static boolean isApproved(String counselorEmail, String parentEmail) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(counselorEmail)) {
+                Map<String, Object> map;
+                if (document.get("Parents") != null)
+                    map = (Map<String, Object>) document.get("Parents");
+                else
+                    continue;
+                List<Object> l;
+                Iterator it = map.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    l = (List<Object>) pair.getValue();
+                    if (l != null) {
+                        if (l.get(0).equals(parentEmail))
+                            return (boolean) l.get(1);
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static Map<String, Object> getParents(String email) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        assert querySnapshot != null;
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email)) {
+                Map<String, Object> map;
+                if (document.get("Parents") != null)
+                    map = (Map<String, Object>) document.get("Parents");
+                else
+                    continue;
+                System.out.println(map);
+                return map;
+            }
+        }
+        return null;
+    }
+
+    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            // Update an existing document
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email)) {
+                DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
+                        .document(document.getId());
+                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                        @Nullable FirestoreException e) {
+                        if (e != null) {
+                            System.err.println("Listen failed: " + e);
+                            return;
+                        }
+
+                        if (snapshot != null && snapshot.exists()) {
+                            Map<String, List<String>> hm = (Map<String, List<String>>) snapshot.get("Parents");
+                            Iterator it = hm.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry pair = (Map.Entry) it.next();
+                                List<String> l = (List<String>) pair.getValue();
+                                if (l.contains(false)) {
+                                    Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
+                                    Platform.runLater(() -> {
+                                        n.refreshApproveList();
+                                        n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
+                                                "You have a new parent request!");
+                                    });
+                                }
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+    }
+
     // social media db - student name, twitter oauth key, twitter link, score, getters & setters
     public static void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret, String accName, String uid) {
         DocumentReference docRef = FirestoreClient.getFirestore().collection("SocialMedia").document();
@@ -549,115 +659,5 @@ public class Firebase {
                     return (ArrayList<String>) document.get("Posts");
         }
         return null;
-    }
-
-    public static boolean isApproved(String counselorEmail, String parentEmail) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
-        QuerySnapshot querySnapshot = null;
-        try {
-            querySnapshot = query.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        assert querySnapshot != null;
-        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-        for (QueryDocumentSnapshot document : documents) {
-            if (document.getString("Email") == null)
-                continue;
-            if (document.getString("Email").equalsIgnoreCase(counselorEmail)) {
-                Map<String, Object> map;
-                if (document.get("Parents") != null)
-                    map = (Map<String, Object>) document.get("Parents");
-                else
-                    continue;
-                List<Object> l;
-                for (int i = 0; i < map.size(); i++) {
-                    l = (List<Object>) map.get(String.valueOf(i));
-                    if (l != null) {
-                        for (int j = 0; j < l.size(); j++) {
-                            if (l.get(0).equals(parentEmail))
-                                return (boolean) l.get(1);
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    public static Map<String, Object> getParents(String email) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
-        QuerySnapshot querySnapshot = null;
-        try {
-            querySnapshot = query.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        assert querySnapshot != null;
-        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-        for (QueryDocumentSnapshot document : documents) {
-            if (document.getString("Email") == null)
-                continue;
-            if (document.getString("Email").equalsIgnoreCase(email)) {
-                Map<String, Object> map;
-                if (document.get("Parents") != null)
-                    map = (Map<String, Object>) document.get("Parents");
-                else
-                    continue;
-                System.out.println(map);
-                return map;
-            }
-        }
-        return null;
-    }
-
-    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
-        QuerySnapshot querySnapshot = null;
-        try {
-            querySnapshot = query.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-        for (QueryDocumentSnapshot document : documents) {
-            // Update an existing document
-            if (document.getString("Email") == null)
-                continue;
-            if (document.getString("Email").equalsIgnoreCase(email)) {
-                DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
-                        .document(document.getId());
-                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                        @Nullable FirestoreException e) {
-                        if (e != null) {
-                            System.err.println("Listen failed: " + e);
-                            return;
-                        }
-
-                        if (snapshot != null && snapshot.exists()) {
-                            Map<String, List<String>> hm = (Map<String, List<String>>) snapshot.get("Parents");
-                            Iterator it = hm.entrySet().iterator();
-                            while (it.hasNext()) {
-                                Map.Entry pair = (Map.Entry) it.next();
-                                List<String> l = (List<String>) pair.getValue();
-                                if (l.contains(false)) {
-                                    Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
-                                    Platform.runLater(() -> {
-                                        n.refreshApproveList();
-                                        n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
-                                                "You have a new parent request!");
-                                    });
-                                }
-                            }
-
-                        }
-                    }
-                });
-            }
-        }
     }
 }
