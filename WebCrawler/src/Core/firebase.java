@@ -43,4 +43,8 @@ public class firebase {
         });*/
         System.out.println("Firebase successfully initialized");
     }
+
+    public static void pushScore(){
+
+    }
 }

@@ -11,6 +11,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class Main extends Application {
 
 
@@ -34,7 +36,12 @@ public class Main extends Application {
 
         button.setOnAction(event -> {
             //TODO: CODEEEEEE
-            System.out.println("REEEE");
+           // System.out.println("REEEE");
+            try {
+                mainLoop();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -47,5 +54,15 @@ public class Main extends Application {
         Scene scene = new Scene(gp, 800, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    //controlling function
+    void mainLoop() throws IOException {
+       // TweetPuller tweetPuller = new TweetPuller();
+        //tweetPuller.pullTweets();
+        TweetProcessing tweetProcessing = new TweetProcessing();
+        int finScore = tweetProcessing.mainProcess();
+        //firebase.pushScore();
+
     }
 }
