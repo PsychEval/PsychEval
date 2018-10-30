@@ -1,46 +1,36 @@
 package Account;
 
-import Admin.*;
-import Counselor.*;
-import Parent.*;
-import Utils.*;
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import Admin.addCounselorByID;
+import Counselor.ApproveParent;
+import Counselor.StudentScoreView;
+import Parent.LinkWithAStudent;
+import Utils.Firebase;
+import Utils.Oauth;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.scene.text.Text;
-//import sun.applet.Main;
 import javafx.stage.Window;
 import twitter4j.TwitterException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
+import Counselor.*;
+import Parent.*;
 import java.util.Optional;
 
+//import sun.applet.Main;
 /*
 IMPORTANT READ: The UI layout of this main menu is a border layout which consists of
                 top, center, bottom, left, and right. In those sections I have a HBox
                 layout in the top and a Gridlayout in the center
                 ---------------------------------------------------------------------
-                The way Account.MainView switches to other scenes is by using setScene() function.
-                This requires me to create a scene of each view and save it in a variable
-                to be used in setScene. This way seems a little "hacky" to me but looking
-                online, I wasn't able to find a solution to switching scenes and switching
-                back to mainView afterwards. There were a lot of examples with FXML which I
-                don't think we use. I think another way to switch scenes is to have some
-                sort of parent and child implementation if anyone wants to try to code it that way.
-                I don't see any problems with my implementation so far..
 */
 public class MainView{
     public static Account currentUser;
@@ -111,6 +101,7 @@ public class MainView{
                         System.out.println("logout button");
                         MainView.currentUser = null;
                         window.setScene(createAccount);
+
                     });
                 }
                 Button editPasswordButton = (Button) getByUserData(pane, "password");
@@ -332,7 +323,7 @@ public class MainView{
     }
 
     public void ChangeSceneToScoreView(){
-        StudentScoreView ssv = new StudentScoreView(window, mainScene);
+        StudentScoreView ssv = new StudentScoreView(window, mainScene, currentUser);
         scoreView = ssv.getScene();
         window.setScene(scoreView);
     }
@@ -344,7 +335,7 @@ public class MainView{
     }
 
     public void ChangeSceneToOauthView() throws TwitterException {
-        oauthform oa = new oauthform(window, mainScene, currentUser);
+        oauthForm oa = new oauthForm(window, mainScene, currentUser);
         this.oauthform = oa.getScene();
         window.setScene(this.oauthform);
     }
@@ -369,6 +360,7 @@ public class MainView{
         AddUI(bp);
         this.mainScene = new Scene(bp, 800,500);
         grabScenes();
+        startNotificationThreads();
     }
 
     private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
@@ -380,4 +372,10 @@ public class MainView{
         alert.show();
     }
 
+    public void startNotificationThreads() {
+        if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
+            // notify if there is a new parent approval request
+            Firebase.checkForNewParents(currentUser.getEmail(), window, mainScene, currentUser);
+        }
+    }
 }
