@@ -1,14 +1,19 @@
 package Utils;
 
+import Account.Account;
+import Counselor.Notifications;
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.firestore.*;
+import com.google.cloud.firestore.EventListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import com.google.firebase.database.annotations.Nullable;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,9 +53,14 @@ public class Firebase {
         return null;
     }
 
-    public static String getName(String email) throws ExecutionException, InterruptedException {
+    public static String getName(String email) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
-        QuerySnapshot querySnapshot = query.get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
             if (document.getString("email") == null)
@@ -159,20 +169,6 @@ public class Firebase {
 
         FirebaseApp.initializeApp(options);
 
-        // As an admin, the app has access to read and write all data, regardless of Security Rules
-        /*final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Object document = dataSnapshot.getValue();
-                System.out.println(document);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-            }
-        });*/
         System.out.println("Firebase successfully initialized");
     }
 
@@ -244,6 +240,7 @@ public class Firebase {
                     map = (Map<String, Object>) document.get("Parents");
                 else
                     continue;
+                System.out.println(map);
                 List<Object> list = new ArrayList<>();
                 for (int i = 0; i < map.size(); ++i) {
                     List<Object> l = (List<Object>) map.get(String.valueOf(i));
@@ -381,15 +378,38 @@ public class Firebase {
         }
     }
 
-    public static String getRiskFactor(String name) throws ExecutionException, InterruptedException {
+    public static long getRiskFactor(String parentEmail) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
-        QuerySnapshot querySnapshot = query.get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
-            if (document.getString("Student Name") == null)
+            if (document.getString("Parent Email") == null)
                 continue;
-            if (document.getString("Student Name").equalsIgnoreCase(name))
-                return document.getString("Risk Factor");
+            if (document.getString("Parent Email").equalsIgnoreCase(parentEmail))
+                return document.getLong("Risk Factor");
+        }
+        return -10;
+    }
+
+    public static String getStuNameSM(String parentEmail) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            if (document.getString("Parent Email") == null)
+                continue;
+            if (document.getString("Parent Email").equalsIgnoreCase(parentEmail))
+                return document.getString("Student Name");
         }
         return null;
     }
@@ -528,5 +548,55 @@ public class Firebase {
             }
         }
         return null;
+    }
+
+    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser) {
+        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            // Update an existing document
+            if (document.getString("Email") == null)
+                continue;
+            if (document.getString("Email").equalsIgnoreCase(email)) {
+                DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
+                        .document(document.getId());
+                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                        @Nullable FirestoreException e) {
+                        if (e != null) {
+                            System.err.println("Listen failed: " + e);
+                            return;
+                        }
+
+                        if (snapshot != null && snapshot.exists()) {
+                            Map<String, List<String>> hm = (Map<String, List<String>>) snapshot.get("Parents");
+                            Iterator it = hm.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry pair = (Map.Entry) it.next();
+                                List<String> l = (List<String>) pair.getValue();
+                                if (l.contains(false)) {
+                                    Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
+                                    Platform.runLater(() -> {
+                                        n.refreshApproveList();
+                                        n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
+                                                "You have a new parent request!");
+                                    });
+                                }
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
     }
 }

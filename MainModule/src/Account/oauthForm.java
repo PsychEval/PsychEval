@@ -142,10 +142,6 @@ public class oauthForm {
     }
 
     private void enterCode(String code) throws TwitterException {
-//        System.out.println(code);
-//        Twitter twitter = TwitterFactory.getSingleton();
-//        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
-//        RequestToken requestToken = twitter.getOAuthRequestToken();
         AccessToken accessToken = null;
         try{
                 if(code.length() > 0){
