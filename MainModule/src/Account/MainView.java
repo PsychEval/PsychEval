@@ -2,15 +2,10 @@ package Account;
 
 import Admin.addCounselorByID;
 import Counselor.ApproveParent;
-import Counselor.Notifications;
 import Counselor.StudentScoreView;
 import Parent.LinkWithAStudent;
 import Utils.Firebase;
 import Utils.Oauth;
-import Admin.*;
-import Counselor.*;
-import Parent.*;
-import Utils.*;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,15 +22,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import twitter4j.TwitterException;
 
-import java.io.IOException;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.Stage;
-//import sun.applet.Main;
-import javafx.stage.Window;
-import twitter4j.TwitterException;
-
 import java.util.Optional;
+
+//import sun.applet.Main;
 
 //import sun.applet.Main;
 
