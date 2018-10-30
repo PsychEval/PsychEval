@@ -340,7 +340,7 @@ public class MainView{
     public void startNotificationThreads() {
         if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
             // notify if there is a new parent approval request
-            Firebase.checkForNewParents("aaa", window, mainScene, currentUser);
+            Firebase.checkForNewParents(currentUser.getEmail(), window, mainScene, currentUser);
         }
     }
 }

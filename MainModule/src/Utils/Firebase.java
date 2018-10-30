@@ -378,7 +378,7 @@ public class Firebase {
         }
     }
 
-    public static int getRiskFactor(String parentEmail) {
+    public static long getRiskFactor(String parentEmail) {
         ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -391,7 +391,7 @@ public class Firebase {
             if (document.getString("Parent Email") == null)
                 continue;
             if (document.getString("Parent Email").equalsIgnoreCase(parentEmail))
-                return Integer.parseInt(document.getString("Risk Factor"));
+                return document.getLong("Risk Factor");
         }
         return -10;
     }

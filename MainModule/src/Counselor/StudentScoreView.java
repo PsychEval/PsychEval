@@ -20,7 +20,7 @@ import javafx.stage.Window;
 
 import java.util.*;
 
-public class StudentScoreView{
+public class StudentScoreView {
     //TODO: make this functional
     private Stage mainStage;
     private Scene mainViewScene;
@@ -46,18 +46,18 @@ public class StudentScoreView{
         table.getColumns().addAll(parentNames, studentNames, studentScore);
         VBox vBox = new VBox();
         vBox.getChildren().addAll(table);
-        vBox.setPadding(new Insets(40,40,40,40));
+        vBox.setPadding(new Insets(40, 40, 40, 40));
         return vBox;
     }
 
-    private void addUI(VBox tableView){
+    private void addUI(VBox tableView) {
         Button goBack = new Button("Back");
         goBack.setOnAction(e -> returnToMainView());
         Region region1 = new Region();
         HBox.setHgrow(region1, Priority.ALWAYS);
 
         HBox hBox = new HBox();
-        hBox.setPadding(new Insets(10,10,10,10));
+        hBox.setPadding(new Insets(10, 10, 10, 10));
         hBox.setSpacing(30);
         hBox.getChildren().addAll(region1, goBack);
 
@@ -74,14 +74,9 @@ public class StudentScoreView{
         alert.show();
     }
 
-    public Scene getScene(){
+    public Scene getScene() {
         VBox cfp = createFormPane();
         addUI(cfp);
-
-//              WRONG
-//            MainView mv = new MainView(mainStage, mainViewScene, MainView.currentUser);
-//            return mv.getScene();
-
         Scene scene = new Scene(cfp, 800, 500);
         return scene;
     }
@@ -96,18 +91,9 @@ public class StudentScoreView{
         mainStage.setScene(mainViewScene);
     }
 
-    public StudentScoreView() {
-    }
-
-    public static void main(String[] args) {
-        Firebase.init();
-        StudentScoreView s = new StudentScoreView();
-        s.getStudentScore();
-    }
     private ObservableList<StudentScore> getStudentScore() {
         ObservableList<StudentScore> pairs = FXCollections.observableArrayList();
         List<List<String>> finalList = new ArrayList<>();
-        // TODO get parent name, student name, student score
         String cEmail = currentUser.getEmail();
         Map<String, Object> hm = Firebase.getParents(cEmail);
         Iterator it = hm.entrySet().iterator();
@@ -117,7 +103,7 @@ public class StudentScoreView{
             String stuName = Firebase.getStuNameSM(l.get(0));
             if (stuName == null)
                 continue;
-            int score = Firebase.getRiskFactor(l.get(0));
+            long score = Firebase.getRiskFactor(l.get(0));
             if (score == -10)
                 continue;
             String pName = Firebase.getName(l.get(0));
@@ -125,27 +111,14 @@ public class StudentScoreView{
             Collections.addAll(list, pName, stuName, String.valueOf(score));
             finalList.add(list);
         }
-//        map = Firebase.getParents(currentUser.getEmail());
-//
-//        for (int i = 0; i < map.size(); i++) {
-//            // map.get(String.valueOf(i));
-//            ArrayList<Object> temp = (ArrayList<Object>) map.get(String.valueOf(i));
-//            if(temp.get(1).equals(false)){
-//                pairs.add(new ParentStudentPair((String)temp.get(0), false, (String)temp.get(2)));
-                    //while adding, if (temp.get(2) > 8) alert the user
-//            }
-//
-//        }
+        for (int i = 0; i < finalList.size(); i++) {
+            pairs.add(new StudentScore(finalList.get(i).get(0), finalList.get(i).get(1), Integer.parseInt(finalList.get(i).get(2))));
+        }
 
-        if(pairs.isEmpty() && currentUser.getAccountType() == Account.AccountType.PARENT) {
+        if (pairs.isEmpty() && currentUser.getAccountType() == Account.AccountType.PARENT) {
             System.out.println("GOT NULL");
             showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Please submit evaluation for your student");
         }
-
-        pairs.add(new StudentScore("parent0", "student0", 2.0));
-        pairs.add(new StudentScore("parent1", "student1", 1.0));
-        pairs.add(new StudentScore("parent2", "student2", 3.0));
-        pairs.add(new StudentScore("parent3", "student3", 4.0));
         return pairs;
     }
 
