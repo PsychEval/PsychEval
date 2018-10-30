@@ -4,9 +4,6 @@
     <facet type="Python" name="Python">
       <configuration sdkName="" />
     </facet>
-    <facet type="Python" name="Python2">
-      <configuration sdkName="" />
-    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
@@ -20,7 +17,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Desktop/twitter4j-core-4.0.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/../twitter4j-core-4.0.7.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
