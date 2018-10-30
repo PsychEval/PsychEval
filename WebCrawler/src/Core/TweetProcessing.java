@@ -15,7 +15,7 @@ import java.util.List;
 public class TweetProcessing {
 
 
-    public int mainProcess() throws IOException {
+    public int mainProcess(List<String> tweets) throws IOException {
         //int ibm = processIBM();
         int ms = setupMS();
 

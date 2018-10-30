@@ -58,10 +58,10 @@ public class Main extends Application {
 
     //controlling function
     void mainLoop() throws IOException {
-       // TweetPuller tweetPuller = new TweetPuller();
-        //tweetPuller.pullTweets();
-        TweetProcessing tweetProcessing = new TweetProcessing();
-        int finScore = tweetProcessing.mainProcess();
+        TweetPuller tweetPuller = new TweetPuller();
+        tweetPuller.pullTweets();
+        //TweetProcessing tweetProcessing = new TweetProcessing();
+        //int finScore = tweetProcessing.mainProcess();
         //firebase.pushScore();
 
     }
