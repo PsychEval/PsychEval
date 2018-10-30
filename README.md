@@ -19,3 +19,11 @@ firebase:
 3) click plus->library->new library
 4) select maven and search for firebase-admin:6.5.0
 5) add to project
+
+watson:
+
+1) file->project structure->modules
+2) click dependencies tab
+3) click plus->library->new library
+4) select maven and search for com.ibm.watson.developer_cloud:tone-analyzer:6.8.0
+5) add to project
