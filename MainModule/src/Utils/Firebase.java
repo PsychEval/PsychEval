@@ -26,18 +26,15 @@ public class Firebase {
     String email;
     String name;
     String password;
-    static int count;
+    static Firestore db;
 
-    public Firebase() {
-        this.count = 0;
-    }
+    public Firebase() {}
 
     public Firebase(String type, String email, String name, String password) {
         this.type = type;
         this.email = email;
         this.name = name;
         this.password = password;
-        this.count = 0;
     }
 
     public static void init() {
@@ -57,13 +54,14 @@ public class Firebase {
         }
 
         FirebaseApp.initializeApp(options);
+        db = FirestoreClient.getFirestore();
 
         System.out.println("Firebase successfully initialized");
     }
 
     // Authentication DB
     public static String getType(String email) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Authentication").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -82,7 +80,7 @@ public class Firebase {
     }
 
     public static String getName(String email) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Authentication").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -100,7 +98,7 @@ public class Firebase {
     }
 
     public static String getPassword(String email) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Authentication").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -119,7 +117,7 @@ public class Firebase {
     }
 
     public static void setPassword(String email, String password) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Authentication").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -151,7 +149,7 @@ public class Firebase {
     }
 
     public static boolean createAccount(String type, String email, String name, String password) {
-        DocumentReference docRef = FirestoreClient.getFirestore().collection("Authentication").document();
+        DocumentReference docRef = db.collection("Authentication").document();
         Map<String, Object> data = new HashMap<>();
         if (getName(email) == null) {
             data.put("type", type);
@@ -172,7 +170,7 @@ public class Firebase {
     }
 
     public static boolean login(String email, String password) throws ExecutionException, InterruptedException {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Authentication").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Authentication").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         for (QueryDocumentSnapshot document : documents) {
@@ -191,7 +189,7 @@ public class Firebase {
     // counselor db - name, email, parent list (parent name, student name, flag)
 
     public static void setParents(String email, Map<Integer, Object> m) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -206,7 +204,7 @@ public class Firebase {
             if (document.getString("Email") == null)
                 continue;
             if (document.getString("Email").equalsIgnoreCase(email)) {
-                DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
+                DocumentReference docRef = db.collection("Counselor")
                         .document(document.getId());
                 Map<String, Object> map;
                 map = (Map<String, Object>) document.get("Parents");
@@ -216,12 +214,14 @@ public class Firebase {
                 l.add("");
                 if (map.containsValue(l))
                     map.remove("EMPTY");
-                int size = map.size();
+                int count = map.size();
                 l.clear();
-                for (int i = 0; i < m.size(); ++i) {
-                    l.add(m.get(i));
+                Iterator it = m.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    l.add(pair.getValue());
                 }
-                map.put(String.valueOf(size++), l);
+                map.put(String.valueOf(count++), l);
                 ApiFuture<WriteResult> arrayUnion = docRef.update("Parents", map);
                 try {
                     arrayUnion.get();
@@ -233,7 +233,7 @@ public class Firebase {
     }
 
     public static void setParentsApproved(String email, String parentEmail) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -248,7 +248,7 @@ public class Firebase {
             if (document.getString("Email") == null)
                 continue;
             if (document.getString("Email").equalsIgnoreCase(email)) {
-                DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
+                DocumentReference docRef = db.collection("Counselor")
                         .document(document.getId());
                 Map<String, Object> map;
                 if (document.get("Parents") != null)
@@ -281,7 +281,7 @@ public class Firebase {
     }
 
     public String getCounselorName(String email) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -300,7 +300,7 @@ public class Firebase {
     }
 
     public static ArrayList<String> getStudentNames(String email) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -313,9 +313,7 @@ public class Firebase {
             if (document.getString("Email") == null)
                 continue;
             if (document.getString("Email").equalsIgnoreCase(email)) {
-                DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
-                        .document(document.getId());
-                Map<String, Object> map = null;
+                Map<String, Object> map;
                 if (document.get("Parents") != null)
                     map = (Map<String, Object>) document.get("Parents");
                 else
@@ -330,7 +328,7 @@ public class Firebase {
     }
 
     public static String getStudentName(String parentEmail) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -358,7 +356,7 @@ public class Firebase {
     }
 
     public static void setCounselorDB(String name, String email, String pEmail, String sName) {
-        DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor").document();
+        DocumentReference docRef = db.collection("Counselor").document();
         Map<String, Object> data = new HashMap<>();
         data.put("Email", email);
         data.put("Name", name);
@@ -366,6 +364,7 @@ public class Firebase {
         Map<String, Object> m = new HashMap<>();
         List<Object> l = new ArrayList<>();
         Collections.addAll(l, pEmail, false, sName);
+        int count = 0;
         if (pEmail.isEmpty() && sName.isEmpty())
             m.put("EMPTY", l);
         else
@@ -381,7 +380,7 @@ public class Firebase {
     }
 
     public static void deleteParent(String cEmail, String pEmail) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -402,7 +401,7 @@ public class Firebase {
                 int i = 0;
                 Iterator it = map.entrySet().iterator();
                 while (it.hasNext()) {
-                    DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
+                    DocumentReference docRef = db.collection("Counselor")
                             .document(document.getId());
                     Map.Entry pair = (Map.Entry) it.next();
                     List<String> l = (List<String>) pair.getValue();
@@ -424,7 +423,7 @@ public class Firebase {
     }
 
     public static boolean isApproved(String counselorEmail, String parentEmail) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -458,7 +457,7 @@ public class Firebase {
     }
 
     public static Map<String, Object> getParents(String email) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -484,7 +483,7 @@ public class Firebase {
     }
 
     public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -499,7 +498,7 @@ public class Firebase {
             if (document.getString("Email") == null)
                 continue;
             if (document.getString("Email").equalsIgnoreCase(email)) {
-                DocumentReference docRef = FirestoreClient.getFirestore().collection("Counselor")
+                DocumentReference docRef = db.collection("Counselor")
                         .document(document.getId());
                 docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
@@ -536,8 +535,8 @@ public class Firebase {
     // social media db - student name, twitter oauth key, twitter link, score, getters & setters
     public static void setSocialMediaDB(String pEmail, int riskFactor, String name, String token, String tokenSecret,
                                         String accName, String uid) {
-        DocumentReference docRef = FirestoreClient.getFirestore().collection("SocialMedia").document();
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
+        DocumentReference docRef = db.collection("SocialMedia").document();
+        ApiFuture<QuerySnapshot> query = db.collection("SocialMedia").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -550,7 +549,7 @@ public class Firebase {
             if (dc.getString("Parent Email") == null)
                 continue;
             if (dc.getString("Parent Email").equalsIgnoreCase(pEmail)) {
-                ApiFuture<WriteResult> writeResult = FirestoreClient.getFirestore().collection("SocialMedia")
+                ApiFuture<WriteResult> writeResult = db.collection("SocialMedia")
                         .document(dc.getId()).delete();
                 try {
                     System.out.println("Update time : " + writeResult.get().getUpdateTime());
@@ -577,7 +576,7 @@ public class Firebase {
     }
 
     public static long getRiskFactor(String parentEmail) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
+        ApiFuture<QuerySnapshot> query = db.collection("SocialMedia").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -595,7 +594,7 @@ public class Firebase {
     }
 
     public static String getStuNameSM(String parentEmail) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("SocialMedia").get();
+        ApiFuture<QuerySnapshot> query = db.collection("SocialMedia").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -614,7 +613,7 @@ public class Firebase {
 
     // PostData db - Name, Posts[]
     public static void setPostDB(String name, String[] posts) {
-        DocumentReference docRef = FirestoreClient.getFirestore().collection("PostData").document();
+        DocumentReference docRef = db.collection("PostData").document();
         Map<String, Object> data = new HashMap<>();
         List<HashMap<String, Object>> l = new ArrayList<>();
         data.put("Name", name);
@@ -631,7 +630,7 @@ public class Firebase {
     }
 
     public static void addPosts(String name, String[] posts) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("PostData").get();
+        ApiFuture<QuerySnapshot> query = db.collection("PostData").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -647,7 +646,7 @@ public class Firebase {
             if (document.getString("Name") == null)
                 continue;
             if (document.getString("Name").equalsIgnoreCase(name)) {
-                DocumentReference docRef = FirestoreClient.getFirestore().collection("PostData")
+                DocumentReference docRef = db.collection("PostData")
                         .document(document.getId());
                 List<Object> list;
                 if (document.get("Posts") != null)
@@ -668,13 +667,11 @@ public class Firebase {
     }
 
     public static ArrayList<String> getPosts(String name) {
-        ApiFuture<QuerySnapshot> query = FirestoreClient.getFirestore().collection("PostData").get();
+        ApiFuture<QuerySnapshot> query = db.collection("PostData").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
@@ -686,5 +683,73 @@ public class Firebase {
                     return (ArrayList<String>) document.get("Posts");
         }
         return null;
+    }
+
+    // Messages DB
+    public static boolean newMessage(String cEmail, String pEmail, int sentBy, String message) {
+        if (sentBy != 0 && sentBy != 1)
+            return false;
+        ApiFuture<QuerySnapshot> query = db.collection("Messages").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        DocumentReference docRef;
+        int count = 0;
+        if (querySnapshot != null) {
+            List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+            for (QueryDocumentSnapshot doc:documents) {
+                if (doc.getString("Counselor Email") == null)
+                    continue;
+                if (doc.getString("Counselor Email").equalsIgnoreCase(cEmail)) {
+                    if (doc.getString("Parent Email") == null)
+                        continue;
+                    if (doc.getString("Parent Email").equalsIgnoreCase(pEmail)) {
+                        docRef = db.collection("Messages")
+                                .document(doc.getId());
+                        Map<String, Object> map;
+                        if (doc.get("Message List") != null)
+                            map = (Map<String, Object>) doc.get("Message List");
+                        else
+                            continue;
+                        List<Object> list = new ArrayList<>();
+                        Iterator it = map.entrySet().iterator();
+                        while (it.hasNext()) {
+                            Map.Entry pair = (Map.Entry) it.next();
+                            count = Integer.parseInt(String.valueOf(pair.getKey())) + 1;
+                        }
+                        Collections.addAll(list, message, sentBy);
+                        map.put(String.valueOf(count++), list);
+                        ApiFuture<WriteResult> arrayUnion = docRef.update("Message List", map);
+                        try {
+                            arrayUnion.get();
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
+        docRef = db.collection("Messages").document();
+        Map<String, Object> data = new HashMap<>();
+        data.put("Counselor Email", cEmail);
+        data.put("Parent Email", pEmail);
+
+        Map<String, Object> m = new HashMap<>();
+        List<Object> l = new ArrayList<>();
+        Collections.addAll(l, message, sentBy);
+        m.put(String.valueOf((count++)), l);
+        data.put("Message List", m);
+
+        ApiFuture<WriteResult> result = docRef.set(data);
+        try {
+            result.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }
