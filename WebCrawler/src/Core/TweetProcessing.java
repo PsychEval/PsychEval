@@ -20,11 +20,12 @@ public class TweetProcessing {
     public int mainProcess(List<String> tweets, String name, String uid) throws IOException {
         int ibm = processIBM(tweets);
         //System.out.println("analyzing tweets for: " + name);
-        //int ms = setupMS(tweets);
+        int ms = setupMS(tweets);
         //System.out.println(ms);
         //TODO: algorithm
+        int avgScore = (ibm+ms)/2;
 
-        return  0;
+        return  avgScore;
     }
 
     private int processIBM(List <String> tweets){
@@ -32,16 +33,30 @@ public class TweetProcessing {
         ToneAnalyzer toneAnalyzer = new ToneAnalyzer("2017-09-21");
         toneAnalyzer.setUsernameAndPassword("6de387d8-b9c6-4014-9d8e-ef01e41396dc","vGwv3H2gphbW");
         toneAnalyzer.setEndPoint("https://gateway.watsonplatform.net/tone-analyzer/api");
-        for (String s :
-                tweets) {
+        double finTone = 0;
+        double count = tweets.size();
+        double score = 0;
+        for (String s : tweets) {
             ToneOptions toneOptions = new ToneOptions.Builder().text(s).build();
             ToneAnalysis toneAnalysis = toneAnalyzer.tone(toneOptions).execute();
-            System.out.println(toneAnalysis);
+            int size = toneAnalysis.getDocumentTone().getTones().size();
+            for(int i=0; i < size; i++){
+                double tone = toneAnalysis.getDocumentTone().getTones().get(i).getScore();
+                String toenail = toneAnalysis.getDocumentTone().getTones().get(i).getToneName();
+                if(toenail.equals("Joy")){
+                    score = 100 - 100*tone;
+                }else{
+                    score = 100*tone;
+                }
+
+                finTone = finTone+score;
+
+            }
         }
 
-
-
-        return 0;
+        double bigBoiScore = finTone/count;
+        //System.out.println(bigBoiScore);
+        return (int)bigBoiScore;
     }
 
 
@@ -92,7 +107,6 @@ public class TweetProcessing {
         in.close();
 
         String finResponse = response.toString();
-        //System.out.println(finResponse);
         //TODO convert response
         return parseMS(finResponse);
 
@@ -113,7 +127,7 @@ public class TweetProcessing {
             finScore += temp;
         }
         finScore = finScore * 100;
-        System.out.println(allMatches);
+//       / System.out.println(allMatches);
         return 100 - (int)finScore/count;
     }
 
