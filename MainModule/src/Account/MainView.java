@@ -46,6 +46,7 @@ public class MainView{
     private Scene oauthform;
     private Scene messageParent;
     private Scene checkMessages;
+    private GridPane gridPane;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -128,14 +129,6 @@ public class MainView{
                 } else {
                     viewScoreButton.setOnAction(event -> {
                         ChangeSceneToScoreView();
-                    });
-                }
-                Button viewProfileRequests = (Button) getByUserData(pane, "viewProfileRequests");
-                if (viewProfileRequests == null) {
-                    System.out.println("view profile button was not found");
-                } else {
-                    viewProfileRequests.setOnAction(event -> {
-                        System.out.println("view profile reqeusts button");
                     });
                 }
                 Button approveParentButton = (Button)getByUserData(pane, "approveParent");
@@ -224,14 +217,14 @@ public class MainView{
     private void AddUI(BorderPane borderPane){ //positioning is important when adding, treat like an array
 
         if (borderPane != null) {
-            Button addCounselor, viewScores, viewProfileRequests, addStudent, oauth, approveParent, approvedYet, sendMessageToParent, checkMessages;
+            Button addCounselor, viewScores, addStudent, oauth, approveParent, approvedYet, sendMessageToParent, checkMessages;
 
             HBox usables = createTopBar();
             usables.setUserData("Top");
             borderPane.setTop(usables);
             setButtonListeners(usables);
 
-            GridPane gridPane = createMiddle();
+            gridPane = createMiddle();
             gridPane.setAlignment(Pos.CENTER);
             gridPane.setUserData("Middle");
 
@@ -252,23 +245,17 @@ public class MainView{
                 viewScores.setUserData("viewScore");
                 gridPane.add(viewScores, 0, 0, 2, 1);
 
-                viewProfileRequests = new Button("View Profile Requests");
-                viewProfileRequests.setPrefHeight(40);
-                viewProfileRequests.setPrefWidth(200);
-                viewProfileRequests.setUserData("viewProfileRequests");
-                gridPane.add(viewProfileRequests, 2, 0, 2, 1);
-
                 approveParent = new Button("Approve Parent");
                 approveParent.setPrefHeight(40);
                 approveParent.setPrefWidth(200);
                 approveParent.setUserData("approveParent");
-                gridPane.add(approveParent, 4, 0, 2, 1);
+                gridPane.add(approveParent, 2, 0, 2, 1);
 
                 sendMessageToParent = new Button("Send Message");
                 sendMessageToParent.setPrefHeight(40);
                 sendMessageToParent.setPrefWidth(200);
                 sendMessageToParent.setUserData("sendMessage");
-                gridPane.add(sendMessageToParent, 2, 3, 2, 1);
+                gridPane.add(sendMessageToParent, 4, 0, 2, 1);
 
 
             } else {
@@ -375,7 +362,7 @@ public class MainView{
     public void startNotificationThreads() {
         if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
             // notify if there is a new parent approval request
-            Firebase.checkForNewParents(currentUser.getEmail(), window, mainScene, currentUser);
+            Firebase.checkForNewParents(currentUser.getEmail(), window, mainScene, currentUser, gridPane);
         }
     }
 }

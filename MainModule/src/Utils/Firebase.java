@@ -11,8 +11,11 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.database.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
@@ -545,7 +548,7 @@ public class Firebase {
         return null;
     }
 
-    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser) {
+    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser, GridPane gp) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -581,9 +584,11 @@ public class Firebase {
                                     if (l.contains(false)) {
                                         Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
                                         Platform.runLater(() -> {
-                                            n.refreshApproveList();
-                                            n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
-                                                    "You have a new parent request!");
+                                            if (getByUserData(gp, "viewScore") != null) {
+                                                n.refreshApproveList();
+                                            }
+                                            n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "Pending Request",
+                                                    "You have pending parent request(s)");
                                         });
                                     }
                                 }
@@ -594,6 +599,15 @@ public class Firebase {
                 }
             }
         }
+    }
+
+    private static Node getByUserData(Pane pane, Object data) {
+        for (Node n : pane.getChildren()) {
+            if (data.equals(n.getUserData())) {
+                return n;
+            }
+        }
+        return null;
     }
 
     public static void setScoreIsBad(String pEmail) {
