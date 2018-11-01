@@ -6,6 +6,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +31,15 @@ public class TweetPuller {
             //pull tweets
             ArrayList<String> tweets = getTweets("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR", token, secret);
             TweetProcessing tp = new TweetProcessing();
+            try {
+                tp.mainProcess(tweets,twitterName, UID);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             //TODO tp.mainProcess(new ArrayList<String>());
-            System.out.println(tweets);
-            System.out.println();
-            System.out.println();
+            //System.out.println(tweets);
+            //System.out.println();
+            //System.out.println();
 
         }
     }
