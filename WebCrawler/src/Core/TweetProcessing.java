@@ -18,23 +18,29 @@ public class TweetProcessing {
 
 
     public int mainProcess(List<String> tweets, String name, String uid) throws IOException {
-        //int ibm = processIBM();
-        System.out.println("analyzing tweets for: " + name);
-        int ms = setupMS(tweets);
-        System.out.println(ms);
+        int ibm = processIBM(tweets);
+        //System.out.println("analyzing tweets for: " + name);
+        //int ms = setupMS(tweets);
+        //System.out.println(ms);
         //TODO: algorithm
 
         return  0;
     }
 
-    private int processIBM(){
+    private int processIBM(List <String> tweets){
 
         ToneAnalyzer toneAnalyzer = new ToneAnalyzer("2017-09-21");
         toneAnalyzer.setUsernameAndPassword("6de387d8-b9c6-4014-9d8e-ef01e41396dc","vGwv3H2gphbW");
         toneAnalyzer.setEndPoint("https://gateway.watsonplatform.net/tone-analyzer/api");
-        ToneOptions toneOptions = new ToneOptions.Builder().text("I Love Myself").build();
-        ToneAnalysis toneAnalysis = toneAnalyzer.tone(toneOptions).execute();
-        System.out.println(toneAnalysis);
+        for (String s :
+                tweets) {
+            ToneOptions toneOptions = new ToneOptions.Builder().text(s).build();
+            ToneAnalysis toneAnalysis = toneAnalyzer.tone(toneOptions).execute();
+            System.out.println(toneAnalysis);
+        }
+
+
+
         return 0;
     }
 
@@ -108,7 +114,7 @@ public class TweetProcessing {
         }
         finScore = finScore * 100;
         System.out.println(allMatches);
-        return (int)finScore/count;
+        return 100 - (int)finScore/count;
     }
 
     private int processGoog(){
