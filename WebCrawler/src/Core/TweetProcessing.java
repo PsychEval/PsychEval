@@ -11,28 +11,61 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TweetProcessing {
 
 
-    public int mainProcess() throws IOException {
-        //int ibm = processIBM();
-        int ms = setupMS();
+    public int mainProcess(List<String> tweets, String name) throws IOException {
+        System.out.println("Getting for: " + name);
+        int ibm = processIBM(tweets);
+        System.out.println("IBM SCORE: " + ibm);
+        int ms = setupMS(tweets);
+        System.out.println("MS SCORE: " + ms);
+        int avgScore = (ibm+ms)/2;
 
-        //TODO: algorithm
-
-        return  0;
+        return  avgScore;
     }
 
-    private int processIBM(){
+    private int processIBM(List <String> tweets){
 
         ToneAnalyzer toneAnalyzer = new ToneAnalyzer("2017-09-21");
         toneAnalyzer.setUsernameAndPassword("6de387d8-b9c6-4014-9d8e-ef01e41396dc","vGwv3H2gphbW");
         toneAnalyzer.setEndPoint("https://gateway.watsonplatform.net/tone-analyzer/api");
-        ToneOptions toneOptions = new ToneOptions.Builder().text("I Love Myself").build();
-        ToneAnalysis toneAnalysis = toneAnalyzer.tone(toneOptions).execute();
-        System.out.println(toneAnalysis);
-        return 0;
+        double finTone = 0;
+        double count = tweets.size();
+        double score = 0;
+        for (String s : tweets) {
+            ToneOptions toneOptions = new ToneOptions.Builder().text(s).build();
+            ToneAnalysis toneAnalysis = toneAnalyzer.tone(toneOptions).execute();
+            int size = toneAnalysis.getDocumentTone().getTones().size();
+            //System.out.println("SIZE: " + size);
+            if(size == 0){
+                continue;
+            }
+            double innerTone = 0;
+            for(int i=0; i < size; i++){
+                double tone = toneAnalysis.getDocumentTone().getTones().get(i).getScore();
+                String toenail = toneAnalysis.getDocumentTone().getTones().get(i).getToneName();
+                if(toenail.equals("Joy")){
+                    score = 100 - 100*tone;
+                   // System.out.println("JOY: " + score);
+                }else{
+                    score = 100*tone;
+                   // System.out.println("NOT JOY: " + score);
+                }
+
+                innerTone = innerTone+score;
+              //  System.out.println(innerTone);
+            }
+            finTone += innerTone/size;
+        }
+
+        double bigBoiScore = finTone/count;
+        //System.out.println(count);
+        //System.out.println(bigBoiScore);
+        return (int)bigBoiScore;
     }
 
 
@@ -43,11 +76,14 @@ public class TweetProcessing {
     static String path = "/text/analytics/v2.0/sentiment";
 
 
-    private int setupMS() throws IOException {
-        //create docuemnts
+    private int setupMS(List<String> tweets) throws IOException {
+        //create documents
         Documents documents = new Documents ();
-        documents.add ("1", "en", "I hate myself");
-        documents.add ("2", "en", "I love myself");
+        int i = 1;
+        for (String s : tweets) {
+            documents.add("" + i++, "en", s);
+        }
+
         return processMS(documents);
     }
 
@@ -78,16 +114,32 @@ public class TweetProcessing {
         in.close();
 
         String finResponse = response.toString();
-        System.out.println(finResponse);
-        //TODO convert response
-        return 0;
+        return parseMS(finResponse);
 
     }
 
-    private int processGoog(){
-
-        return 0;
+    private int parseMS(String response){
+        List<String> allMatches = new ArrayList<String>();
+        Matcher m = Pattern.compile("score(.*?)\\}")
+                .matcher(response);
+        while (m.find()) {
+            allMatches.add(m.group());
+        }
+        double finScore = 0;
+        int count = allMatches.size();
+        for (String s : allMatches) {
+            s = s.substring(7, s.length()-1);
+            double temp = Double.parseDouble(s);
+            finScore += temp;
+        }
+        finScore = finScore * 100;
+        return 100 - (int)finScore/count;
     }
+
+//    private int processGoog(){
+//
+//        return 0;
+//    }
 
 }
 
