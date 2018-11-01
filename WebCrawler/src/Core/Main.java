@@ -6,9 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -17,7 +15,6 @@ public class Main extends Application {
 
 
     private GridPane createGridPane(){
-        //n rows 2 colums
         GridPane gp = new GridPane();
         gp.setAlignment(Pos.CENTER);
         gp.setPadding(new Insets(40,40,40,40));
@@ -35,8 +32,6 @@ public class Main extends Application {
         gp.add(button, 0,0);
 
         button.setOnAction(event -> {
-            //TODO: CODEEEEEE
-           // System.out.println("REEEE");
             try {
                 mainLoop();
             } catch (IOException e) {
@@ -58,11 +53,9 @@ public class Main extends Application {
 
     //controlling function
     void mainLoop() throws IOException {
-       // TweetPuller tweetPuller = new TweetPuller();
-        //tweetPuller.pullTweets();
-        TweetProcessing tweetProcessing = new TweetProcessing();
-        int finScore = tweetProcessing.mainProcess();
-        //firebase.pushScore();
+        TweetPuller tweetPuller = new TweetPuller();
+        tweetPuller.pullTweets();
+
 
     }
 }
