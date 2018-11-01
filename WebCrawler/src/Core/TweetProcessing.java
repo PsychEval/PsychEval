@@ -11,14 +11,17 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TweetProcessing {
 
 
-    public int mainProcess(List<String> tweets) throws IOException {
+    public int mainProcess(List<String> tweets, String name, String uid) throws IOException {
         //int ibm = processIBM();
-        int ms = setupMS();
-
+        System.out.println("analyzing tweets for: " + name);
+        int ms = setupMS(tweets);
+        System.out.println(ms);
         //TODO: algorithm
 
         return  0;
@@ -43,11 +46,15 @@ public class TweetProcessing {
     static String path = "/text/analytics/v2.0/sentiment";
 
 
-    private int setupMS() throws IOException {
+    private int setupMS(List<String> tweets) throws IOException {
         //create docuemnts
         Documents documents = new Documents ();
-        documents.add ("1", "en", "I hate myself");
-        documents.add ("2", "en", "I love myself");
+        int i = 1;
+        for (String s : tweets) {
+            documents.add("" + i++, "en", s);
+        }
+        //System.out.println(documents);
+
         return processMS(documents);
     }
 
@@ -73,15 +80,35 @@ public class TweetProcessing {
                 new InputStreamReader(connection.getInputStream()));
         String line;
         while ((line = in.readLine()) != null) {
+            //System.out.println(line);
             response.append(line);
         }
         in.close();
 
         String finResponse = response.toString();
-        System.out.println(finResponse);
+        //System.out.println(finResponse);
         //TODO convert response
-        return 0;
+        return parseMS(finResponse);
 
+    }
+
+    private int parseMS(String response){
+        List<String> allMatches = new ArrayList<String>();
+        Matcher m = Pattern.compile("score(.*?)\\}")
+                .matcher(response);
+        while (m.find()) {
+            allMatches.add(m.group());
+        }
+        double finScore = 0;
+        int count = allMatches.size();
+        for (String s : allMatches) {
+            s = s.substring(7, s.length()-1);
+            double temp = Double.parseDouble(s);
+            finScore += temp;
+        }
+        finScore = finScore * 100;
+        System.out.println(allMatches);
+        return (int)finScore/count;
     }
 
     private int processGoog(){
