@@ -17,11 +17,12 @@ import java.util.regex.Pattern;
 public class TweetProcessing {
 
 
-    public int mainProcess(List<String> tweets) throws IOException {
+    public int mainProcess(List<String> tweets, String name) throws IOException {
+        System.out.println("Getting for: " + name);
         int ibm = processIBM(tweets);
-
+        System.out.println("IBM SCORE: " + ibm);
         int ms = setupMS(tweets);
-
+        System.out.println("MS SCORE: " + ms);
         int avgScore = (ibm+ms)/2;
 
         return  avgScore;
@@ -39,21 +40,30 @@ public class TweetProcessing {
             ToneOptions toneOptions = new ToneOptions.Builder().text(s).build();
             ToneAnalysis toneAnalysis = toneAnalyzer.tone(toneOptions).execute();
             int size = toneAnalysis.getDocumentTone().getTones().size();
+            //System.out.println("SIZE: " + size);
+            if(size == 0){
+                continue;
+            }
+            double innerTone = 0;
             for(int i=0; i < size; i++){
                 double tone = toneAnalysis.getDocumentTone().getTones().get(i).getScore();
                 String toenail = toneAnalysis.getDocumentTone().getTones().get(i).getToneName();
                 if(toenail.equals("Joy")){
                     score = 100 - 100*tone;
+                   // System.out.println("JOY: " + score);
                 }else{
                     score = 100*tone;
+                   // System.out.println("NOT JOY: " + score);
                 }
 
-                finTone = finTone+score;
-
+                innerTone = innerTone+score;
+              //  System.out.println(innerTone);
             }
+            finTone += innerTone/size;
         }
 
         double bigBoiScore = finTone/count;
+        //System.out.println(count);
         //System.out.println(bigBoiScore);
         return (int)bigBoiScore;
     }

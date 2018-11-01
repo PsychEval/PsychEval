@@ -19,7 +19,7 @@ public class TweetPuller {
         for (List l : data) {
             String UID = (String) l.get(0);
 //            String studentName = (String) l.get(1);
-//            String twitterName = (String) l.get(2);
+           String twitterName = (String) l.get(2);
 //            String parentEmail = (String) l.get(3);
             String secret = (String) l.get(4);
 //            String riskFactor = (String) l.get(5);
@@ -29,7 +29,7 @@ public class TweetPuller {
             ArrayList<String> tweets = getTweets("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR", token, secret);
             TweetProcessing tp = new TweetProcessing();
             try {
-                int score = tp.mainProcess(tweets);
+                int score = tp.mainProcess(tweets, twitterName);
                 firebase.pushScore(UID, score);
             } catch (IOException e) {
                 e.printStackTrace();
