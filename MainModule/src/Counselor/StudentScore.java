@@ -1,18 +1,18 @@
 package Counselor;
 
 public class StudentScore {
-    private String parentName;
+    private String parentEmail;
     private String studentName;
     private int studentScore;
 
     StudentScore(String parent, String studentName, int studentScore) {
-        this.parentName = parent;
+        this.parentEmail = parent;
         this.studentName = studentName;
         this.studentScore = studentScore;
     }
 
-    public String getParentName() {
-        return this.parentName;
+    public String getParentEmail() {
+        return this.parentEmail;
     }
     public String getStudentName() {
         return this.studentName;

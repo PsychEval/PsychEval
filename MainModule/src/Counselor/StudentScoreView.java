@@ -21,7 +21,6 @@ import javafx.stage.Window;
 import java.util.*;
 
 public class StudentScoreView {
-    //TODO: make this functional
     private Stage mainStage;
     private Scene mainViewScene;
     private Scene createAccountScene;
@@ -29,9 +28,9 @@ public class StudentScoreView {
     private TableView<StudentScore> table;
 
     private VBox createFormPane() {
-        TableColumn<StudentScore, String> parentNames = new TableColumn<>("Parent Name");
+        TableColumn<StudentScore, String> parentNames = new TableColumn<>("Parent Email");
         parentNames.setMinWidth(200);
-        parentNames.setCellValueFactory(new PropertyValueFactory<>("parentName"));
+        parentNames.setCellValueFactory(new PropertyValueFactory<>("parentEmail"));
 
         TableColumn<StudentScore, String> studentNames = new TableColumn<>("Student Name");
         studentNames.setMinWidth(200);
@@ -106,6 +105,9 @@ public class StudentScoreView {
             long score = Firebase.getRiskFactor(l.get(0));
             if (score == -10)
                 continue;
+            if (score > 70) {
+                // TODO alert parent
+            }
             String pName = Firebase.getName(l.get(0));
             List<String> list = new ArrayList<>();
             Collections.addAll(list, pName, stuName, String.valueOf(score));

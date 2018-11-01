@@ -44,8 +44,8 @@ public class MainView{
     private Scene approveParent;
     private Scene linkStudent;
     private Scene oauthform;
-    private Scene messageParent;
-    private Scene checkMessages;
+    private Scene messaging;
+    private Scene getParentToMessage;
     private GridPane gridPane;
 
     private BorderPane createFormPane() {
@@ -167,22 +167,32 @@ public class MainView{
 
                     });
                 }
-                Button sendMessageToParent = (Button)getByUserData(pane, "sendMessage");
-                if (sendMessageToParent == null) {
-                    System.out.println("sendMessage button was not found");
+                Button messagesButton = (Button)getByUserData(pane, "messages");
+                if (messagesButton == null) {
+                    System.out.println("messaging button was not found");
                 } else {
-                    sendMessageToParent.setOnAction(event -> {
-                        System.out.println("sendmessage button");
-                        ChangeSceneToSendMessageView();
+                    messagesButton.setOnAction(event -> {
+                        System.out.println("message button");
+                        ChangeSceneToMessageView();
                     });
                 }
+
+                Button messageParentButton = (Button)getByUserData(pane, "messageAParent");
+                if (messageParentButton == null) {
+                    System.out.println("message a parent button was not found");
+                } else {
+                    messageParentButton.setOnAction(event -> {
+                        System.out.println("message a parent button");
+                        ChangeSceneToMessageParent();
+                    });
+                }
+
                 Button approvedYetButton = (Button)getByUserData(pane, "approvedYet");
                 if (approvedYetButton == null) {
                     System.out.println("approved yet button was not found");
                 } else {
                     approvedYetButton.setOnAction(event -> {
                         System.out.println("approved yet button");
-                        // TODO get form db
                         TextInputDialog dialog = new TextInputDialog();
                         dialog.setTitle("Counselor Email");
                         dialog.setHeaderText("Enter email");
@@ -202,22 +212,13 @@ public class MainView{
                         //showAlert(Alert.AlertType.INFORMATION, window, "Pending", "Counselor is still reviewing your request.");
                     });
                 }
-                Button checkMessagesButton = (Button)getByUserData(pane, "checkMessages");
-                if (checkMessagesButton == null) {
-                    System.out.println("checkMessages button was not found");
-                } else {
-                    checkMessagesButton.setOnAction(event -> {
-                        System.out.println("checkMessage button");
-                        ChangeSceneToCheckMessage();
-                    });
-                }
             }
         }
     }
     private void AddUI(BorderPane borderPane){ //positioning is important when adding, treat like an array
 
         if (borderPane != null) {
-            Button addCounselor, viewScores, addStudent, oauth, approveParent, approvedYet, sendMessageToParent, checkMessages;
+            Button addCounselor, viewScores, addStudent, oauth, approveParent, approvedYet, messages;
 
             HBox usables = createTopBar();
             usables.setUserData("Top");
@@ -251,11 +252,11 @@ public class MainView{
                 approveParent.setUserData("approveParent");
                 gridPane.add(approveParent, 2, 0, 2, 1);
 
-                sendMessageToParent = new Button("Send Message");
-                sendMessageToParent.setPrefHeight(40);
-                sendMessageToParent.setPrefWidth(200);
-                sendMessageToParent.setUserData("sendMessage");
-                gridPane.add(sendMessageToParent, 4, 0, 2, 1);
+                messages = new Button("Message A Parent");
+                messages.setPrefHeight(40);
+                messages.setPrefWidth(200);
+                messages.setUserData("messageAParent");
+                gridPane.add(messages, 4, 0, 2, 1);
 
 
             } else {
@@ -278,11 +279,11 @@ public class MainView{
                 approvedYet.setUserData("approvedYet");
                 gridPane.add(approvedYet, 4, 0, 2, 1);
 
-                checkMessages = new Button("Check Messages");
-                checkMessages.setPrefHeight(40);
-                checkMessages.setPrefWidth(200);
-                checkMessages.setUserData("checkMessages");
-                gridPane.add(checkMessages, 2,3,2,1);
+                messages = new Button("Messaging");
+                messages.setPrefHeight(40);
+                messages.setPrefWidth(200);
+                messages.setUserData("messages");
+                gridPane.add(messages, 2,3,2,1);
             }
 
             borderPane.setCenter(gridPane);
@@ -327,17 +328,18 @@ public class MainView{
         window.setScene(this.oauthform);
     }
 
-    public void ChangeSceneToSendMessageView() {
-        MessageParent mp = new MessageParent(window, mainScene, currentUser);
-        messageParent = mp.getScene();
-        window.setScene(messageParent);
+    public void ChangeSceneToMessageView() {
+        Messaging m = new Messaging(window, mainScene, currentUser, currentUser.getEmail());
+        messaging = m.getScene();
+        window.setScene(messaging);
     }
 
-    public void ChangeSceneToCheckMessage() {
-        CheckMessages cm = new CheckMessages(window, mainScene, currentUser);
-        checkMessages = cm.getScene();
-        window.setScene(checkMessages);
+    public void ChangeSceneToMessageParent() {
+        SelectParentToMessage sptm = new SelectParentToMessage(window, mainScene, currentUser);
+        getParentToMessage = sptm.getScene();
+        window.setScene(getParentToMessage);
     }
+
 
     public MainView(Stage primaryStage, Scene createAccount, Account currUser) {
         this.window = primaryStage;

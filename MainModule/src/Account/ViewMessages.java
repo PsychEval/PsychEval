@@ -1,12 +1,13 @@
-package Parent;
+package Account;
 
-import Account.Account;
 import Counselor.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -14,7 +15,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class CheckMessages {
+public class ViewMessages {
     private Stage mainStage;
     private Scene mainViewScene;
     private TableView<Message> table;
@@ -86,7 +87,7 @@ public class CheckMessages {
         return scene;
     }
 
-    public CheckMessages(Stage primaryStage, Scene mainViewScene, Account currentUser) {
+    public ViewMessages(Stage primaryStage, Scene mainViewScene, Account currentUser) {
         this.mainStage = primaryStage;
         this.mainViewScene = mainViewScene;
         this.user = currentUser;
