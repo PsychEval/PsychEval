@@ -17,12 +17,11 @@ import java.util.regex.Pattern;
 public class TweetProcessing {
 
 
-    public int mainProcess(List<String> tweets, String name, String uid) throws IOException {
+    public int mainProcess(List<String> tweets) throws IOException {
         int ibm = processIBM(tweets);
-        //System.out.println("analyzing tweets for: " + name);
+
         int ms = setupMS(tweets);
-        //System.out.println(ms);
-        //TODO: algorithm
+
         int avgScore = (ibm+ms)/2;
 
         return  avgScore;
@@ -68,13 +67,12 @@ public class TweetProcessing {
 
 
     private int setupMS(List<String> tweets) throws IOException {
-        //create docuemnts
+        //create documents
         Documents documents = new Documents ();
         int i = 1;
         for (String s : tweets) {
             documents.add("" + i++, "en", s);
         }
-        //System.out.println(documents);
 
         return processMS(documents);
     }
@@ -101,13 +99,11 @@ public class TweetProcessing {
                 new InputStreamReader(connection.getInputStream()));
         String line;
         while ((line = in.readLine()) != null) {
-            //System.out.println(line);
             response.append(line);
         }
         in.close();
 
         String finResponse = response.toString();
-        //TODO convert response
         return parseMS(finResponse);
 
     }
@@ -127,14 +123,13 @@ public class TweetProcessing {
             finScore += temp;
         }
         finScore = finScore * 100;
-//       / System.out.println(allMatches);
         return 100 - (int)finScore/count;
     }
 
-    private int processGoog(){
-
-        return 0;
-    }
+//    private int processGoog(){
+//
+//        return 0;
+//    }
 
 }
 
