@@ -15,6 +15,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 //import sun.applet.Main;
 
 import java.io.IOException;
@@ -53,9 +54,18 @@ public class CreateAccountView extends Application{
         gridPane.add(accSelectLabel, 0,1);
 
         //Add Account Selection Dropdown
-        ObservableList<String> accOptions = FXCollections.observableArrayList(
-                "Admin", "Counselor", "Parent"
-        );
+        // check if admin accoutn already exists
+        ObservableList<String> accOptions;
+        if (Firebase.checkIfAdminExists()) {
+            accOptions = FXCollections.observableArrayList(
+                    "Counselor", "Parent"
+            );
+        }
+        else {
+            accOptions = FXCollections.observableArrayList(
+                    "Admin", "Counselor", "Parent"
+            );
+        }
         ComboBox<String> comboBox = new ComboBox<>(accOptions);
         comboBox.setPrefHeight(40);
         gridPane.add(comboBox, 1, 1);
@@ -120,16 +130,25 @@ public class CreateAccountView extends Application{
                 temp = Account.AccountType.PARENT;
             }
             try {
-                Firebase.createAccount(selection, emailField.getText(), nameField.getText(), passwordField.getText());
-                Account currentUser = new Account(emailField.getText(), passwordField.getText(), nameField.getText(), temp);
-                MainView mainView = new MainView(mainStage, createAccountScene, currentUser);
-                Scene mainViewScene = mainView.getScene();
+                //check if admin already added this counselor
+                if (Firebase.isAddedAlready(emailField.getText())) {
+                    emailField.setText("");
+                    passwordField.setText("");
+                    nameField.setText("");
+                    showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Counselor Email Is Already Added!");
+                }
+                else {
+                    Firebase.createAccount(selection, emailField.getText(), nameField.getText(), passwordField.getText());
+                    Account currentUser = new Account(emailField.getText(), passwordField.getText(), nameField.getText(), temp);
+                    MainView mainView = new MainView(mainStage, createAccountScene, currentUser);
+                    Scene mainViewScene = mainView.getScene();
 
-                emailField.setText("");
-                passwordField.setText("");
-                nameField.setText("");
+                    emailField.setText("");
+                    passwordField.setText("");
+                    nameField.setText("");
 
-                mainStage.setScene(mainViewScene);
+                    mainStage.setScene(mainViewScene);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -145,11 +164,14 @@ public class CreateAccountView extends Application{
         return scene;
     }
 
-//    public CreateAccountView(Stage primaryStage, Scene mainViewScene, Scene loginScene) {
-//        mainStage = primaryStage;
-//        this.mainViewScene = mainViewScene;
-//        this.loginScene = loginScene;
-//    }
+    private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initOwner(owner);
+        alert.show();
+    }
 
     public void grabScenes() {
         loginForm login = new loginForm(mainStage, createAccountScene);
