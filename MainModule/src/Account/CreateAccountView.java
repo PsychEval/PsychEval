@@ -16,42 +16,77 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.apache.commons.validator.routines.EmailValidator;
+
+import java.util.regex.Pattern;
+
 //import sun.applet.Main;
 
-import java.io.IOException;
-
-public class CreateAccountView extends Application{
+public class CreateAccountView extends Application {
 
     private Stage mainStage;
     private Scene loginScene;
     private Scene createAccountScene;
+    private static final Pattern hasUppercase = Pattern.compile("[A-Z]");
+    private static final Pattern hasLowercase = Pattern.compile("[a-z]");
+    private static final Pattern hasNumber = Pattern.compile("\\d");
+    private static final Pattern hasSpecialChar = Pattern.compile("[^a-zA-Z0-9 ]");
 
-    private GridPane createFormPane(){
+    public static String validateNewPass(String pass1) {
+        if (pass1 == null) {
+            return "Please enter a password!";
+        }
+
+        StringBuilder retVal = new StringBuilder();
+
+        if (pass1.isEmpty()) {
+            return "Please enter a password!";
+        }
+
+        if (pass1.length() < 4)
+            retVal.append("Password is too short. Needs to have 4 characters!\n");
+
+        if (!hasUppercase.matcher(pass1).find())
+            retVal.append("Password needs an upper case!\n");
+
+        if (!hasLowercase.matcher(pass1).find())
+            retVal.append("Password needs a lowercase!\n");
+
+        if (!hasNumber.matcher(pass1).find())
+            retVal.append("Password needs a number!\n");
+
+        if (!hasSpecialChar.matcher(pass1).find())
+            retVal.append("Password needs a special character i.e. !,@,#, etc.\n");
+
+        return retVal.toString();
+    }
+
+    private GridPane createFormPane() {
         //n rows 2 colums
         GridPane gp = new GridPane();
         gp.setAlignment(Pos.CENTER);
-        gp.setPadding(new Insets(40,40,40,40));
+        gp.setPadding(new Insets(40, 40, 40, 40));
         gp.setHgap(10);
         gp.setVgap(10);
         ColumnConstraints columnOneConstraints = new ColumnConstraints(100, 100, Double.MAX_VALUE);
         columnOneConstraints.setHalignment(HPos.RIGHT);
-        ColumnConstraints columnTwoConstrains = new ColumnConstraints(200,200, Double.MAX_VALUE);
+        ColumnConstraints columnTwoConstrains = new ColumnConstraints(200, 200, Double.MAX_VALUE);
         columnTwoConstrains.setHgrow(Priority.ALWAYS);
         gp.getColumnConstraints().addAll(columnOneConstraints, columnTwoConstrains);
         return gp;
     }
 
-    private void AddUI(GridPane gridPane){ //positioning is important when adding, treat like an array
+    private void AddUI(GridPane gridPane) { //positioning is important when adding, treat like an array
         // Add Header
         Label headerLabel = new Label("Create Account");
         headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        gridPane.add(headerLabel, 0,0,2,1);
+        gridPane.add(headerLabel, 0, 0, 2, 1);
         GridPane.setHalignment(headerLabel, HPos.CENTER);
-        GridPane.setMargin(headerLabel, new Insets(20, 0,20,0));
+        GridPane.setMargin(headerLabel, new Insets(20, 0, 20, 0));
 
         //Add account selection label
         Label accSelectLabel = new Label("Type : ");
-        gridPane.add(accSelectLabel, 0,1);
+        gridPane.add(accSelectLabel, 0, 1);
 
         //Add Account Selection Dropdown
         // check if admin accoutn already exists
@@ -60,8 +95,7 @@ public class CreateAccountView extends Application{
             accOptions = FXCollections.observableArrayList(
                     "Counselor", "Parent"
             );
-        }
-        else {
+        } else {
             accOptions = FXCollections.observableArrayList(
                     "Admin", "Counselor", "Parent"
             );
@@ -72,12 +106,12 @@ public class CreateAccountView extends Application{
 
         // Add Name Label
         Label nameLabel = new Label("Name : ");
-        gridPane.add(nameLabel, 0,2);
+        gridPane.add(nameLabel, 0, 2);
 
         // Add Name Text Field
         TextField nameField = new TextField();
         nameField.setPrefHeight(40);
-        gridPane.add(nameField, 1,2);
+        gridPane.add(nameField, 1, 2);
 
 
         // Add Email Label
@@ -111,7 +145,7 @@ public class CreateAccountView extends Application{
         logInButton.setPrefHeight(40);
         logInButton.setDefaultButton(true);
         logInButton.setPrefWidth(100);
-        gridPane.add(logInButton, 0,6,2,1);
+        gridPane.add(logInButton, 0, 6, 2, 1);
 
         logInButton.setOnAction(event -> {
             mainStage.setScene(loginScene);
@@ -120,24 +154,46 @@ public class CreateAccountView extends Application{
         submitButton.setOnAction(event -> {
             //TODO: error checking for password and email
             String selection = comboBox.getValue();
-            String type;
+            if (selection == null)
+                showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Please Select Account Type!");
             Account.AccountType temp;
-            if(selection.equals("Admin")){
+            if (selection.equals("Admin")) {
                 temp = Account.AccountType.ADMIN;
-            }else if(selection.equals("Counselor")){
+            } else if (selection.equals("Counselor")) {
                 temp = Account.AccountType.COUNSELOR;
-            }else{
+            } else {
                 temp = Account.AccountType.PARENT;
             }
             try {
+                // check if all fields are filled
+                if (emailField.getText().isEmpty() || passwordField.getText().isEmpty() || nameField.getText().isEmpty()
+                        || emailField.getText() == null || passwordField.getText() == null || nameField.getText() == null)
+                    showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Please Enter All Fields!");
+
+                    // check if email is invalid
+                else if (!EmailValidator.getInstance().isValid(emailField.getText())) {
+                    emailField.setText("");
+                    passwordField.setText("");
+                    nameField.setText("");
+                    showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Invalid Email!");
+                }
+
+                // check if password is valid
+                else if (!validateNewPass(passwordField.getText()).isEmpty()) {
+                    String message = validateNewPass(passwordField.getText());
+                    emailField.setText("");
+                    passwordField.setText("");
+                    nameField.setText("");
+                    showAlert(Alert.AlertType.ERROR, mainStage, "Error", message);
+                }
+
                 //check if admin already added this counselor
-                if (Firebase.isAddedAlready(emailField.getText())) {
+                else if (Firebase.isAddedAlready(emailField.getText())) {
                     emailField.setText("");
                     passwordField.setText("");
                     nameField.setText("");
                     showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Counselor Email Is Already Added!");
-                }
-                else {
+                } else {
                     Firebase.createAccount(selection, emailField.getText(), nameField.getText(), passwordField.getText());
                     Account currentUser = new Account(emailField.getText(), passwordField.getText(), nameField.getText(), temp);
                     MainView mainView = new MainView(mainStage, createAccountScene, currentUser);
@@ -160,7 +216,7 @@ public class CreateAccountView extends Application{
     public Scene getScene() {
         GridPane gp = createFormPane();
         AddUI(gp);
-        Scene scene = new Scene(gp, 800,500);
+        Scene scene = new Scene(gp, 800, 500);
         return scene;
     }
 
@@ -182,13 +238,14 @@ public class CreateAccountView extends Application{
         primaryStage.setTitle("Create Account");
         GridPane gp = createFormPane();
         AddUI(gp);
-        createAccountScene = new Scene(gp, 800,500);
+        createAccountScene = new Scene(gp, 800, 500);
         mainStage = primaryStage;
         grabScenes();
         primaryStage.setScene(createAccountScene);
         primaryStage.show();
     }
-    public static void main(String [] args) {
+
+    public static void main(String[] args) {
         try {
             Firebase.init(); //intializes the static firebase class
         } catch (Exception e) {
