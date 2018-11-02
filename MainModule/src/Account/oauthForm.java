@@ -45,7 +45,7 @@ public class oauthForm {
         return scene;
     }
 
-    private GridPane createPane(){
+    public GridPane createPane(){
         GridPane gp = new GridPane();
 
         gp.setAlignment(Pos.CENTER);
@@ -62,7 +62,7 @@ public class oauthForm {
         return gp;
     }
 
-    private void addUI(GridPane gp){
+    public void addUI(GridPane gp){
         Button showOauth = new Button("Link Twitter");
         showOauth.setPrefWidth(100);
         showOauth.setPrefHeight(40);
@@ -110,7 +110,7 @@ public class oauthForm {
 
 
     }
-    private static void launchOauth() throws TwitterException{
+    public static void launchOauth() throws TwitterException{
 //        Twitter twitter = TwitterFactory.getSingleton();
 //        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
 //        RequestToken requestToken = twitter.getOAuthRequestToken();
@@ -141,7 +141,7 @@ public class oauthForm {
         }
     }
 
-    private void enterCode(String code) throws TwitterException {
+    public void enterCode(String code) throws TwitterException {
         AccessToken accessToken = null;
         try{
                 if(code.length() > 0){
@@ -166,7 +166,7 @@ public class oauthForm {
 
     }
 
-    private void updateTokens(String token, String secret, String twitterId, String userID){
+    public void updateTokens(String token, String secret, String twitterId, String userID){
         //TODO: make sure they have linked with counselor
         //TODO: pull student name from database
         Firebase.setSocialMediaDB(currentUser.getEmail(), -1, Firebase.getStudentName(currentUser.getEmail()), token, secret, twitterId, userID);
