@@ -51,6 +51,7 @@ public class TweetProcessingTest {
         TweetProcessing tweetProcessing = new TweetProcessing();
         int a = tweetProcessing.processMS(documents);
         Assert.assertNotEquals(null, a);
+
     }
 
 }
