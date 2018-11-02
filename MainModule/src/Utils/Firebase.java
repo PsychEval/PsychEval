@@ -685,7 +685,7 @@ public class Firebase {
         return false;
     }
 
-    public static void checkScoreIsBad(String pEmail) {
+    public static void checkScoreIsBad(String pEmail, Stage primaryStage, Scene mainViewScene, Account currentUser) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -719,7 +719,12 @@ public class Firebase {
                                 public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot,
                                                     @javax.annotation.Nullable FirestoreException e) {
                                     if ((boolean) l.get(3)) {
-                                        //TODO for Bryan
+                                        Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
+                                        Platform.runLater(() -> {
+                                            n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "Contact Counselor",
+                                                    "Your child may be unwell. Contact your counselor!!");
+                                        });
+
                                     }
                                 }
                             });

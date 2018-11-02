@@ -366,5 +366,8 @@ public class MainView{
             // notify if there is a new parent approval request
             Firebase.checkForNewParents(currentUser.getEmail(), window, mainScene, currentUser, gridPane);
         }
+        if (currentUser.getAccountType() == Account.AccountType.PARENT) {
+            Firebase.checkScoreIsBad(currentUser.getEmail(), window, mainScene, currentUser);
+        }
     }
 }

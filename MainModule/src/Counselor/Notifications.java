@@ -30,4 +30,6 @@ public class Notifications{
         Scene approveParent = ap.getScene();
         window.setScene(approveParent);
     }
+
+
 }
