@@ -584,11 +584,12 @@ public class Firebase {
                                     if (!(boolean)l.get(1)) {
                                         Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
                                         Platform.runLater(() -> {
-                                            if (getByUserData(gp, "viewScore") != null) {
-                                                n.refreshApproveList();
-                                            }
+//                                            if (getByUserData(gp, "viewScore") == null) {
+//                                                n.refreshApproveList();
+//                                            }
                                             n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "Pending Request",
                                                     "You have pending parent request(s)");
+                                            n.refreshApproveList();
                                         });
                                     }
                                 }
