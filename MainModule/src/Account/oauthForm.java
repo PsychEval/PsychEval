@@ -25,8 +25,8 @@ public class oauthForm {
     private Stage mainStage;
     private Scene mainViewScene;
     private Account currentUser;
-    private Twitter twitter;
-    private RequestToken requestToken;
+    static Twitter twitter;
+    static RequestToken requestToken;
 
     public oauthForm(Stage primary, Scene mainViewScene, Account currentUser) throws TwitterException {
         this.mainStage = primary;
