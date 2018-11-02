@@ -1,24 +1,22 @@
 package Account;
 
 import Utils.Firebase;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.apache.commons.validator.routines.EmailValidator;
 
-import java.util.concurrent.ExecutionException;
 
-
-public class loginForm{
+public class loginForm {
 
     private Stage mainStage;
     private Scene mainViewScene;
@@ -64,7 +62,7 @@ public class loginForm{
         columnOneConstraints.setHalignment(HPos.RIGHT);
 
         // columnTwoConstraints will be applied to all the nodes placed in column two.
-        ColumnConstraints columnTwoConstrains = new ColumnConstraints(200,200, Double.MAX_VALUE);
+        ColumnConstraints columnTwoConstrains = new ColumnConstraints(200, 200, Double.MAX_VALUE);
         columnTwoConstrains.setHgrow(Priority.ALWAYS);
 
         gridPane.getColumnConstraints().addAll(columnOneConstraints, columnTwoConstrains);
@@ -76,9 +74,9 @@ public class loginForm{
         // Add Header
         Label headerLabel = new Label("Login");
         headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        gridPane.add(headerLabel, 0,0,2,1);
+        gridPane.add(headerLabel, 0, 0, 2, 1);
         GridPane.setHalignment(headerLabel, HPos.CENTER);
-        GridPane.setMargin(headerLabel, new Insets(20, 0,20,0));
+        GridPane.setMargin(headerLabel, new Insets(20, 0, 20, 0));
 
         // Add Email Label
         Label emailLabel = new Label("Email ID : ");
@@ -105,14 +103,14 @@ public class loginForm{
         submitButton.setPrefWidth(100);
         gridPane.add(submitButton, 0, 4, 2, 1);
         GridPane.setHalignment(submitButton, HPos.CENTER);
-        GridPane.setMargin(submitButton, new Insets(20, 0,20,0));
+        GridPane.setMargin(submitButton, new Insets(20, 0, 20, 0));
 
         Button editPassButton = new Button("Change Password");
         editPassButton.setPrefHeight(40);
         editPassButton.setPrefWidth(100);
-        gridPane.add(editPassButton,0,5,2,1);
+        gridPane.add(editPassButton, 0, 5, 2, 1);
         GridPane.setHalignment(editPassButton, HPos.CENTER);
-        GridPane.setMargin(editPassButton, new Insets(20, 0,20,0));
+        GridPane.setMargin(editPassButton, new Insets(20, 0, 20, 0));
 
 
         editPassButton.setOnAction(event -> {
@@ -122,20 +120,25 @@ public class loginForm{
         });
 
         submitButton.setOnAction(event -> {
-                try {
-                if(Firebase.login(emailField.getText(), passwordField.getText())){
+            try {
+                if (!EmailValidator.getInstance().isValid(emailField.getText())) {
+                    emailField.setText("");
+                    passwordField.setText("");
+                    showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Invalid Email!");
+                }
+                if (Firebase.login(emailField.getText(), passwordField.getText())) {
                     Account.AccountType tempA;
                     String type = Firebase.getType(emailField.getText());
-                    if(type.equals("Admin")){
+                    if (type.equals("Admin")) {
                         tempA = Account.AccountType.ADMIN;
-                    }else if(type.equals("Counselor")){
+                    } else if (type.equals("Counselor")) {
                         tempA = Account.AccountType.COUNSELOR;
-                    }else{
-                        tempA  = Account.AccountType.PARENT;
+                    } else {
+                        tempA = Account.AccountType.PARENT;
                     }
                     String name = Firebase.getName(emailField.getText());
                     String pass = passwordField.getText();
-                    System.out.println(type + " "  + name);
+                    System.out.println(type + " " + name);
                     currentUser = new Account(emailField.getText(), pass, name, tempA);
                     MainView mv = new MainView(mainStage, createAccountScene, currentUser);
                     mainViewScene = mv.getScene();
@@ -144,7 +147,9 @@ public class loginForm{
                     passwordField.setText("");
 
                     mainStage.setScene(mainViewScene);
-                }else{
+                } else {
+                    emailField.setText("");
+                    passwordField.setText("");
                     showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Incorrect Username or Password");
                 }
             } catch (Exception e) {
@@ -177,7 +182,7 @@ public class loginForm{
     public Scene getScene() {
         GridPane gp = createRegistrationFormPane();
         addUIControls(gp);
-        Scene scene = new Scene(gp, 800,500);
+        Scene scene = new Scene(gp, 800, 500);
         return scene;
     }
 

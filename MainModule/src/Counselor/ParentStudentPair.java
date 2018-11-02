@@ -1,18 +1,18 @@
 package Counselor;
 
 public class ParentStudentPair {
-    private String parentName;
+    private String parentEmail;
     private String studentName;
     private Boolean approved;
 
-    ParentStudentPair(String parent, Boolean approved, String student) {
-        this.parentName = parent;
+    ParentStudentPair(String parentEmail, Boolean approved, String student) {
+        this.parentEmail = parentEmail;
         this.studentName = student;
         this.approved = approved;
     }
 
-    public String getParentName() {
-        return this.parentName;
+    public String getParentEmail() {
+        return this.parentEmail;
     }
     public String getStudentName() {
         return this.studentName;

@@ -21,7 +21,6 @@ import javafx.stage.Window;
 import java.util.*;
 
 public class StudentScoreView {
-    //TODO: make this functional
     private Stage mainStage;
     private Scene mainViewScene;
     private Scene createAccountScene;
@@ -106,6 +105,9 @@ public class StudentScoreView {
             long score = Firebase.getRiskFactor(l.get(0));
             if (score == -10)
                 continue;
+            if (score > 70) {
+                Firebase.setScoreIsBad(l.get(0));
+            }
             String pName = Firebase.getName(l.get(0));
             List<String> list = new ArrayList<>();
             Collections.addAll(list, pName, stuName, String.valueOf(score));

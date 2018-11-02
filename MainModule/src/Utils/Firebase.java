@@ -11,8 +11,11 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.database.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
@@ -559,7 +562,7 @@ public class Firebase {
         return null;
     }
 
-    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser) {
+    public static ListenerRegistration checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser, GridPane gp) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -577,7 +580,7 @@ public class Firebase {
                 if (document.getString("Email").equalsIgnoreCase(email)) {
                     DocumentReference docRef = db.collection("Counselor")
                             .document(document.getId());
-                    docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    ListenerRegistration registration = docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
                         public void onEvent(@Nullable DocumentSnapshot snapshot,
                                             @Nullable FirestoreException e) {
@@ -591,13 +594,16 @@ public class Firebase {
                                 Iterator it = hm.entrySet().iterator();
                                 while (it.hasNext()) {
                                     Map.Entry pair = (Map.Entry) it.next();
-                                    List<String> l = (List<String>) pair.getValue();
-                                    if (l.contains(false)) {
+                                    List<Object> l = (List<Object>) pair.getValue();
+                                    if (!(boolean)l.get(1)) {
                                         Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
                                         Platform.runLater(() -> {
+//                                            if (getByUserData(gp, "viewScore") == null) {
+//                                                n.refreshApproveList();
+//                                            }
+                                            n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "Pending Request",
+                                                    "You have pending parent request(s)");
                                             n.refreshApproveList();
-                                            n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "New Request",
-                                                    "You have a new parent request!");
                                         });
                                     }
                                 }
@@ -605,9 +611,20 @@ public class Firebase {
                             }
                         }
                     });
+                    return registration;
                 }
             }
         }
+        return null;
+    }
+
+    private static Node getByUserData(Pane pane, Object data) {
+        for (Node n : pane.getChildren()) {
+            if (data.equals(n.getUserData())) {
+                return n;
+            }
+        }
+        return null;
     }
 
     public static void setScoreIsBad(String pEmail) {
@@ -663,7 +680,7 @@ public class Firebase {
     }
 
     public static boolean isAddedAlready(String cEmail) {
-        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Authentication").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -676,16 +693,16 @@ public class Firebase {
             for (QueryDocumentSnapshot document : documents) {
 
                 // Update an existing document
-                if (document.getString("Email") == null)
+                if (document.getString("email") == null)
                     continue;
-                if (document.getString("Email").equalsIgnoreCase(cEmail))
+                if (document.getString("email").equalsIgnoreCase(cEmail))
                     return true;
             }
         }
         return false;
     }
 
-    public static void checkScoreIsBad(String pEmail) {
+    public static void checkScoreIsBad(String pEmail, Stage primaryStage, Scene mainViewScene, Account currentUser) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -708,7 +725,6 @@ public class Firebase {
                         map = (Map<String, Object>) document.get("Parents");
                     else
                         continue;
-                    List<Object> list = new ArrayList<>();
                     Iterator it = map.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
@@ -718,8 +734,13 @@ public class Firebase {
                                 @Override
                                 public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot,
                                                     @javax.annotation.Nullable FirestoreException e) {
-                                    if ((boolean) l.get(3)) {
-                                        //TODO for Bryan
+                                    if (documentSnapshot != null && documentSnapshot.exists() && (boolean) l.get(3)) {
+                                        Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
+                                        Platform.runLater(() -> {
+                                            n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "Contact Counselor",
+                                                    "Your child may be unwell. Contact your counselor!!");
+                                        });
+
                                     }
                                 }
                             });

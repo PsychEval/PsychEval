@@ -30,9 +30,9 @@ public class ApproveParent {
     private Account user;
 
     private VBox createFormPane() {
-        TableColumn<ParentStudentPair, String> parentNames = new TableColumn<>("Parent Name");
+        TableColumn<ParentStudentPair, String> parentNames = new TableColumn<>("Parent Email");
         parentNames.setMinWidth(200);
-        parentNames.setCellValueFactory(new PropertyValueFactory<>("parentName"));
+        parentNames.setCellValueFactory(new PropertyValueFactory<>("parentEmail"));
 
         TableColumn<ParentStudentPair, String> studentNames = new TableColumn<>("Student Name");
         studentNames.setMinWidth(200);
@@ -76,10 +76,12 @@ public class ApproveParent {
         selectedPair = table.getSelectionModel().getSelectedItems();
         if (status == 0) {
             for (ParentStudentPair p : selectedPair) {
-                Firebase.setParentsApproved(user.getEmail(), p.getParentName());
+                Firebase.setParentsApproved(user.getEmail(), p.getParentEmail());
             }
         } else {
-            // The database doesn't update the parent's approval. It's simply removed from list
+            for (ParentStudentPair p : selectedPair) {
+                Firebase.deleteParent(user.getEmail(), p.getParentEmail());
+            }
         }
         selectedPair.forEach(allPairs::remove);
     }
