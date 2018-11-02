@@ -548,7 +548,7 @@ public class Firebase {
         return null;
     }
 
-    public static void checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser, GridPane gp) {
+    public static ListenerRegistration checkForNewParents(String email, Stage primaryStage, Scene mainViewScene, Account currentUser, GridPane gp) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -566,7 +566,7 @@ public class Firebase {
                 if (document.getString("Email").equalsIgnoreCase(email)) {
                     DocumentReference docRef = db.collection("Counselor")
                             .document(document.getId());
-                    docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    ListenerRegistration registration = docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
                         public void onEvent(@Nullable DocumentSnapshot snapshot,
                                             @Nullable FirestoreException e) {
@@ -596,9 +596,11 @@ public class Firebase {
                             }
                         }
                     });
+                    return registration;
                 }
             }
         }
+        return null;
     }
 
     private static Node getByUserData(Pane pane, Object data) {
