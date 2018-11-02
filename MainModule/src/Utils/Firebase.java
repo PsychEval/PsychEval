@@ -711,7 +711,6 @@ public class Firebase {
                         map = (Map<String, Object>) document.get("Parents");
                     else
                         continue;
-                    List<Object> list = new ArrayList<>();
                     Iterator it = map.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
@@ -721,7 +720,7 @@ public class Firebase {
                                 @Override
                                 public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot,
                                                     @javax.annotation.Nullable FirestoreException e) {
-                                    if ((boolean) l.get(3)) {
+                                    if (documentSnapshot != null && documentSnapshot.exists() && (boolean) l.get(3)) {
                                         Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
                                         Platform.runLater(() -> {
                                             n.showAlert(Alert.AlertType.INFORMATION, primaryStage, "Contact Counselor",
