@@ -89,6 +89,11 @@ public class EditPassword {
             //checkInput()
             //TODO: SHOW SUCCESS ALERT
             String passToChange = newPass2Field.getText();
+            String message = CreateAccountView.validateNewPass(passToChange);
+            if (!message.isEmpty()) {
+                errorMessage.setFill(Color.RED);
+                errorMessage.setText(message);
+            }
             boolean validInput = checkInput(oldPassField, newPassField, newPass2Field);
             if (!validInput) {
                 errorMessage.setFill(Color.RED);
