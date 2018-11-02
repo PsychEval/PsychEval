@@ -28,9 +28,9 @@ public class StudentScoreView {
     private TableView<StudentScore> table;
 
     private VBox createFormPane() {
-        TableColumn<StudentScore, String> parentNames = new TableColumn<>("Parent Email");
+        TableColumn<StudentScore, String> parentNames = new TableColumn<>("Parent Name");
         parentNames.setMinWidth(200);
-        parentNames.setCellValueFactory(new PropertyValueFactory<>("parentEmail"));
+        parentNames.setCellValueFactory(new PropertyValueFactory<>("parentName"));
 
         TableColumn<StudentScore, String> studentNames = new TableColumn<>("Student Name");
         studentNames.setMinWidth(200);
