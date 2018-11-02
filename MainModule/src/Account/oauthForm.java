@@ -25,8 +25,8 @@ public class oauthForm {
     private Stage mainStage;
     private Scene mainViewScene;
     private Account currentUser;
-    static Twitter twitter;
-    static RequestToken requestToken;
+    private Twitter twitter;
+    private RequestToken requestToken;
 
     public oauthForm(Stage primary, Scene mainViewScene, Account currentUser) throws TwitterException {
         this.mainStage = primary;
@@ -35,6 +35,10 @@ public class oauthForm {
         twitter = TwitterFactory.getSingleton();
         twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
         requestToken = twitter.getOAuthRequestToken();
+
+    }
+
+    public oauthForm(){
 
     }
 
@@ -110,7 +114,7 @@ public class oauthForm {
 
 
     }
-    public static void launchOauth() throws TwitterException{
+    public  void launchOauth() throws TwitterException{
 //        Twitter twitter = TwitterFactory.getSingleton();
 //        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
 //        RequestToken requestToken = twitter.getOAuthRequestToken();

@@ -2,6 +2,7 @@ package Account;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,8 +17,7 @@ public class oauthFormTest {
 
     @BeforeClass
     public static void initToolkit()
-            throws InterruptedException
-    {
+            throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
         SwingUtilities.invokeLater(() -> {
             new JFXPanel(); // initializes JavaFX environment
@@ -31,33 +31,19 @@ public class oauthFormTest {
 
     @Test
     public void getScene() {
-        try {
-            oauthForm oa = new oauthForm(null,null,null);
-            Scene s = oa.getScene();
-            Assert.assertNotNull(s);
-        } catch (TwitterException e) {
-            e.printStackTrace();
-        }
+        oauthForm oa = new oauthForm();
+        Scene s = oa.getScene();
+        Assert.assertNotNull(s);
 
     }
 
     @Test
-    public void createPane() {
-    }
-
-    @Test
-    public void addUI() {
-    }
-
-    @Test
-    public void launchOauth() {
-    }
-
-    @Test
-    public void enterCode() {
-    }
-
-    @Test
-    public void updateTokens() {
+    public void addUI() throws TwitterException {
+        GridPane gp1 = new GridPane();
+        GridPane gp2 = new GridPane();
+        oauthForm oa = new oauthForm(null, null, null);
+        oa.addUI(gp1);
+        Assert.assertNotSame(gp1, gp2);
     }
 }
+
