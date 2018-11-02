@@ -2,14 +2,14 @@ package Parent;
 
 import Account.Account;
 import Utils.Firebase;
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -18,10 +18,8 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class LinkWithAStudent{
 
@@ -95,6 +93,7 @@ public class LinkWithAStudent{
             m.put(0, user.getEmail());
             m.put(1, false);
             m.put(2, studentName);
+            m.put(3, false);
             Firebase.setParents(counselorEmail, m);
             showAlert(Alert.AlertType.INFORMATION, mainStage, "Success", "Counselor will review your request");
             mainStage.setScene(mainViewScene);
