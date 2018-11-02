@@ -772,6 +772,44 @@ public class Firebase {
         return null;
     }
 
+    public static void checkForNewScores(String email) {
+        ApiFuture<QuerySnapshot> query = db.collection("SocialMedia").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents;
+        if (querySnapshot != null) {
+            documents = querySnapshot.getDocuments();
+            for (QueryDocumentSnapshot document : documents) {
+                // Update an existing document
+                if (document.getString("Parent Email") == null)
+                    continue;
+                if (document.getString("Parent Email").equalsIgnoreCase(email)) {
+                    DocumentReference docRef = db.collection("SocialMedia")
+                            .document(document.getId());
+                    docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                            @Nullable FirestoreException e) {
+                            if (e != null) {
+                                System.err.println("Listen failed: " + e);
+                                return;
+                            }
+
+                            if (snapshot != null && snapshot.exists()) {
+                                Long score = document.getLong("Risk Factor");
+                                // TODO for Bryan
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
     // PostData db - Name, Posts[]
     public static void setPostDB(String name, String[] posts) {
         DocumentReference docRef = db.collection("PostData").document();
@@ -917,7 +955,7 @@ public class Firebase {
         return true;
     }
 
-    public static List<String> getMessages(String cEmail, String pEmail) {
+    public static List<List<Object>> getMessages(String cEmail, String pEmail) {
         ApiFuture<QuerySnapshot> query = db.collection("Messages").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -939,12 +977,15 @@ public class Firebase {
                             map = (Map<String, Object>) doc.get("Message List");
                         else
                             continue;
-                        List<String> messages = new ArrayList<>();
+                        List<List<Object>> messages = new ArrayList<>();
                         Iterator it = map.entrySet().iterator();
                         while (it.hasNext()) {
                             Map.Entry pair = (Map.Entry) it.next();
                             List<Object> l = (List<Object>) pair.getValue();
-                            messages.add((String) l.get(0));
+                            List<Object> list = new ArrayList<>();
+                            list.add(l.get(0));
+                            list.add(l.get(1));
+                            messages.add(list);
                         }
                         return messages;
                     }

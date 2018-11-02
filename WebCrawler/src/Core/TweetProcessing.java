@@ -28,7 +28,7 @@ public class TweetProcessing {
         return  avgScore;
     }
 
-    private int processIBM(List <String> tweets){
+    int processIBM(List<String> tweets){
 
         ToneAnalyzer toneAnalyzer = new ToneAnalyzer("2017-09-21");
         toneAnalyzer.setUsernameAndPassword("6de387d8-b9c6-4014-9d8e-ef01e41396dc","vGwv3H2gphbW");
@@ -88,7 +88,7 @@ public class TweetProcessing {
     }
 
 
-    private int processMS(Documents documents) throws IOException {
+    int processMS(Documents documents) throws IOException {
         String text = new Gson().toJson(documents);
         byte[] encoded_text = text.getBytes("UTF-8");
 
