@@ -580,8 +580,8 @@ public class Firebase {
                                 Iterator it = hm.entrySet().iterator();
                                 while (it.hasNext()) {
                                     Map.Entry pair = (Map.Entry) it.next();
-                                    List<String> l = (List<String>) pair.getValue();
-                                    if (l.contains(false)) {
+                                    List<Object> l = (List<Object>) pair.getValue();
+                                    if (!(boolean)l.get(1)) {
                                         Notifications n = new Notifications(primaryStage, mainViewScene, currentUser);
                                         Platform.runLater(() -> {
                                             if (getByUserData(gp, "viewScore") != null) {
