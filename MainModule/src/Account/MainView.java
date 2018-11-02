@@ -6,6 +6,7 @@ import Counselor.StudentScoreView;
 import Parent.LinkWithAStudent;
 import Utils.Firebase;
 import Utils.Oauth;
+import com.google.cloud.firestore.ListenerRegistration;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -47,6 +48,7 @@ public class MainView{
     private Scene messaging;
     private Scene getParentToMessage;
     private GridPane gridPane;
+    private ListenerRegistration lr;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -101,6 +103,8 @@ public class MainView{
                     logoutButton.setOnAction(event -> {
                         System.out.println("logout button");
                         MainView.currentUser = null;
+                        if (lr != null)
+                            lr.remove();
                         window.setScene(createAccount);
 
                     });
@@ -364,7 +368,7 @@ public class MainView{
     public void startNotificationThreads() {
         if (currentUser.getAccountType() == Account.AccountType.COUNSELOR) {
             // notify if there is a new parent approval request
-            Firebase.checkForNewParents(currentUser.getEmail(), window, mainScene, currentUser, gridPane);
+            lr = Firebase.checkForNewParents(currentUser.getEmail(), window, mainScene, currentUser, gridPane);
         }
         if (currentUser.getAccountType() == Account.AccountType.PARENT) {
             Firebase.checkScoreIsBad(currentUser.getEmail(), window, mainScene, currentUser);
