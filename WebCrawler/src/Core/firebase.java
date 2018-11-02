@@ -12,10 +12,13 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceAsStream;
 
 public class firebase {
 
@@ -24,11 +27,12 @@ public class firebase {
         FileInputStream serviceAccount;
         FirebaseOptions options = null;
         try {
-            serviceAccount = new FileInputStream("WebCrawler/src/Core/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
-
+            InputStream stream = firebase.class.getResourceAsStream("psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
+            //serviceAccount = new FileInputStream("WebCrawler/src/Core/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
+           // System.out.println(stream);
             // Initialize the app with a service account, granting admin privileges
             options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setCredentials(GoogleCredentials.fromStream(stream))
                     .setDatabaseUrl("https://psycheval-ff91b.firebaseio.com")
                     .build();
         } catch (IOException e) {
