@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Messaging {
@@ -74,11 +75,10 @@ public class Messaging {
         messageField.setText("");
 
         if (user.getAccountType() == Account.AccountType.COUNSELOR) {
-            //ObservableList<ParentInfo> selectedPair;
-            //selectedPair = table.getSelectionModel().getSelectedItems();
-            // TODO send the message to parent based on the parentemail
-            // Firebase.addMessage(user.getEmail(), selectedPair.get(0).getParentEmail, messageString);
+            Firebase.newMessage(user.getEmail(), parentEmail, 0, messageString);
         }
+        else
+            Firebase.newMessage(Firebase.getCounselorEmail(parentEmail), parentEmail,1, messageString);
 
     }
     public void returnToMainView() {
@@ -91,21 +91,16 @@ public class Messaging {
         String counselorEmail;
         if (user.getAccountType() == Account.AccountType.PARENT)
             counselorEmail = Firebase.getCounselorEmail(user.getEmail());
+        else
+            counselorEmail = user.getEmail();
+        List<List<Object>> listOfMessages = Firebase.getMessages(counselorEmail, parentEmail);
+        for (List<Object> e : listOfMessages) {
+            if((long)e.get(1) == 1)
+                pairs.add(new Message((String)e.get(0), "Sent By Parent"));
+            else
+                pairs.add(new Message((String)e.get(0), "Sent By Counselor"));
+        }
 
-        //TODO get messages given counselor email and parent email
-
-//        if (map == null)
-//            return pairs;
-
-//        for (String key : map.keySet()) {
-//            // map.get(String.valueOf(i));
-//            ArrayList<Object> temp = (ArrayList<Object>) map.get(key);
-//            if (temp.get(0) != null)
-//                pairs.add(new Message((String)temp.get(0), (String)temp.get(1)));
-//        }
-        pairs.add(new Message("message 0 ", "sent by counselor"));
-        pairs.add(new Message("message 1" , "sent by parent"));
-        pairs.add(new Message("message 2", "sent by counselor"));
         return pairs;
 
     }

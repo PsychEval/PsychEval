@@ -105,9 +105,9 @@ public class StudentScoreView {
             long score = Firebase.getRiskFactor(l.get(0));
             if (score == -10)
                 continue;
-            if (score > 70) {
-                // TODO alert parent
-            }
+//            if (score > 70) {
+//                Firebase.setScoreIsBad(l.get(0));
+//            }
             String pName = Firebase.getName(l.get(0));
             List<String> list = new ArrayList<>();
             Collections.addAll(list, pName, stuName, String.valueOf(score));
