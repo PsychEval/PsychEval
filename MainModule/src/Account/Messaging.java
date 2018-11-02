@@ -94,6 +94,8 @@ public class Messaging {
         else
             counselorEmail = user.getEmail();
         List<List<Object>> listOfMessages = Firebase.getMessages(counselorEmail, parentEmail);
+        if (listOfMessages == null)
+            return pairs;
         for (List<Object> e : listOfMessages) {
             if((long)e.get(1) == 1)
                 pairs.add(new Message((String)e.get(0), "Sent By Parent"));
