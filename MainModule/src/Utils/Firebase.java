@@ -663,7 +663,7 @@ public class Firebase {
     }
 
     public static boolean isAddedAlready(String cEmail) {
-        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
+        ApiFuture<QuerySnapshot> query = db.collection("Authentication").get();
         QuerySnapshot querySnapshot = null;
         try {
             querySnapshot = query.get();
@@ -676,9 +676,9 @@ public class Firebase {
             for (QueryDocumentSnapshot document : documents) {
 
                 // Update an existing document
-                if (document.getString("Email") == null)
+                if (document.getString("email") == null)
                     continue;
-                if (document.getString("Email").equalsIgnoreCase(cEmail))
+                if (document.getString("email").equalsIgnoreCase(cEmail))
                     return true;
             }
         }
