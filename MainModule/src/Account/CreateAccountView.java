@@ -152,7 +152,6 @@ public class CreateAccountView extends Application {
         });
 
         submitButton.setOnAction(event -> {
-            //TODO: error checking for password and email
             String selection = comboBox.getValue();
             if (selection == null)
                 showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Please Select Account Type!");
@@ -173,17 +172,13 @@ public class CreateAccountView extends Application {
                     // check if email is invalid
                 else if (!EmailValidator.getInstance().isValid(emailField.getText())) {
                     emailField.setText("");
-                    passwordField.setText("");
-                    nameField.setText("");
                     showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Invalid Email!");
                 }
 
                 // check if password is valid
                 else if (!validateNewPass(passwordField.getText()).isEmpty()) {
                     String message = validateNewPass(passwordField.getText());
-                    emailField.setText("");
                     passwordField.setText("");
-                    nameField.setText("");
                     showAlert(Alert.AlertType.ERROR, mainStage, "Error", message);
                 }
 
