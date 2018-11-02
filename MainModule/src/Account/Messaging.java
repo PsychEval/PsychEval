@@ -80,6 +80,9 @@ public class Messaging {
         else
             Firebase.newMessage(Firebase.getCounselorEmail(parentEmail), parentEmail,1, messageString);
 
+        Messaging m = new Messaging(mainStage, mainViewScene, user, parentEmail);
+        Scene messaging = m.getScene();
+        mainStage.setScene(messaging);
     }
     public void returnToMainView() {
         mainStage.setScene(mainViewScene);
