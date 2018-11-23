@@ -2,9 +2,7 @@ package Core;
 
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.firestore.*;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
@@ -13,14 +11,13 @@ import com.google.firebase.cloud.FirestoreClient;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceAsStream;
 
 public class firebase {
+    static Firestore db;
 
     public static void init() {
         // Fetch the service account key JSON file contents
@@ -39,7 +36,9 @@ public class firebase {
             e.printStackTrace();
         }
 
+
         FirebaseApp.initializeApp(options);
+        db = FirestoreClient.getFirestore();
         System.out.println("Firebase successfully initialized");
     }
 
@@ -97,5 +96,41 @@ public class firebase {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void pushToQuickLookup(String tweet){
+        DocumentReference docRef = db.collection("Quick Lookup").document();
+        Map<String, Object> data = new HashMap<>();
+        data.put("Tweet", tweet);
+
+        ApiFuture<WriteResult> result = docRef.set(data);
+        try {
+            result.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //TODO:This returns null for some reason
+    public static List<String> getFromQuickLookup (){
+        ApiFuture<QuerySnapshot> query = db.collection("Quick Lookup").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents;
+        List<String> potentialRisks = new ArrayList<>();
+        if (querySnapshot != null) {
+            documents = querySnapshot.getDocuments();
+            for (QueryDocumentSnapshot document : documents) {
+                String s = document.getString("Tweets");
+                System.out.println("1 " + s);
+                potentialRisks.add(s);
+            }
+        }
+        return potentialRisks;
     }
 }
