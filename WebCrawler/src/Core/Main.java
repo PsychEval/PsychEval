@@ -72,7 +72,7 @@ public class Main extends Application {
     void mainLoop() throws IOException {
         TweetPuller tweetPuller = new TweetPuller();
 //        tweetPuller.pullTweets();
-        System.out.println(firebase.getFromQuickLookup());
+//        System.out.println(firebase.getFromQuickLookup());
 
     }
 

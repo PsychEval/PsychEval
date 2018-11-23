@@ -112,7 +112,6 @@ public class firebase {
     }
 
 
-    //TODO:This returns null for some reason
     public static List<String> getFromQuickLookup (){
         ApiFuture<QuerySnapshot> query = db.collection("Quick Lookup").get();
         QuerySnapshot querySnapshot = null;
@@ -123,11 +122,13 @@ public class firebase {
         }
         List<QueryDocumentSnapshot> documents;
         List<String> potentialRisks = new ArrayList<>();
+//        int i = 0;
         if (querySnapshot != null) {
             documents = querySnapshot.getDocuments();
             for (QueryDocumentSnapshot document : documents) {
-                String s = document.getString("Tweets");
-                System.out.println("1 " + s);
+                String s = document.get("Tweet").toString();
+//                i++;
+//                System.out.println(i + s);
                 potentialRisks.add(s);
             }
         }
