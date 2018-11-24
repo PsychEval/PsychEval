@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 public class TweetProcessing {
 
+    protected List<String> newPotential = new ArrayList<>();
 
     public int mainProcess(List<String> tweets, String name) throws IOException {
         System.out.println("Getting for: " + name);
@@ -24,6 +25,10 @@ public class TweetProcessing {
         int ms = setupMS(tweets);
         System.out.println("MS SCORE: " + ms);
         int avgScore = (ibm+ms)/2;
+
+        for (String k: newPotential) {
+            firebase.pushToQuickLookup(k);
+        }
 
         return  avgScore;
     }
@@ -36,7 +41,12 @@ public class TweetProcessing {
         double finTone = 0;
         double count = tweets.size();
         double score = 0;
+        List<String> potential = firebase.getFromQuickLookup();
         for (String s : tweets) {
+            if (potential.contains(s)) {
+                System.out.println("FOUND ONE " + s);
+                //TODO: skip the calculation and give a tone
+            }
             ToneOptions toneOptions = new ToneOptions.Builder().text(s).build();
             ToneAnalysis toneAnalysis = toneAnalyzer.tone(toneOptions).execute();
             int size = toneAnalysis.getDocumentTone().getTones().size();
@@ -48,6 +58,14 @@ public class TweetProcessing {
             for(int i=0; i < size; i++){
                 double tone = toneAnalysis.getDocumentTone().getTones().get(i).getScore();
                 String toenail = toneAnalysis.getDocumentTone().getTones().get(i).getToneName();
+                if (tone > 0.9 && !toenail.equals("Joy")){
+                    if (!potential.contains(s)) {
+                        if (!newPotential.contains(s)){
+                            newPotential.add(s);
+                        }
+
+                    }
+                }
                 if(toenail.equals("Joy")){
                     score = 100 - 100*tone;
                    // System.out.println("JOY: " + score);

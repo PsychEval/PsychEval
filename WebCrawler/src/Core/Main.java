@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLOutput;
+
 
 public class Main extends Application {
 
@@ -71,7 +71,7 @@ public class Main extends Application {
     //controlling function
     void mainLoop() throws IOException {
         TweetPuller tweetPuller = new TweetPuller();
-//        tweetPuller.pullTweets();
+        tweetPuller.pullTweets();
 //        System.out.println(firebase.getFromQuickLookup());
 
     }
