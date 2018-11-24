@@ -28,6 +28,7 @@ public class TweetProcessing {
 
         for (String k: newPotential) {
             firebase.pushToQuickLookup(k);
+            System.out.println("Added " + k);
         }
 
         return  avgScore;
@@ -43,9 +44,13 @@ public class TweetProcessing {
         double score = 0;
         List<String> potential = firebase.getFromQuickLookup();
         for (String s : tweets) {
+            double innerTone = 0;
+            int flag = 0;
             if (potential.contains(s)) {
                 System.out.println("FOUND ONE " + s);
                 //TODO: skip the calculation and give a tone
+                innerTone = 100;
+                flag = 1;
             }
             ToneOptions toneOptions = new ToneOptions.Builder().text(s).build();
             ToneAnalysis toneAnalysis = toneAnalyzer.tone(toneOptions).execute();
@@ -54,11 +59,14 @@ public class TweetProcessing {
             if(size == 0){
                 continue;
             }
-            double innerTone = 0;
             for(int i=0; i < size; i++){
+                //TODO: check calculations
+                if (flag == 1){
+                    break;
+                }
                 double tone = toneAnalysis.getDocumentTone().getTones().get(i).getScore();
                 String toenail = toneAnalysis.getDocumentTone().getTones().get(i).getToneName();
-                if (tone > 0.9 && !toenail.equals("Joy")){
+                if (tone > 0.8 && !toenail.equalsIgnoreCase("Joy")){
                     if (!potential.contains(s)) {
                         if (!newPotential.contains(s)){
                             newPotential.add(s);
