@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "157426664750",
+    "firebase_url": "https://testapp-61617.firebaseio.com",
+    "project_id": "testapp-61617",
+    "storage_bucket": "testapp-61617.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:157426664750:android:693751bb34e0d109",
+        "android_client_info": {
+          "package_name": "com.psycheval.testapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "157426664750-2mb0tn363j71qb70n1icpblm7lps4ps5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.psycheval.testapp",
+            "certificate_hash": "38c033caaf31d4edee2eb04133d5bd3f1f962559"
+          }
+        },
+        {
+          "client_id": "157426664750-sm7lm3n980pnsuateal3ck3g2mm5822m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2eJI5cALg7l5K0AszYFuJrBCfylkGZQQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "157426664750-sm7lm3n980pnsuateal3ck3g2mm5822m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
