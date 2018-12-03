@@ -67,6 +67,7 @@ public class TweetProcessing {
                 }
                 double tone = toneAnalysis.getDocumentTone().getTones().get(i).getScore();
                 String toenail = toneAnalysis.getDocumentTone().getTones().get(i).getToneName();
+
                 if (tone > 0.8 && !toenail.equalsIgnoreCase("Joy")){
                     if (!potential.contains(s)) {
                         if (!newPotential.contains(s)){
@@ -75,6 +76,7 @@ public class TweetProcessing {
 
                     }
                 }
+
                 if(toenail.equals("Joy")){
                     score = 100 - 100*tone;
                    // System.out.println("JOY: " + score);
@@ -111,6 +113,7 @@ public class TweetProcessing {
         for (String s : tweets) {
             if (potential.contains(s)){
                 riskCount++;
+                System.out.println("risk count for MS : " + riskCount);
             } else {
                 documents.add("" + i++, "en", s);
             }
