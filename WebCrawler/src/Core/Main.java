@@ -9,7 +9,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+
 
 public class Main extends Application {
 
@@ -38,6 +41,20 @@ public class Main extends Application {
                 e.printStackTrace();
             }
         });
+
+
+        Button button1 = new Button("Update Database");
+        button1.setPrefHeight(40);
+//        button1.setPrefWidth(100);
+        button1.setDefaultButton(true);
+        GridPane.setHalignment(button1, HPos.CENTER);
+        gp.add(button1, 0,1);
+
+        button1.setOnAction(event -> {
+            updateDatabaseOfTweets();
+        });
+
+
     }
 
     @Override
@@ -55,7 +72,22 @@ public class Main extends Application {
     void mainLoop() throws IOException {
         TweetPuller tweetPuller = new TweetPuller();
         tweetPuller.pullTweets();
+//        System.out.println(firebase.getFromQuickLookup());
 
+    }
 
+    void updateDatabaseOfTweets() throws NullPointerException{
+        //read from txt
+        //push to firebase line by line
+        String file = "WebCrawler/src/Core/killerTweets.txt";
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line = br.readLine();
+            while (line != null) {
+                firebase.pushToQuickLookup(line);
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

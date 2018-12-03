@@ -16,14 +16,22 @@ import java.util.regex.Pattern;
 
 public class TweetProcessing {
 
+    protected List<String> newPotential = new ArrayList<>();
+    List<String> potential = new ArrayList<>();
 
     public int mainProcess(List<String> tweets, String name) throws IOException {
+        potential = firebase.getFromQuickLookup();
         System.out.println("Getting for: " + name);
         int ibm = processIBM(tweets);
         System.out.println("IBM SCORE: " + ibm);
         int ms = setupMS(tweets);
         System.out.println("MS SCORE: " + ms);
         int avgScore = (ibm+ms)/2;
+
+        for (String k: newPotential) {
+            firebase.pushToQuickLookup(k);
+            System.out.println("Added " + k);
+        }
 
         return  avgScore;
     }
@@ -37,6 +45,14 @@ public class TweetProcessing {
         double count = tweets.size();
         double score = 0;
         for (String s : tweets) {
+            double innerTone = 0;
+            int flag = 0;
+            if (potential.contains(s)) {
+                System.out.println("FOUND ONE " + s);
+                //TODO: skip the calculation and give a tone
+                innerTone = 100;
+                flag = 1;
+            }
             ToneOptions toneOptions = new ToneOptions.Builder().text(s).build();
             ToneAnalysis toneAnalysis = toneAnalyzer.tone(toneOptions).execute();
             int size = toneAnalysis.getDocumentTone().getTones().size();
@@ -44,10 +60,23 @@ public class TweetProcessing {
             if(size == 0){
                 continue;
             }
-            double innerTone = 0;
             for(int i=0; i < size; i++){
+                //TODO: check calculations
+                if (flag == 1){
+                    break;
+                }
                 double tone = toneAnalysis.getDocumentTone().getTones().get(i).getScore();
                 String toenail = toneAnalysis.getDocumentTone().getTones().get(i).getToneName();
+
+                if (tone > 0.8 && !toenail.equalsIgnoreCase("Joy")){
+                    if (!potential.contains(s)) {
+                        if (!newPotential.contains(s)){
+                            newPotential.add(s);
+                        }
+
+                    }
+                }
+
                 if(toenail.equals("Joy")){
                     score = 100 - 100*tone;
                    // System.out.println("JOY: " + score);
@@ -80,15 +109,21 @@ public class TweetProcessing {
         //create documents
         Documents documents = new Documents ();
         int i = 1;
+        int riskCount = 0;
         for (String s : tweets) {
-            documents.add("" + i++, "en", s);
+            if (potential.contains(s)){
+                riskCount++;
+                System.out.println("risk count for MS : " + riskCount);
+            } else {
+                documents.add("" + i++, "en", s);
+            }
         }
 
-        return processMS(documents);
+        return processMS(documents, riskCount);
     }
 
 
-    int processMS(Documents documents) throws IOException {
+    int processMS(Documents documents, int riskCount) throws IOException {
         String text = new Gson().toJson(documents);
         byte[] encoded_text = text.getBytes("UTF-8");
 
@@ -114,11 +149,11 @@ public class TweetProcessing {
         in.close();
 
         String finResponse = response.toString();
-        return parseMS(finResponse);
+        return parseMS(finResponse, riskCount);
 
     }
 
-    private int parseMS(String response){
+    private int parseMS(String response, int riskCount){
         List<String> allMatches = new ArrayList<String>();
         Matcher m = Pattern.compile("score(.*?)\\}")
                 .matcher(response);
@@ -133,7 +168,20 @@ public class TweetProcessing {
             finScore += temp;
         }
         finScore = finScore * 100;
-        return 100 - (int)finScore/count;
+
+        int calculatedScore =  100 - (int)finScore/count;
+
+        return calculateMS(calculatedScore, count, riskCount);
+    }
+
+
+    private int calculateMS(int calculatedScore, int count, int countOfRisks){
+        int weighted1 = calculatedScore*count;
+        int weighted2 = countOfRisks*100;
+        int sum = weighted1+weighted2;
+        int bottom = count+countOfRisks;
+        int avg = sum/bottom;
+        return avg;
     }
 
 //    private int processGoog(){
