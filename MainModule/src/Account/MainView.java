@@ -24,6 +24,8 @@ import javafx.stage.Window;
 import twitter4j.TwitterException;
 import Counselor.*;
 import Parent.*;
+
+import java.util.List;
 import java.util.Optional;
 
 //import sun.applet.Main;
@@ -204,12 +206,16 @@ public class MainView{
                         Optional<String> result = dialog.showAndWait();
                         if (result.isPresent()){
                             //System.out.println("AHHHHHHH   " + result.get() + " " + currentUser.getName());
-                            boolean temp = Firebase.isApproved(result.get(), currentUser.getName());
-                            if(temp){
-                                showAlert(Alert.AlertType.INFORMATION, window, "Approved", "You are approved");
-                            }else{
-                                showAlert(Alert.AlertType.INFORMATION, window, "Not Approved", "You are not approved");
+                            List<String> children = Firebase.getStudentName(currentUser.getEmail());
+                            StringBuilder approvedYetAllChildren = new StringBuilder();
+                            for (String each: children) {
+                                boolean temp = Firebase.isApproved(result.get(), currentUser.getName(), each);
+                                if (temp)
+                                    approvedYetAllChildren.append("You are approved for child: " + each);
+                                else
+                                    approvedYetAllChildren.append("You are not approved for child: " + each + " ");
                             }
+                            showAlert(Alert.AlertType.INFORMATION, window, "Am I approved", approvedYetAllChildren.toString());
                         }
 
 
