@@ -38,12 +38,9 @@ public class MainActivity extends AppCompatActivity {
         Context myContext = getApplicationContext();
         AssetManager asmgr = myContext.getAssets();
 
-        Firebase.init();
-        Utils.setTwitter();
-
-
-
-
+        //Firebase.setPassword("parent@parent.com", "Test1!");
+        //Firebase.init();
+        //Utils.setTwitter();
 
     }
 

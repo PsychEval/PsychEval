@@ -108,7 +108,6 @@ public class MainViewScreen extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), EditPassActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -116,6 +115,7 @@ public class MainViewScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent  = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 Account.curruser = null;
                 startActivity(intent);
                 finish();

@@ -10,7 +10,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -18,11 +20,14 @@ import com.google.firestore.v1beta1.WriteResult;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import javax.annotation.Nullable;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -33,7 +38,23 @@ public class Firebase {
     static void init(){
         db = FirebaseFirestore.getInstance();
         Log.e("FB", "INITIALIZED!");
-        System.out.println("estaeads");
+        db.collection("Counselor")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+
+                        List<String> data = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : value) {
+
+                        }
+                        Log.d(TAG, "Some data: " + data);
+
+                    }
+                });
     }
 
     public static interface loginCallback{
@@ -362,20 +383,105 @@ public class Firebase {
     }
 
 
-    public static void sendMessage(String cEmail, String pEmail, String Message, final sendMessageCompleteCallback callback){
+    public static void sendMessage(final String cEmail, final String pEmail, final String message, final sendMessageCompleteCallback callback){
         db.collection("Messages")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        DocumentReference docRef;
+                        int count = 0;
                         if(task.isSuccessful()){
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                if (doc.getString("Counselor Email") == null)
+                                    continue;
+                                if (doc.getString("Counselor Email").equalsIgnoreCase(cEmail)) {
+                                    if (doc.getString("Parent Email") == null)
+                                        continue;
+                                    if (doc.getString("Parent Email").equalsIgnoreCase(pEmail)) {
+                                        docRef = db.collection("Messages")
+                                                .document(doc.getId());
+                                        Map<String, Object> map;
+                                        if (doc.get("Message List") != null)
+                                            map = (Map<String, Object>) doc.get("Message List");
+                                        else
+                                            continue;
+                                        List<Object> list = new ArrayList<>();
+                                        Iterator it = map.entrySet().iterator();
+                                        while (it.hasNext()) {
+                                            Map.Entry pair = (Map.Entry) it.next();
+                                            count = Integer.parseInt(String.valueOf(pair.getKey())) + 1;
+                                        }
+                                        Collections.addAll(list, message, 1);
+                                        map.put(String.valueOf(count++), list);
 
+                                        docRef.update("Message List", map);
+                                        callback.onCallback();
+                                        return;
+                                    }
+                                }
+                            }
+                            docRef = db.collection("Messages").document();
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("Counselor Email", cEmail);
+                            data.put("Parent Email", pEmail);
+
+                            Map<String, Object> m = new HashMap<>();
+                            List<Object> l = new ArrayList<>();
+                            Collections.addAll(l, message, 1);
+                            m.put(String.valueOf((count++)), l);
+                            data.put("Message List", m);
+
+                            docRef.set(data);
+                            callback.onCallback();
+                            return;
                         }else{
                             Log.e("ERROR", "Failed to get database in sendMessage");
                         }
                         callback.onCallback();
+
                     }
 
+                });
+    }
+
+    public static void setPassword(final String email, final String password){
+        db.collection("Authentication")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot document : task.getResult()){
+                                if (document.getString("email") == null)
+                                    continue;
+                                byte[] salt = email.getBytes();
+                                byte[] pass = Passwords.hash(password, salt);
+                                String p = "";
+                                for (byte b:pass)
+                                    p += b + " ";
+
+                                if(document.getString("email").equalsIgnoreCase(email)){
+                                    document.getReference().update("password",p);
+                                    document.getReference().update("salt", salt.toString());
+                                }
+
+
+//                                try {B
+//                                    if (document.getString("email").equalsIgnoreCase(email)) {
+//                                        future = document.getReference().update("password", p);
+//                                        future.get();
+//                                        future = document.getReference().update("salt", salt.toString());
+//                                        future.get();
+//                                    }
+//                                } catch (InterruptedException | ExecutionException e) {
+//                                    e.printStackTrace();
+//                                }
+                            }
+                        }else{
+                            Log.e("ERROR", "Failed to access database in setPassword");
+                        }
+                    }
                 });
     }
 

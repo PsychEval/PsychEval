@@ -10,36 +10,74 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!--<application-->
+        <!--android:allowBackup="true"-->
+        <!--android:icon="@mipmap/ic_launcher"-->
+        <!--android:label="@string/app_name"-->
+        <!--android:roundIcon="@mipmap/ic_launcher_round"-->
+        <!--android:supportsRtl="true"-->
+        <!--android:theme="@style/AppTheme"-->
+        <!--tools:ignore="GoogleAppIndexingWarning">-->
+        <!--<activity-->
+            <!--android:name=".MainActivity"-->
+            <!--android:label="@string/title_activity_login">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+        <!--<activity android:name=".MainViewScreen" />-->
+        <!--<activity-->
+            <!--android:name=".LinkActivity"-->
+            <!--android:parentActivityName=".MainViewScreen" />-->
+        <!--<activity-->
+            <!--android:name=".OauthActivity"-->
+            <!--android:parentActivityName=".MainViewScreen" />-->
+        <!--<activity-->
+            <!--android:name=".ApprovedActivity"-->
+            <!--android:parentActivityName=".MainViewScreen" />-->
+        <!--<activity-->
+            <!--android:name=".MessagingActivity"-->
+            <!--android:parentActivityName=".MainViewScreen" >-->
+
+        <!--</activity>-->
+        <!--<activity android:name=".EditPassActivity"/>-->
+    <!--</application>-->
+
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:name=".MyApplication"
+        tools:ignore="GoogleAppIndexingWarning"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_login">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        >
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity
+        android:name=".MainActivity"
+        android:label="@string/title_activity_login"
+            android:noHistory="true">
+        <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+
+        <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
         </activity>
         <activity android:name=".MainViewScreen" />
         <activity
-            android:name=".LinkActivity"
-            android:parentActivityName=".MainViewScreen" />
+        android:name=".LinkActivity"
+        android:parentActivityName=".MainViewScreen" />
         <activity
-            android:name=".OauthActivity"
-            android:parentActivityName=".MainViewScreen" />
+        android:name=".OauthActivity"
+        android:parentActivityName=".MainViewScreen" />
         <activity
-            android:name=".ApprovedActivity"
-            android:parentActivityName=".MainViewScreen" />
+        android:name=".ApprovedActivity"
+        android:parentActivityName=".MainViewScreen" />
         <activity
-            android:name=".MessagingActivity"
-            android:parentActivityName=".MainViewScreen" >
+        android:name=".MessagingActivity"
+        android:parentActivityName=".MainViewScreen" >
 
         </activity>
         <activity android:name=".EditPassActivity"/>
