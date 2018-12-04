@@ -377,7 +377,10 @@ public class MainView{
             lr = Firebase.checkForNewParents(currentUser.getEmail(), window, mainScene, currentUser, gridPane);
         }
         if (currentUser.getAccountType() == Account.AccountType.PARENT) {
-            Firebase.checkScoreIsBad(currentUser.getEmail(), window, mainScene, currentUser);
+            List<String> allChild = Firebase.getStudentName(currentUser.getEmail());
+            for (String each: allChild) {
+                Firebase.checkScoreIsBad(currentUser.getEmail(), each, window, mainScene, currentUser);
+            }
         }
     }
 }
