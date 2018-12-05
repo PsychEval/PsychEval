@@ -209,7 +209,7 @@ public class MainView{
                             List<String> children = Firebase.getStudentName(currentUser.getEmail());
                             StringBuilder approvedYetAllChildren = new StringBuilder();
                             for (String each: children) {
-                                boolean temp = Firebase.isApproved(result.get(), currentUser.getName(), each);
+                                boolean temp = Firebase.isApproved(result.get(), currentUser.getEmail(), each);
                                 if (temp)
                                     approvedYetAllChildren.append("You are approved for child: " + each);
                                 else
