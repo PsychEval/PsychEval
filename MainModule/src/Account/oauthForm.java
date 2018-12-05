@@ -40,10 +40,6 @@ public class oauthForm {
         this.mainStage = primary;
         this.mainViewScene = mainViewScene;
         this.currentUser= currentUser;
-        //twitter = TwitterFactory.getSingleton();
-        //twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
-        //requestToken = twitter.getOAuthRequestToken();
-
     }
 
     public oauthForm(){
@@ -136,21 +132,8 @@ public class oauthForm {
 
     }
     public  void launchOauth() throws TwitterException{
-//        Twitter twitter = TwitterFactory.getSingleton();
-//        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
-//        RequestToken requestToken = twitter.getOAuthRequestToken();
-        //AccessToken accessToken = null;
-        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//        System.out.println("Open the following URL and grant access to your account:");
-//        System.out.println(requestToken.getAuthorizationURL());
         try {
-          //  Desktop desktop = java.awt.Desktop.getDesktop();
-            //URI oURL = new URI(requestToken.getAuthorizationURL());
-            //desktop.browse(oURL);
-            //System.out.println("Test1");
-            //System.out.println(Desktop.isDesktopSupported());
-            //Desktop.getDesktop().browse(new URL(requestToken.getAuthorizationURL()).toURI());
-            //System.out.println("Test 2");
+
             if( Desktop.isDesktopSupported() )
             {
                 new Thread(() -> {
@@ -176,11 +159,7 @@ public class oauthForm {
     }
 
     public void enterCode(String code) throws TwitterException {
-        try {
-            requestToken = twitter.getOAuthRequestToken();
-        } catch (TwitterException e) {
-            e.printStackTrace();
-        }
+
         if(nameField.getText().isEmpty()){
             showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Please Enter Child Name");
             return;
