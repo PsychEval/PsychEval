@@ -17,6 +17,10 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.apache.commons.validator.routines.EmailValidator;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.RequestToken;
 
 import java.util.regex.Pattern;
 
@@ -229,7 +233,16 @@ public class CreateAccountView extends Application {
         loginScene = login.getScene();
     }
 
+    static Twitter twitter;
+    static RequestToken requestToken;
     public void start(Stage primaryStage) {
+        twitter = TwitterFactory.getSingleton();
+        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
+        try {
+            requestToken = twitter.getOAuthRequestToken();
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
         primaryStage.setTitle("Create Account");
         GridPane gp = createFormPane();
         AddUI(gp);
