@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -23,22 +24,25 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static Account.CreateAccountView.requestToken;
+import static Account.CreateAccountView.twitter;
+
 public class oauthForm {
 
     private Stage mainStage;
     private Scene mainViewScene;
     private Account currentUser;
-    static Twitter twitter;
+    //static Twitter twitter;
     private TextField nameField;
-    static RequestToken requestToken;
+    //static RequestToken requestToken;
 
     public oauthForm(Stage primary, Scene mainViewScene, Account currentUser) throws TwitterException {
         this.mainStage = primary;
         this.mainViewScene = mainViewScene;
         this.currentUser= currentUser;
-        twitter = TwitterFactory.getSingleton();
-        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
-        requestToken = twitter.getOAuthRequestToken();
+        //twitter = TwitterFactory.getSingleton();
+        //twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
+        //requestToken = twitter.getOAuthRequestToken();
 
     }
 
@@ -87,13 +91,22 @@ public class oauthForm {
 
         });
 
+
+        Label codeLabel = new Label("Enter Twitter Code");
+        gp.add(codeLabel, 0, 1);
+
         TextField twitterCode = new TextField();
         twitterCode.setPrefHeight(40);
-        gp.add(twitterCode, 0, 1);
+        gp.add(twitterCode, 1, 1);
 
+
+        Label nameLabel = new Label("Enter Child name");
+        gp.add(nameLabel, 0, 2);
         nameField = new TextField();
         nameField.setPrefHeight(40);
-        gp.add(nameField,0,2);
+        gp.add(nameField,1,2);
+
+
 
         Button submitButton = new Button("Submit");
         submitButton.setPrefWidth(100);
@@ -142,7 +155,7 @@ public class oauthForm {
             {
                 new Thread(() -> {
                     try {
-                        Desktop.getDesktop().browse( new URI( requestToken.getAuthorizationURL() ) );
+                        Desktop.getDesktop().browse( new URI(requestToken.getAuthorizationURL() ) );
                     } catch (IOException | URISyntaxException e1) {
                         e1.printStackTrace();
                     }
@@ -163,7 +176,11 @@ public class oauthForm {
     }
 
     public void enterCode(String code) throws TwitterException {
-
+        try {
+            requestToken = twitter.getOAuthRequestToken();
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
         if(nameField.getText().isEmpty()){
             showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Please Enter Child Name");
             return;
