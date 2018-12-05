@@ -289,7 +289,7 @@ public class Firebase {
         }
     }
 
-    public static void setParentsApproved(String email, String parentEmail) {
+    public static void setParentsApproved(String email, String parentEmail, String child) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -318,7 +318,7 @@ public class Firebase {
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
                         List<Object> l = (List<Object>) pair.getValue();
-                        if (l.contains(parentEmail)) {
+                        if (l.contains(parentEmail) && l.contains(child)) {
                             for (int j = 0; j < l.size(); j++) {
                                 if (j == 1)
                                     list.add(true);
@@ -400,7 +400,7 @@ public class Firebase {
         return (ArrayList<String>) sNames;
     }
 
-    public static String getStudentName(String parentEmail) {
+    public static List<String> getStudentName(String parentEmail) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -418,13 +418,15 @@ public class Firebase {
                 else
                     continue;
                 Iterator it = map.entrySet().iterator();
+                List<String> children = new ArrayList<>();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
                     List<String> l = (List<String>) pair.getValue();
                     if (!l.contains(parentEmail))
                         continue;
-                    return l.get(2);
+                    children.add(l.get(2));
                 }
+                return children;
             }
         }
         return null;
@@ -454,7 +456,7 @@ public class Firebase {
         }
     }
 
-    public static void deleteParent(String cEmail, String pEmail) {
+    public static void deleteParent(String cEmail, String pEmail, String child) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -481,7 +483,7 @@ public class Firebase {
                                 .document(document.getId());
                         Map.Entry pair = (Map.Entry) it.next();
                         List<String> l = (List<String>) pair.getValue();
-                        if (l.contains(pEmail)) {
+                        if (l.contains(pEmail) && l.contains(child)) {
                             Map<String, Object> updates = new HashMap<>();
                             updates.put("Parents." + String.valueOf(i), FieldValue.delete());
                             // Update and delete the "capital" field in the document
@@ -499,7 +501,7 @@ public class Firebase {
         }
     }
 
-    public static boolean isApproved(String counselorEmail, String parentEmail) {
+    public static boolean isApproved(String counselorEmail, String parentEmail, String child) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -525,7 +527,7 @@ public class Firebase {
                         Map.Entry pair = (Map.Entry) it.next();
                         l = (List<Object>) pair.getValue();
                         if (l != null) {
-                            if (l.get(0).equals(parentEmail))
+                            if (l.get(0).equals(parentEmail) && l.get(2).equals(child))
                                 return (boolean) l.get(1);
                         }
                     }
@@ -627,7 +629,7 @@ public class Firebase {
         return null;
     }
 
-    public static void setScoreIsBad(String pEmail) {
+    public static void setScoreIsBad(String pEmail, String child) {
         String cEmail = getCounselorEmail(pEmail);
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
@@ -657,7 +659,7 @@ public class Firebase {
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
                         List<Object> l = (List<Object>) pair.getValue();
-                        if (l.contains(pEmail)) {
+                        if (l.contains(pEmail) && l.contains(child)) {
                             for (int j = 0; j < l.size(); j++) {
                                 if (j == 3)
                                     list.add(true);
@@ -702,7 +704,7 @@ public class Firebase {
         return false;
     }
 
-    public static void checkScoreIsBad(String pEmail, Stage primaryStage, Scene mainViewScene, Account currentUser) {
+    public static void checkScoreIsBad(String pEmail, String child, Stage primaryStage, Scene mainViewScene, Account currentUser) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -729,7 +731,7 @@ public class Firebase {
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
                         List<Object> l = (List<Object>) pair.getValue();
-                        if (l.contains(pEmail)) {
+                        if (l.contains(pEmail) && l.contains(child)) {
                             docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                 @Override
                                 public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot,
@@ -796,7 +798,7 @@ public class Firebase {
         }
     }
 
-    public static long getRiskFactor(String parentEmail) {
+    public static long getRiskFactor(String parentEmail, String child) {
         ApiFuture<QuerySnapshot> query = db.collection("SocialMedia").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -810,14 +812,15 @@ public class Firebase {
             for (QueryDocumentSnapshot document : documents) {
                 if (document.getString("Parent Email") == null)
                     continue;
-                if (document.getString("Parent Email").equalsIgnoreCase(parentEmail))
+                if (document.getString("Parent Email").equalsIgnoreCase(parentEmail) &&
+                document.getString("Student Name").equalsIgnoreCase(child))
                     return document.getLong("Risk Factor");
             }
         }
         return -10;
     }
 
-    public static String getStuNameSM(String parentEmail) {
+    public static List<String> getStuNameSM(String parentEmail) {
         ApiFuture<QuerySnapshot> query = db.collection("SocialMedia").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -826,19 +829,21 @@ public class Firebase {
             e.printStackTrace();
         }
         List<QueryDocumentSnapshot> documents;
+        List<String> children = new ArrayList<>();
         if (querySnapshot != null) {
             documents = querySnapshot.getDocuments();
             for (QueryDocumentSnapshot document : documents) {
                 if (document.getString("Parent Email") == null)
                     continue;
                 if (document.getString("Parent Email").equalsIgnoreCase(parentEmail))
-                    return document.getString("Student Name");
+                    children.add(document.getString("Student Name"));
             }
+            return children;
         }
         return null;
     }
 
-    public static void checkForNewScores(String pEmail) {
+    public static void checkForNewScores(String pEmail, String child) {
         ApiFuture<QuerySnapshot> query = db.collection("SocialMedia").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -853,7 +858,8 @@ public class Firebase {
                 // Update an existing document
                 if (document.getString("Parent Email") == null)
                     continue;
-                if (document.getString("Parent Email").equalsIgnoreCase(pEmail)) {
+                if (document.getString("Parent Email").equalsIgnoreCase(pEmail) &&
+                document.getString("Student Name").equalsIgnoreCase(child)) {
                     DocumentReference docRef = db.collection("SocialMedia")
                             .document(document.getId());
                     docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {

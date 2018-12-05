@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.List;
+
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 
@@ -22,6 +24,7 @@ public class OauthActivity extends AppCompatActivity {
     private Button twitterLoginButton;
     private Button submitTwitterButton;
     private EditText pinField;
+    private EditText childNameField;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +33,7 @@ public class OauthActivity extends AppCompatActivity {
         submitTwitterButton=findViewById(R.id.submitTwitterButton);
         pinField = findViewById(R.id.pinCodeField);
         twitterLoginButton = findViewById(R.id.twitterLogin);
+        childNameField = findViewById(R.id.editTextChildNameOauth);
 
 
 
@@ -52,6 +56,7 @@ public class OauthActivity extends AppCompatActivity {
                     return;
                 }
                 Intent intent = new Intent(getApplicationContext(), MainViewScreen.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
 
@@ -62,6 +67,17 @@ public class OauthActivity extends AppCompatActivity {
 
     void enterCode(String code){
         AccessToken accessToken = null;
+
+        String name = childNameField.getText().toString();
+        if(name.isEmpty()){
+            Utils.displayToast(getApplicationContext(), "Please Enter A Child Name");
+            return;
+        }
+
+
+
+
+
         try{
             if(code.length() > 0){
                 accessToken = twitter.getOAuthAccessToken(requestToken, code);
@@ -81,18 +97,10 @@ public class OauthActivity extends AppCompatActivity {
         System.out.println(accessToken.getScreenName());
         System.out.println(accessToken.getUserId());
         //TODO: push tokens to database
-        updateTokens(accessToken.getToken(), accessToken.getTokenSecret(), accessToken.getScreenName(), Long.toString(accessToken.getUserId()));
+        updateTokens(accessToken.getToken(), accessToken.getTokenSecret(), accessToken.getScreenName(), Long.toString(accessToken.getUserId()), name);
     }
 
-    void updateTokens(final String token, final String secret, final String twitterId, final String userID){
-
-        Firebase.getStudentName(Account.curruser.getEmail(), new Firebase.getNameCallback() {
-            @Override
-            public void onCallback(String name) {
-                Firebase.setSocialMediaDB(Account.curruser.getEmail(), -1, name ,token,secret,twitterId,userID );
-            }
-        });
-
-        //TODO
+    void updateTokens(final String token, final String secret, final String twitterId, final String userID, String name){
+        Firebase.setSocialMediaDB(Account.curruser.getEmail(), -1, name ,token,secret,twitterId,userID );
     }
 }

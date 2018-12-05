@@ -188,16 +188,18 @@ public class Firebase {
     }
 
 
+
     public interface isApprovedCallback{
-        void onCallback(boolean isApproved);
+        void onCallback(List<ApprovedObject> isApproved);
     }
 
-    public static void isApproved(final String cousnelorEmail, final String parentEmail, final isApprovedCallback callback){
+    public static void isApproved(final String cousnelorEmail, final String parentEmail, final List<String> child, final isApprovedCallback callback){
         db.collection("Counselor")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List<ApprovedObject> finList = new ArrayList<>();
                         boolean isApproved = false;
                         if(task.isSuccessful()){
                             for (QueryDocumentSnapshot doc : task.getResult()){
@@ -216,8 +218,8 @@ public class Firebase {
                                         Map.Entry pair = (Map.Entry) it.next();
                                         l = (List<Object>) pair.getValue();
                                         if (l != null) {
-                                            if (l.get(0).equals(parentEmail))
-                                                isApproved = (boolean) l.get(1);
+                                            if (l.get(0).equals(parentEmail) && child.contains((String) l.get(2)))
+                                                finList.add(new ApprovedObject((String)l.get(2), (boolean)l.get(1)));
                                         }
                                     }
                                 }
@@ -225,7 +227,7 @@ public class Firebase {
                         }else{
                             Log.e("ERROR", "Could not access database in isApproved");
                         }
-                        callback.onCallback(isApproved);
+                        callback.onCallback(finList);
                     }
                 });
     }
@@ -263,14 +265,19 @@ public class Firebase {
     }
 
 
+    public static interface getStudentNameCallback{
+        void onCallback(List<String> names);
+    }
 
-    public static void getStudentName(final String parentEmail, final getNameCallback callback){
+
+    public static void getStudentName(final String parentEmail, final getStudentNameCallback callback){
         db.collection("Counselor")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         String studentName = "";
+                        List<String> children = new ArrayList<>();
                         if(task.isSuccessful()){
                             for(QueryDocumentSnapshot doc : task.getResult()){
                                 Map<String, Object> map;
@@ -279,18 +286,19 @@ public class Firebase {
                                 else
                                     continue;
                                 Iterator it = map.entrySet().iterator();
+
                                 while (it.hasNext()) {
                                     Map.Entry pair = (Map.Entry) it.next();
                                     List<String> l = (List<String>) pair.getValue();
                                     if (!l.contains(parentEmail))
                                         continue;
-                                    studentName = l.get(2);
+                                    children.add(l.get(2));
                                 }
                             }
                         }else{
                             Log.e("ERROR", "Failed to access database from getStudentName");
                         }
-                        callback.onCallback(studentName);
+                        callback.onCallback(children);
                     }
                 });
     }

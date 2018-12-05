@@ -99,19 +99,22 @@ public class StudentScoreView {
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             List<String> l = (List<String>) pair.getValue();
-            String stuName = Firebase.getStuNameSM(l.get(0));
+            List<String> stuName = Firebase.getStuNameSM(l.get(0));
             if (stuName == null)
                 continue;
-            long score = Firebase.getRiskFactor(l.get(0));
-            if (score == -10)
-                continue;
-            if (score > 70) {
-                Firebase.setScoreIsBad(l.get(0));
+            for (String each: stuName) {
+                long score = Firebase.getRiskFactor(l.get(0), each);
+                if (score == -10)
+                    continue;
+                if (score > 70) {
+                    Firebase.setScoreIsBad(l.get(0), each);
+                }
+
+                String pName = Firebase.getName(l.get(0));
+                List<String> list = new ArrayList<>();
+                Collections.addAll(list, pName, each, String.valueOf(score));
+                finalList.add(list);
             }
-            String pName = Firebase.getName(l.get(0));
-            List<String> list = new ArrayList<>();
-            Collections.addAll(list, pName, stuName, String.valueOf(score));
-            finalList.add(list);
         }
         for (int i = 0; i < finalList.size(); i++) {
             pairs.add(new StudentScore(finalList.get(i).get(0), finalList.get(i).get(1), Integer.parseInt(finalList.get(i).get(2))));

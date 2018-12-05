@@ -49,7 +49,7 @@ public class TweetProcessingTest {
         }
 
         TweetProcessing tweetProcessing = new TweetProcessing();
-        int a = tweetProcessing.processMS(documents);
+        int a = tweetProcessing.processMS(documents, 0);
         Assert.assertNotEquals(null, a);
 
     }
