@@ -5,37 +5,41 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static Account.CreateAccountView.requestToken;
+import static Account.CreateAccountView.twitter;
 
 public class oauthForm {
 
     private Stage mainStage;
     private Scene mainViewScene;
     private Account currentUser;
-    static Twitter twitter;
-    static RequestToken requestToken;
+    //static Twitter twitter;
+    private TextField nameField;
+    //static RequestToken requestToken;
 
     public oauthForm(Stage primary, Scene mainViewScene, Account currentUser) throws TwitterException {
         this.mainStage = primary;
         this.mainViewScene = mainViewScene;
         this.currentUser= currentUser;
-        twitter = TwitterFactory.getSingleton();
-        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
-        requestToken = twitter.getOAuthRequestToken();
-
     }
 
     public oauthForm(){
@@ -83,14 +87,27 @@ public class oauthForm {
 
         });
 
+
+        Label codeLabel = new Label("Enter Twitter Code");
+        gp.add(codeLabel, 0, 1);
+
         TextField twitterCode = new TextField();
         twitterCode.setPrefHeight(40);
-        gp.add(twitterCode, 0, 1);
+        gp.add(twitterCode, 1, 1);
+
+
+        Label nameLabel = new Label("Enter Child name");
+        gp.add(nameLabel, 0, 2);
+        nameField = new TextField();
+        nameField.setPrefHeight(40);
+        gp.add(nameField,1,2);
+
+
 
         Button submitButton = new Button("Submit");
         submitButton.setPrefWidth(100);
         submitButton.setPrefHeight(40);
-        gp.add(submitButton,0,2);
+        gp.add(submitButton,0,3);
         GridPane.setHalignment(submitButton, HPos.CENTER);
 
         submitButton.setOnAction(event -> {
@@ -108,33 +125,20 @@ public class oauthForm {
         Button goBack = new Button("Back");
         goBack.setPrefHeight(40);
         goBack.setPrefWidth(100);
-        gp.add(goBack, 0, 3);
+        gp.add(goBack, 0, 4);
         goBack.setOnAction(e -> mainStage.setScene(mainViewScene));
         GridPane.setHalignment(goBack, HPos.CENTER);
 
 
     }
     public  void launchOauth() throws TwitterException{
-//        Twitter twitter = TwitterFactory.getSingleton();
-//        twitter.setOAuthConsumer("KrKj0MnihSR5cUCXix2aS8aJV", "aaJY6emW1hwjmXPqrQMStjwGWGAcXpuNPvx849PUjBzijSfFVR");
-//        RequestToken requestToken = twitter.getOAuthRequestToken();
-        //AccessToken accessToken = null;
-        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//        System.out.println("Open the following URL and grant access to your account:");
-//        System.out.println(requestToken.getAuthorizationURL());
         try {
-          //  Desktop desktop = java.awt.Desktop.getDesktop();
-            //URI oURL = new URI(requestToken.getAuthorizationURL());
-            //desktop.browse(oURL);
-            //System.out.println("Test1");
-            //System.out.println(Desktop.isDesktopSupported());
-            //Desktop.getDesktop().browse(new URL(requestToken.getAuthorizationURL()).toURI());
-            //System.out.println("Test 2");
+
             if( Desktop.isDesktopSupported() )
             {
                 new Thread(() -> {
                     try {
-                        Desktop.getDesktop().browse( new URI( requestToken.getAuthorizationURL() ) );
+                        Desktop.getDesktop().browse( new URI(requestToken.getAuthorizationURL() ) );
                     } catch (IOException | URISyntaxException e1) {
                         e1.printStackTrace();
                     }
@@ -145,7 +149,24 @@ public class oauthForm {
         }
     }
 
+    private void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initOwner(owner);
+        alert.show();
+    }
+
     public void enterCode(String code) throws TwitterException {
+
+        if(nameField.getText().isEmpty()){
+            showAlert(Alert.AlertType.ERROR, mainStage, "Error", "Please Enter Child Name");
+            return;
+        }
+
+
+
         AccessToken accessToken = null;
         try{
                 if(code.length() > 0){
@@ -173,6 +194,6 @@ public class oauthForm {
     public void updateTokens(String token, String secret, String twitterId, String userID){
         //TODO: make sure they have linked with counselor
         //TODO: pull student name from database
-        Firebase.setSocialMediaDB(currentUser.getEmail(), -1, Firebase.getStudentName(currentUser.getEmail()), token, secret, twitterId, userID);
+        Firebase.setSocialMediaDB(currentUser.getEmail(), -1, nameField.getText() , token, secret, twitterId, userID);
     }
 }

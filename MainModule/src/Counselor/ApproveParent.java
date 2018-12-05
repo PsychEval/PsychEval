@@ -76,11 +76,11 @@ public class ApproveParent {
         selectedPair = table.getSelectionModel().getSelectedItems();
         if (status == 0) {
             for (ParentStudentPair p : selectedPair) {
-                Firebase.setParentsApproved(user.getEmail(), p.getParentEmail());
+                Firebase.setParentsApproved(user.getEmail(), p.getParentEmail(), p.getStudentName());
             }
         } else {
             for (ParentStudentPair p : selectedPair) {
-                Firebase.deleteParent(user.getEmail(), p.getParentEmail());
+                Firebase.deleteParent(user.getEmail(), p.getParentEmail(), p.getStudentName());
             }
         }
         selectedPair.forEach(allPairs::remove);
