@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditPassActivity">
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="54dp"
+        android:textSize="32dp"
+        android:text="Change Your Password" />
+
+    <EditText
+        android:id="@+id/oldPasswordField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="159dp"
+        android:ems="10"
+        android:hint="Enter current password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/newPasswordField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/oldPasswordField"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="303dp"
+        android:ems="10"
+        android:hint="Enter new password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/buttonEditPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="128dp"
+        android:text="Submit " />
+
+    <EditText
+        android:id="@+id/confirmPassField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/oldPasswordField"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="223dp"
+        android:ems="10"
+        android:hint="Confirm new password"
+        android:inputType="textPassword" />
+
+</RelativeLayout>
