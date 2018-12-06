@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import firebase from "firebase";
-
+import { ButtonToolbar, Button } from "react-bootstrap";
 class isApproved extends Component {
   constructor(props) {
     super(props);
@@ -39,11 +39,24 @@ class isApproved extends Component {
         });
       });
   }
+  goBack = async event => {
+    this.props.history.push("/");
+  };
 
   render() {
     // const { message } = this.state;
     // this.checkApproved();
-    return <div>{this.state.message}</div>;
+    return (
+      <div>
+        {this.state.message}
+
+        <ButtonToolbar>
+          <Button bsStyle="primary" bsSize="large" active onClick={this.goBack}>
+            Back
+          </Button>
+        </ButtonToolbar>
+      </div>
+    );
   }
 }
 
