@@ -11,8 +11,8 @@ import Approved from "./containers/Approved";
 import Oauth from "./containers/Oauth";
 export default ({ childProps }) => (
   <Switch>
-    <AppliedRoute path="/" exact component={Home} props={childProps} />
-    <AppliedRoute path="/login" exact component={Login} props={childProps} />
+    <AppliedRoute path="/home" exact component={Home} props={childProps} />
+    <AppliedRoute path="/" exact component={Login} props={childProps} />
     <AppliedRoute
       path="/editpass"
       exact

@@ -69,7 +69,7 @@ class ChangePassword extends Component {
   };
 
   goBack = async event => {
-    this.props.history.push("/");
+    this.props.history.push("/home");
   };
   render() {
     const { currentPassword, passwordOne, passwordTwo, error } = this.state;

@@ -49,7 +49,7 @@ export default class Login extends Component {
             this.props.userHasAuthenticated(true);
             this.setState({ isLoading: false });
             isValid = false;
-            this.props.history.push("/");
+            this.props.history.push("/home");
           }
         });
         if (isValid) {

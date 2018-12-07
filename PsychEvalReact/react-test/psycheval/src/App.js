@@ -34,7 +34,7 @@ class App extends Component {
     // await Auth.signOut();
     window.localStorage.setItem("ParentEmail", "");
     this.userHasAuthenticated(false);
-    this.props.history.push("/login");
+    this.props.history.push("/");
   };
   render() {
     const childProps = {
@@ -47,7 +47,7 @@ class App extends Component {
           <Navbar fluid collapseOnSelect>
             <Navbar.Header>
               <Navbar.Brand>
-                <Link to="/">PsychEval</Link>
+                <Link to="/home">PsychEval</Link>
               </Navbar.Brand>
               <Navbar.Toggle />
             </Navbar.Header>
