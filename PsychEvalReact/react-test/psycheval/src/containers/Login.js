@@ -41,18 +41,32 @@ export default class Login extends Component {
       .collection("Authentication")
       .get()
       .then(querySnapshot => {
-        var isValid = true;
+        var isInvalid = true;
         querySnapshot.docs.forEach(doc => {
-          if (doc.data().email === email && doc.data().password === password) {
-            console.log("here");
-            window.localStorage.setItem("ParentEmail", email);
-            this.props.userHasAuthenticated(true);
-            this.setState({ isLoading: false });
-            isValid = false;
-            this.props.history.push("/");
+          if (doc.data().type === "Parent" && doc.data().email === email) {
+            var hashed = doc.data().password;
+            var c = "";
+            var p = "";
+            for (let i = 0; i < hashed.length; i++) {
+              const element = hashed[i];
+              if (element !== " ") {
+                c += element;
+              } else {
+                var num = parseInt(c) - 21;
+                p += String.fromCharCode(num);
+                c = "";
+              }
+            }
+            if (p === password) {
+              window.localStorage.setItem("ParentEmail", email);
+              this.props.userHasAuthenticated(true);
+              this.setState({ isLoading: false });
+              isInvalid = false;
+              this.props.history.push("/home");
+            }
           }
         });
-        if (isValid) {
+        if (isInvalid) {
           alert("invalid login");
           this.setState({ isLoading: false });
         }

@@ -23,7 +23,7 @@ class Oauth extends Component {
   }
 
   onSubmit = event => {
-    const { TwitterCode, ChildName, error } = this.state;
+    const { TwitterCode, ChildName } = this.state;
 
     twitter.getAccessToken(
       RequestToken,
@@ -106,7 +106,7 @@ class Oauth extends Component {
   };
 
   goBack = async event => {
-    this.props.history.push("/");
+    this.props.history.push("/home");
   };
 
   render() {

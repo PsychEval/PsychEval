@@ -61,7 +61,7 @@ class LinkWithChild extends Component {
     event.preventDefault();
   };
   goBack = async event => {
-    this.props.history.push("/");
+    this.props.history.push("/home");
   };
 
   onChangeParent = event => {
