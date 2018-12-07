@@ -105,19 +105,19 @@ public class loginForm {
         GridPane.setHalignment(submitButton, HPos.CENTER);
         GridPane.setMargin(submitButton, new Insets(20, 0, 20, 0));
 
-        Button editPassButton = new Button("Change Password");
-        editPassButton.setPrefHeight(40);
-//        editPassButton.setPrefWidth(100);
-        gridPane.add(editPassButton, 0, 5, 2, 1);
-        GridPane.setHalignment(editPassButton, HPos.CENTER);
-        GridPane.setMargin(editPassButton, new Insets(20, 0, 20, 0));
+//        Button editPassButton = new Button("Change Password");
+//        editPassButton.setPrefHeight(40);
+////        editPassButton.setPrefWidth(100);
+//        gridPane.add(editPassButton, 0, 5, 2, 1);
+//        GridPane.setHalignment(editPassButton, HPos.CENTER);
+//        GridPane.setMargin(editPassButton, new Insets(20, 0, 20, 0));
 
 
-        editPassButton.setOnAction(event -> {
-            EditPassword ep = new EditPassword(mainStage, mainViewScene);
-            Scene eps = ep.getScene();
-            mainStage.setScene(eps);
-        });
+//        editPassButton.setOnAction(event -> {
+//            EditPassword ep = new EditPassword(mainStage, mainViewScene);
+//            Scene eps = ep.getScene();
+//            mainStage.setScene(eps);
+//        });
 
         submitButton.setOnAction(event -> {
             try {
@@ -162,9 +162,9 @@ public class loginForm {
         });
         //Add back button
 
-        Button goBack = new Button("Create Account");
-        goBack.setPrefSize(200,40);
-        gridPane.add(goBack, 0, 6);
+        Button goBack = new Button("New Account");
+        goBack.setPrefSize(150,40);
+        gridPane.add(goBack, 0, 5);
 //        GridPane.setHalignment(goBack, HPos.CENTER);
         goBack.setOnAction(e -> mainStage.setScene(createAccountScene));
     }
