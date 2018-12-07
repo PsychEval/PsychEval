@@ -13,6 +13,7 @@ class ChangePassword extends Component {
   }
 
   onSubmit = event => {
+    event.preventDefault();
     // eslint-disable-next-line
     const { currentPassword, passwordOne, passwordTwo, error } = this.state;
 
@@ -25,24 +26,38 @@ class ChangePassword extends Component {
       alert("please login again");
     } else {
       // TODO update database
-      var db1 = db.collection("Authentication");
-      db1.get().then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          if (
-            doc.data().email === email &&
-            doc.data().password === currentPassword
-          ) {
-            alert("password changed");
-            db1.doc(doc.id).set({
-              email: doc.data()["email"],
-              name: doc.data()["name"],
-              password: passwordOne,
-              type: doc.data()["type"]
-            });
-          }
-        });
-      });
+      var c = "";
+      var p = "";
+      for (let i = 0; i < currentPassword.length; i++) {
+        var num = currentPassword.charCodeAt(i) + 21;
+        p += num.toString() + " ";
+      }
+      // console.log(p);
+      var currPassword = p;
     }
+    var db1 = db.collection("Authentication");
+    db1.get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        if (
+          doc.data().email === email &&
+          doc.data().password === currPassword
+        ) {
+          var np = "";
+          for (let i = 0; i < passwordOne.length; i++) {
+            var num = passwordOne.charCodeAt(i) + 21;
+            np += num.toString() + " ";
+          }
+          var newPassword = np;
+          db1.doc(doc.id).set({
+            email: doc.data()["email"],
+            name: doc.data()["name"],
+            password: newPassword,
+            type: doc.data()["type"]
+          });
+          alert("password changed");
+        }
+      });
+    });
 
     this.setState({
       currentPassword: "",
