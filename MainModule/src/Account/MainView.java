@@ -339,9 +339,12 @@ public class MainView{
     }
 
     public void ChangeSceneToMessageView() {
-        Messaging m = new Messaging(window, mainScene, currentUser, currentUser.getEmail());
-        messaging = m.getScene();
-        window.setScene(messaging);
+//        Messaging m = new Messaging(window, mainScene, currentUser, currentUser.getEmail());
+//        messaging = m.getScene();
+//        window.setScene(messaging);
+        SelectCounselorToMessage sctm = new SelectCounselorToMessage(window, mainScene, currentUser);
+        getParentToMessage = sctm.getScene();
+        window.setScene(getParentToMessage);
     }
 
     public void ChangeSceneToMessageParent() {

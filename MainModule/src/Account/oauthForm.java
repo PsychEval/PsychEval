@@ -18,7 +18,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
-import javax.xml.soap.Text;
+//import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;

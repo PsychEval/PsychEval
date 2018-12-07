@@ -28,6 +28,7 @@ public class Messaging {
     private TableView<Message> table;
     private Account user;
     private String parentEmail;
+    private String counselorEmail;
 
     private VBox createFormPaneAllMessages() {
         TableColumn<Message, String> message = new TableColumn<>("Message");
@@ -78,7 +79,9 @@ public class Messaging {
             Firebase.newMessage(user.getEmail(), parentEmail, 0, messageString);
         }
         else
-            Firebase.newMessage(Firebase.getCounselorEmail(parentEmail), parentEmail,1, messageString);
+            Firebase.newMessage(counselorEmail, user.getEmail(),1, messageString);
+//            Firebase.newMessage(Firebase.getCounselorEmail(parentEmail), parentEmail,1, messageString);
+
 
         Messaging m = new Messaging(mainStage, mainViewScene, user, parentEmail);
         Scene messaging = m.getScene();
@@ -91,12 +94,16 @@ public class Messaging {
     private ObservableList<Message> getAllMessages() {
         ObservableList<Message> pairs = FXCollections.observableArrayList();
         Map<String, Object> map;
-        String counselorEmail;
+//        String counselorEmail;
+        List<List<Object>> listOfMessages;
         if (user.getAccountType() == Account.AccountType.PARENT)
-            counselorEmail = Firebase.getCounselorEmail(user.getEmail());
+            listOfMessages = Firebase.getMessages(counselorEmail, user.getEmail());
+//            counselorEmail = Firebase.getCounselorEmail(user.getEmail());
         else
-            counselorEmail = user.getEmail();
-        List<List<Object>> listOfMessages = Firebase.getMessages(counselorEmail, parentEmail);
+            listOfMessages = Firebase.getMessages(user.getEmail(), parentEmail);
+//            counselorEmail = user.getEmail();
+//        List<List<Object>> listOfMessages = Firebase.getMessages(counselorEmail, parentEmail);
+
         if (listOfMessages == null)
             return pairs;
         for (List<Object> e : listOfMessages) {
@@ -120,7 +127,15 @@ public class Messaging {
         this.mainStage = primaryStage;
         this.mainViewScene = mainViewScene;
         this.user = currentUser;
-        this.parentEmail = parentEmail;
+//        this.parentEmail = parentEmail;
+        if (currentUser.getAccountType() == Account.AccountType.PARENT) {
+            this.counselorEmail = parentEmail;
+            this.parentEmail = "";
+        }
+        else {
+            this.counselorEmail = "";
+            this.parentEmail = parentEmail;
+        }
     }
 }
 
