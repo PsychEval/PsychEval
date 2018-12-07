@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import firebase from "firebase";
+import { ButtonToolbar, Button } from "react-bootstrap";
 // import * as ROUTES from "../../constants/routes";
 // import oth from "oauth";
 var RequestToken;
