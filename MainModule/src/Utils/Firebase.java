@@ -367,6 +367,37 @@ public class Firebase {
         return null;
     }
 
+    public static List<String> getCounselorEmails(String pEmail) {
+        ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
+        QuerySnapshot querySnapshot = null;
+        try {
+            querySnapshot = query.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        List<QueryDocumentSnapshot> documents;
+        List<String> cEmails = new ArrayList<>(3);
+        if (querySnapshot != null) {
+            documents = querySnapshot.getDocuments();
+            for (QueryDocumentSnapshot document : documents) {
+                if (document.get("Parents") == null)
+                    continue;
+                Map<String, Object> map = (Map<String, Object>) document.get("Parents");
+                Iterator it = map.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    List<Object> l = (List<Object>) pair.getValue();
+                    if (l.contains(pEmail)) {
+                        //return document.getString("Email");
+                        cEmails.add(document.getString("Email"));
+                    }
+                }
+            }
+            return cEmails;
+        }
+        return null;
+    }
+
     public static ArrayList<String> getStudentNames(String email) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
