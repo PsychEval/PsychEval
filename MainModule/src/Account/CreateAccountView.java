@@ -255,7 +255,7 @@ public class CreateAccountView extends Application {
 
     public static void main(String[] args) {
         try {
-            Firebase.init(); //intializes the static firebase class
+            Firebase.init("MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json"); //intializes the static firebase class
         } catch (Exception e) {
             e.printStackTrace();
         }
