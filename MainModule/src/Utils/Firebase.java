@@ -710,7 +710,7 @@ public class Firebase {
         return false;
     }
 
-    public static void checkScoreIsBad(String pEmail, String child, Stage primaryStage, Scene mainViewScene, Account currentUser) {
+    public static ListenerRegistration checkScoreIsBad(String pEmail, String child, Stage primaryStage, Scene mainViewScene, Account currentUser) {
         ApiFuture<QuerySnapshot> query = db.collection("Counselor").get();
         QuerySnapshot querySnapshot = null;
         try {
@@ -738,7 +738,7 @@ public class Firebase {
                         Map.Entry pair = (Map.Entry) it.next();
                         List<Object> l = (List<Object>) pair.getValue();
                         if (l.contains(pEmail) && l.contains(child)) {
-                            docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            ListenerRegistration registration = docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                 @Override
                                 public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot,
                                                     @javax.annotation.Nullable FirestoreException e) {
@@ -752,11 +752,13 @@ public class Firebase {
                                     }
                                 }
                             });
+                            return registration;
                         }
                     }
                 }
             }
         }
+        return null;
     }
 
     // social media db - student name, twitter oauth key, twitter link, score, getters & setters

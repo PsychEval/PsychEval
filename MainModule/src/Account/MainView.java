@@ -51,6 +51,7 @@ public class MainView{
     private Scene getParentToMessage;
     private GridPane gridPane;
     private ListenerRegistration lr;
+    private ListenerRegistration lr1;
 
     private BorderPane createFormPane() {
         BorderPane bp = new BorderPane();
@@ -107,6 +108,8 @@ public class MainView{
                         MainView.currentUser = null;
                         if (lr != null)
                             lr.remove();
+                        if (lr1 != null)
+                            lr1.remove();
                         window.setScene(createAccount);
 
                     });
@@ -382,7 +385,7 @@ public class MainView{
         if (currentUser.getAccountType() == Account.AccountType.PARENT) {
             List<String> allChild = Firebase.getStudentName(currentUser.getEmail());
             for (String each: allChild) {
-                Firebase.checkScoreIsBad(currentUser.getEmail(), each, window, mainScene, currentUser);
+                lr1 = Firebase.checkScoreIsBad(currentUser.getEmail(), each, window, mainScene, currentUser);
             }
         }
     }
