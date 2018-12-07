@@ -65,7 +65,7 @@ public class MainView{
         hbox.setStyle("-fx-background-color: #336699;");
 
         Button passwordButton = new Button("Edit Password");
-        passwordButton.setPrefSize(100, 20);
+        passwordButton.setPrefSize(150, 20);
         passwordButton.setUserData("password");
 
         Button logoutButton = new Button("Logout");

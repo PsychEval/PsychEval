@@ -107,7 +107,7 @@ public class loginForm {
 
         Button editPassButton = new Button("Change Password");
         editPassButton.setPrefHeight(40);
-        editPassButton.setPrefWidth(100);
+//        editPassButton.setPrefWidth(100);
         gridPane.add(editPassButton, 0, 5, 2, 1);
         GridPane.setHalignment(editPassButton, HPos.CENTER);
         GridPane.setMargin(editPassButton, new Insets(20, 0, 20, 0));
@@ -163,8 +163,7 @@ public class loginForm {
         //Add back button
 
         Button goBack = new Button("Create Account");
-        goBack.setPrefHeight(40);
-        goBack.setPrefWidth(100);
+        goBack.setPrefSize(200,40);
         gridPane.add(goBack, 0, 6);
 //        GridPane.setHalignment(goBack, HPos.CENTER);
         goBack.setOnAction(e -> mainStage.setScene(createAccountScene));

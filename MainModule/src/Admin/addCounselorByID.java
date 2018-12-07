@@ -71,7 +71,7 @@ public class addCounselorByID{
         Button submitButton = new Button("Add Counselor");
         submitButton.setPrefHeight(40);
         submitButton.setDefaultButton(true);
-        submitButton.setPrefWidth(100);
+//        submitButton.setPrefWidth(100);
         gridPane.add(submitButton, 0, 5, 2, 1);
         GridPane.setHalignment(submitButton, HPos.CENTER);
 
