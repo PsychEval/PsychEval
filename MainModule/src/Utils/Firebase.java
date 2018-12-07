@@ -106,27 +106,6 @@ public class Firebase {
         return null;
     }
 
-    /*public static String getPassword(String email) {
-        ApiFuture<QuerySnapshot> query = db.collection("Authentication").get();
-        QuerySnapshot querySnapshot = null;
-        try {
-            querySnapshot = query.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        List<QueryDocumentSnapshot> documents;
-        if (querySnapshot != null) {
-            documents = querySnapshot.getDocuments();
-            for (QueryDocumentSnapshot document : documents) {
-                if (document.getString("email") == null)
-                    continue;
-                if (document.getString("email").equalsIgnoreCase(email))
-                    return document.getString("password");
-            }
-        }
-        return null;
-    }*/
-
     public static void setPassword(String email, String password) {
         ApiFuture<QuerySnapshot> query = db.collection("Authentication").get();
         QuerySnapshot querySnapshot = null;
@@ -144,16 +123,12 @@ public class Firebase {
                 // Update an existing document
                 if (document.getString("email") == null)
                     continue;
-                byte[] salt = email.getBytes();
-                byte[] pass = Passwords.hash(password, salt);
                 String p = "";
-                for (byte b:pass)
-                    p += b + " ";
+                for (int i = 0; i < password.length(); ++i)
+                    p += (password.charAt(i) + 21) + " ";
                 try {
                     if (document.getString("email").equalsIgnoreCase(email)) {
                         future = document.getReference().update("password", p);
-                        future.get();
-                        future = document.getReference().update("salt", salt.toString());
                         future.get();
                     }
                 } catch (InterruptedException | ExecutionException e) {
@@ -170,11 +145,10 @@ public class Firebase {
             data.put("type", type);
             data.put("email", email);
             data.put("name", name);
-            byte[] salt = email.getBytes();
-            byte[] pass = Passwords.hash(password, salt);
             String p = "";
-            for (byte b:pass)
-                p += b + " ";
+            for (int i = 0; i < password.length(); ++i) {
+                p += (password.charAt(i) + 21) + " ";
+            }
             data.put("password", p);
 
             ApiFuture<WriteResult> result = docRef.set(data);
@@ -208,11 +182,12 @@ public class Firebase {
                         continue;
                     String pass = document.getString("password");
                     String [] arr = pass.split(" ");
-                    byte[] p = new byte[arr.length];
+                    String p = "";
                     for (int i = 0; i < arr.length; i++)
-                        p[i] = Byte.parseByte(arr[i]);
-                    byte[] salt = email.getBytes();
-                    if (Passwords.isExpectedPassword(password, salt, p))
+                        p += (char)(Integer.parseInt(arr[i]) - 21);
+                    System.out.println(p);
+                    System.out.println(password);
+                    if (p.equals(password))
                         return true;
                 }
             }
