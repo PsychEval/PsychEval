@@ -147,7 +147,7 @@ public class CreateAccountView extends Application {
         //Add Login Button
         Button logInButton = new Button("Login");
         logInButton.setPrefHeight(40);
-        logInButton.setDefaultButton(true);
+//        logInButton.setDefaultButton(true);
         logInButton.setPrefWidth(100);
         gridPane.add(logInButton, 0, 6, 2, 1);
 
