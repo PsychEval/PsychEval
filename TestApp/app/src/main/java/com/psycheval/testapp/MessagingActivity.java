@@ -15,6 +15,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.grpc.okhttp.internal.Util;
+
 
 public class MessagingActivity extends AppCompatActivity {
 
@@ -23,6 +25,8 @@ public class MessagingActivity extends AppCompatActivity {
     private ListView listView;
     private EditText messagingTextField;
     private Button sendMessageButton;
+    private Button viewMessageButton;
+    private EditText counselorEmailField;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +35,15 @@ public class MessagingActivity extends AppCompatActivity {
         listView = findViewById(R.id.messageListView);
         messagingTextField = findViewById(R.id.messageTextField);
         sendMessageButton = findViewById(R.id.sendMessageButton);
+        counselorEmailField = findViewById(R.id.counslelorEmailFieldMessage);
+        viewMessageButton = findViewById(R.id.viewMessageButton);
+
+        viewMessageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reloadMessages();
+            }
+        });
 
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,31 +53,31 @@ public class MessagingActivity extends AppCompatActivity {
         });
 
 
-        Firebase.getCounselorEmail(Account.curruser.getEmail(), new Firebase.getCounselorEmailCallback() {
-            @Override
-            public void onCallback(String email) {
-                Account.curruser.setCounselorEmail(email);
-                Firebase.getMessages(email, Account.curruser.getEmail(), new Firebase.getMessagesCallback() {
-                    @Override
-                    public void onCallback(List<List<Object>> list) {
-                        ArrayList<Message> messages = new ArrayList<>();
-                        if(list == null){
-                            messages.add(new Message("No messages", ""));
-                        }else{
-                            for (List<Object> e : list){
-                                if((long)e.get(1)==1){
-                                    messages.add(new Message((String)e.get(0), "Sent By Parent"));
-                                }else{
-                                    messages.add(new Message((String)e.get(1), "Sent By Counselor"));
-                                }
-                            }
-                        }
-                        MessageListAdapter adapter = new MessageListAdapter(getApplicationContext(), R.layout.adapter_view_layout, messages);
-                        listView.setAdapter(adapter);
-                    }
-                });
-            }
-        });
+//        Firebase.getCounselorEmail(Account.curruser.getEmail(), new Firebase.getCounselorEmailCallback() {
+//            @Override
+//            public void onCallback(String email) {
+//                //Account.curruser.setCounselorEmail(email);
+//                Firebase.getMessages(email, Account.curruser.getEmail(), new Firebase.getMessagesCallback() {
+//                    @Override
+//                    public void onCallback(List<List<Object>> list) {
+//                        ArrayList<Message> messages = new ArrayList<>();
+//                        if(list == null){
+//                            messages.add(new Message("No messages", ""));
+//                        }else{
+//                            for (List<Object> e : list){
+//                                if((long)e.get(1)==1){
+//                                    messages.add(new Message((String)e.get(0), "Sent By Parent"));
+//                                }else{
+//                                    messages.add(new Message((String)e.get(0), "Sent By Counselor"));
+//                                }
+//                            }
+//                        }
+//                        MessageListAdapter adapter = new MessageListAdapter(getApplicationContext(), R.layout.adapter_view_layout, messages);
+//                        listView.setAdapter(adapter);
+//                    }
+//                });
+//            }
+//        });
     }
 
 
@@ -74,7 +87,7 @@ public class MessagingActivity extends AppCompatActivity {
             return;
         }
         messagingTextField.setText("");
-        Firebase.sendMessage(Account.curruser.getCounselorEmail(), Account.curruser.getEmail(), messageToSend, new Firebase.sendMessageCompleteCallback() {
+        Firebase.sendMessage(counselorEmailField.getText().toString(), Account.curruser.getEmail(), messageToSend, new Firebase.sendMessageCompleteCallback() {
             @Override
             public void onCallback() {
                 reloadMessages();
@@ -91,7 +104,13 @@ public class MessagingActivity extends AppCompatActivity {
     }
 
     void reloadMessages(){
-        Firebase.getMessages(Account.curruser.getCounselorEmail(), Account.curruser.getEmail(), new Firebase.getMessagesCallback() {
+
+        if(counselorEmailField.getText().toString().isEmpty()){
+            Utils.displayToast(getApplicationContext(), "Please enter a counselor email");
+            return;
+        }
+
+        Firebase.getMessages(counselorEmailField.getText().toString(), Account.curruser.getEmail(), new Firebase.getMessagesCallback() {
             @Override
             public void onCallback(List<List<Object>> list) {
                 ArrayList<Message> messages = new ArrayList<>();
@@ -102,7 +121,7 @@ public class MessagingActivity extends AppCompatActivity {
                         if((long)e.get(1)==1){
                             messages.add(new Message((String)e.get(0), "Sent By Parent"));
                         }else{
-                            messages.add(new Message((String)e.get(1), "Sent By Counselor"));
+                            messages.add(new Message((String)e.get(0), "Sent By Counselor"));
                         }
                     }
                 }

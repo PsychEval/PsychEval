@@ -41,12 +41,12 @@ public class Firebase {
         this.password = password;
     }
 
-    public static void init() {
+    public static void init(String path) {
         // Fetch the service account key JSON file contents
         FileInputStream serviceAccount;
         FirebaseOptions options = null;
         try {
-            serviceAccount = new FileInputStream("MainModule/src/Utils/psycheval-ff91b-firebase-adminsdk-pjtsv-d414b51557.json");
+            serviceAccount = new FileInputStream(path);
 
             // Initialize the app with a service account, granting admin privileges
             options = new FirebaseOptions.Builder()
