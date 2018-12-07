@@ -64,13 +64,13 @@ public class Firebase {
     public static void login(final String email, final String password, final loginCallback callback){
         CollectionReference cr = db.collection("Authentication");
 
-        byte[] salt = email.getBytes();
-        byte[] pass = Passwords.hash(password, salt);
+
         String p = "";
-        for(byte b:pass){
-            p += b + " ";
+        for (int i = 0; i < password.length(); i++) {
+            p += (password.charAt(i)+21) +" ";
         }
-        Query q1 = cr.whereEqualTo("email",email).whereEqualTo("password",p);
+        final String finPass = p;
+        Query q1 = cr.whereEqualTo("email",email).whereEqualTo("password",finPass);
         q1.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -81,12 +81,7 @@ public class Firebase {
                     tempPass  = ds.getString("password");
                     if(tempEmail.equalsIgnoreCase(email)){
                         //String pass = document.getString("password");
-                        String [] arr = tempPass.split(" ");
-                        byte[] p = new byte[arr.length];
-                        for (int i = 0; i < arr.length; i++)
-                            p[i] = Byte.parseByte(arr[i]);
-                        byte[] salt = email.getBytes();
-                        if (Passwords.isExpectedPassword(password, salt, p)){
+                        if(tempPass.equals(finPass)){
                             isTrue = true;
                         }
                     }
@@ -94,6 +89,7 @@ public class Firebase {
                 callback.onCallback(isTrue);
             }
         });
+
 
     }
 
@@ -463,15 +459,13 @@ public class Firebase {
                             for(QueryDocumentSnapshot document : task.getResult()){
                                 if (document.getString("email") == null)
                                     continue;
-                                byte[] salt = email.getBytes();
-                                byte[] pass = Passwords.hash(password, salt);
                                 String p = "";
-                                for (byte b:pass)
-                                    p += b + " ";
+                                for (int i = 0; i < password.length(); i++) {
+                                    p += (password.charAt(i)+21) +" ";
+                                }
 
                                 if(document.getString("email").equalsIgnoreCase(email)){
                                     document.getReference().update("password",p);
-                                    document.getReference().update("salt", salt.toString());
                                 }
 
 
