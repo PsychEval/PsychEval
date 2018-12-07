@@ -8,6 +8,9 @@ class isApproved extends Component {
       message: ""
     };
   }
+  goBack = async event => {
+    this.props.history.push("/");
+  };
 
   // checkApproved = () => {
   componentDidMount() {
@@ -39,17 +42,11 @@ class isApproved extends Component {
         });
       });
   }
-  goBack = async event => {
-    this.props.history.push("/");
-  };
 
   render() {
-    // const { message } = this.state;
-    // this.checkApproved();
     return (
       <div>
-        {this.state.message}
-
+        {this.state.message}{" "}
         <ButtonToolbar>
           <Button bsStyle="primary" bsSize="large" active onClick={this.goBack}>
             Back

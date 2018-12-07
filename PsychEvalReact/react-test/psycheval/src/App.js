@@ -32,7 +32,7 @@ class App extends Component {
   };
   handleLogout = async event => {
     // await Auth.signOut();
-
+    window.localStorage.setItem("ParentEmail", "");
     this.userHasAuthenticated(false);
     this.props.history.push("/login");
   };
