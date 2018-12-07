@@ -112,6 +112,14 @@ public class EditPassword {
 
             }
         });
+
+        //Add back button
+        Button goBack = new Button("Back");
+        goBack.setPrefHeight(40);
+        goBack.setPrefWidth(100);
+        gridPane.add(goBack, 0, 4);
+        goBack.setOnAction(e -> mainStage.setScene(mainViewScene));
+        GridPane.setHalignment(goBack, HPos.CENTER);
     }
 
     public boolean checkInput(TextField oldPassField, PasswordField newPassField, PasswordField newPass2Field) {
